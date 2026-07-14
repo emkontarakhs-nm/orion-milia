@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Χάρτης Ναυτικών Μιλίων — ΩΡΙΩΝ</title>
+
+<!-- Εγκατάσταση στην αρχική οθόνη (iOS) -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ΩΡΙΩΝ">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjM2IiBmaWxsPSIjMTQyOTNEIi8+PGNpcmNsZSBjeD0iOTAiIGN5PSI5MCIgcj0iNjQiIHN0cm9rZT0iI0I1NzIyRSIgc3Ryb2tlLXdpZHRoPSI0IiBmaWxsPSJub25lIi8+PGNpcmNsZSBjeD0iOTAiIGN5PSI5MCIgcj0iNiIgZmlsbD0iI0YzRUNERCIvPjxwYXRoIGQ9Ik05MCAyOCBMMTAxIDgyIEw5MCA5MCBMNzkgODIgWiIgZmlsbD0iI0YzRUNERCIvPjxwYXRoIGQ9Ik05MCAxNTIgTDEwMSA5OCBMOTAgOTAgTDc5IDk4IFoiIGZpbGw9IiM1QzZCNzgiLz48cGF0aCBkPSJNMjggOTAgTDgyIDc5IEw5MCA5MCBMODIgMTAxIFoiIGZpbGw9IiM4RkEwQUQiLz48cGF0aCBkPSJNMTUyIDkwIEw5OCA3OSBMOTAgOTAgTDk4IDEwMSBaIiBmaWxsPSIjOEZBMEFEIi8+PC9zdmc+Cg==">
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjM2IiBmaWxsPSIjMTQyOTNEIi8+PGNpcmNsZSBjeD0iOTAiIGN5PSI5MCIgcj0iNjQiIHN0cm9rZT0iI0I1NzIyRSIgc3Ryb2tlLXdpZHRoPSI0IiBmaWxsPSJub25lIi8+PGNpcmNsZSBjeD0iOTAiIGN5PSI5MCIgcj0iNiIgZmlsbD0iI0YzRUNERCIvPjxwYXRoIGQ9Ik05MCAyOCBMMTAxIDgyIEw5MCA5MCBMNzkgODIgWiIgZmlsbD0iI0YzRUNERCIvPjxwYXRoIGQ9Ik05MCAxNTIgTDEwMSA5OCBMOTAgOTAgTDc5IDk4IFoiIGZpbGw9IiM1QzZCNzgiLz48cGF0aCBkPSJNMjggOTAgTDgyIDc5IEw5MCA5MCBMODIgMTAxIFoiIGZpbGw9IiM4RkEwQUQiLz48cGF0aCBkPSJNMTUyIDkwIEw5OCA3OSBMOTAgOTAgTDk4IDEwMSBaIiBmaWxsPSIjOEZBMEFEIi8+PC9zdmc+Cg==">
+
+<!-- Εγκατάσταση στην αρχική οθόνη (Android) -->
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoizqfOrM+Bz4TOt8+CIM6czrnOu86vz4nOvSDOqc6hzpnOqc6dIiwic2hvcnRfbmFtZSI6Is6pzqHOmc6pzp0iLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzE0MjkzRCIsInRoZW1lX2NvbG9yIjoiIzE0MjkzRCIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZzlJakFnTUNBeE9EQWdNVGd3SWo0OGNtVmpkQ0IzYVdSMGFEMGlNVGd3SWlCb1pXbG5hSFE5SWpFNE1DSWdjbmc5SWpNMklpQm1hV3hzUFNJak1UUXlPVE5FSWk4K1BHTnBjbU5zWlNCamVEMGlPVEFpSUdONVBTSTVNQ0lnY2owaU5pSWdabWxzYkQwaUkwWXpSVU5FUkNJdlBqeHdZWFJvSUdROUlrMDVNQ0F5T0NCTU1UQXhJRGd5SUV3NU1DQTVNQ0JNTnprZ09ESWdXaUlnWm1sc2JEMGlJMFl6UlVORVJDSXZQanh3WVhSb0lHUTlJazA1TUNBeE5USWdUREV3TVNBNU9DQk1PVEFnT1RBZ1REYzVJRGs0SUZvaUlHWnBiR3c5SWlNMVF6WkNOemdpTHo0OGNHRjBhQ0JrUFNKTk1qZ2dPVEFnVERneUlEYzVJRXc1TUNBNU1DQk1PRElnTVRBeElGb2lJR1pwYkd3OUlpTTRSa0V3UVVRaUx6NDhjR0YwYUNCa1BTSk5NVFV5SURrd0lFdzVPQ0EzT1NCTU9UQWdPVEFnVERrNElERXdNU0JhSWlCbWFXeHNQU0lqT0VaQk1FRkVJaTgrUEM5emRtYytDZz09Iiwic2l6ZXMiOiIxODB4MTgwIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifSx7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjRiV3h1Y3owaWFIUjBjRG92TDNkM2R5NTNNeTV2Y21jdk1qQXdNQzl6ZG1jaUlIWnBaWGRDYjNnOUlqQWdNQ0F4T0RBZ01UZ3dJajQ4Y21WamRDQjNhV1IwYUQwaU1UZ3dJaUJvWldsbmFIUTlJakU0TUNJZ2NuZzlJak0ySWlCbWFXeHNQU0lqTVRReU9UTkVJaTgrUEdOcGNtTnNaU0JqZUQwaU9UQWlJR041UFNJNU1DSWdjajBpTmpRaUlITjBjbTlyWlQwaUkwSTFOekl5UlNJZ2MzUnliMnRsTFhkcFpIUm9QU0kwSWlCbWFXeHNQU0p1YjI1bElpOCtQR05wY21Oc1pTQmplRDBpT1RBaUlHTjVQU0k1TUNJZ2NqMGlOaUlnWm1sc2JEMGlJMFl6UlVORVJDSXZQanh3WVhSb0lHUTlJazA1TUNBeU9DQk1NVEF4SURneUlFdzVNQ0E1TUNCTU56a2dPRElnV2lJZ1ptbHNiRDBpSTBZelJVTkVSQ0l2UGp4d1lYUm9JR1E5SWswNU1DQXhOVElnVERFd01TQTVPQ0JNT1RBZ09UQWdURGM1SURrNElGb2lJR1pwYkd3OUlpTTFRelpDTnpnaUx6NDhjR0YwYUNCa1BTSk5NamdnT1RBZ1REZ3lJRGM1SUV3NU1DQTVNQ0JNT0RJZ01UQXhJRm9pSUdacGJHdzlJaU00UmtFd1FVUWlMejQ4Y0dGMGFDQmtQU0pOTVRVeUlEa3dJRXc1T0NBM09TQk1PVEFnT1RBZ1REazRJREV3TVNCYUlpQm1hV3hzUFNJak9FWkJNRUZFSWk4K1BDOXpkbWMrQ2c9PSIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIiwicHVycG9zZSI6ImFueSBtYXNrYWJsZSJ9XX0K">
+<meta name="theme-color" content="#14293D">
+<meta name="mobile-web-app-capable" content="yes">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14293D; --ink-2:#1F3A52;
+    --parchment:#F3ECDD; --parchment-2:#EAE0C9;
+    --teal:#1F6F6B; --teal-light:#DCEAE7;
+    --brass:#B5722E; --brass-light:#F3E3CE;
+    --coral:#B54432; --coral-light:#F5DFDA;
+    --line:#C9BFA4; --text-muted:#5C6B78;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--parchment);font-family:'Inter',sans-serif;color:var(--ink);}
+  .wrap{max-width:760px;margin:0 auto;padding:32px 24px 80px;}
+
+  .hero{position:relative;padding:36px 32px 32px;background:var(--ink);border-radius:4px;color:var(--parchment);overflow:hidden;margin-bottom:24px;}
+  .hero::before{content:'';position:absolute;inset:0;
+    background-image:repeating-linear-gradient(0deg, rgba(243,236,221,0.05) 0px, rgba(243,236,221,0.05) 1px, transparent 1px, transparent 32px),
+    repeating-linear-gradient(90deg, rgba(243,236,221,0.05) 0px, rgba(243,236,221,0.05) 1px, transparent 1px, transparent 32px);
+    pointer-events:none;}
+  .hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;color:var(--brass);text-transform:uppercase;margin:0 0 10px;position:relative;}
+  .hero h1{font-family:'Fraunces',serif;font-weight:500;font-size:26px;line-height:1.25;margin:0 0 14px;max-width:480px;position:relative;}
+  .stat-row{display:flex;gap:24px;position:relative;flex-wrap:wrap;}
+  .stat{font-family:'JetBrains Mono',monospace;}
+  .stat .num{font-size:22px;color:var(--parchment);display:block;}
+  .stat .lbl{font-size:10px;color:#8FA0AD;letter-spacing:0.06em;text-transform:uppercase;}
+  .stage-pill{display:inline-block;margin-top:16px;padding:6px 14px;background:rgba(181,114,46,0.25);border:1px solid var(--brass);border-radius:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--brass-light);position:relative;}
+
+  .section-title{font-family:'Fraunces',serif;font-weight:500;font-size:18px;margin:0 0 4px;}
+  .section-sub{font-size:12.5px;color:var(--text-muted);margin:0 0 14px;}
+
+  /* ---- Stages ---- */
+  .route{position:relative;margin-top:8px;margin-bottom:32px;}
+  .route::before{content:'';position:absolute;left:23px;top:8px;bottom:8px;width:0;border-left:2px dashed var(--line);}
+  .stage{position:relative;padding:0 0 8px 60px;margin-bottom:6px;}
+  .stage-marker{position:absolute;left:0;top:0;width:48px;height:48px;border-radius:50%;background:var(--parchment);border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;color:var(--ink);z-index:1;}
+  .stage-marker.done{background:var(--teal);border-color:var(--teal);color:#fff;}
+  .stage-marker.partial{background:var(--brass-light);border-color:var(--brass);}
+  .stage-head{padding:10px 0 10px;cursor:pointer;user-select:none;}
+  .stage-title{font-family:'Fraunces',serif;font-weight:500;font-size:17px;margin:0 0 4px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .stage-desc{font-size:12.5px;color:var(--text-muted);margin:0;}
+  .chevron{font-size:16px;color:var(--text-muted);transition:transform 0.25s ease;flex-shrink:0;}
+  .stage.open .chevron{transform:rotate(180deg);}
+  .stage-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease;}
+  .stage.open .stage-body{max-height:600px;}
+  .area-list{display:flex;flex-direction:column;gap:0;margin:8px 0 16px;background:#fff;border:1px solid var(--parchment-2);border-radius:4px;overflow:hidden;}
+  .area-item{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--parchment-2);cursor:pointer;}
+  .area-item:last-child{border-bottom:none;}
+  .area-item:hover{background:var(--parchment);}
+  .area-item input{width:16px;height:16px;accent-color:var(--teal);flex-shrink:0;cursor:pointer;}
+  .area-item.checked span{color:var(--text-muted);text-decoration:line-through;}
+  .area-item span{font-size:13.5px;}
+
+  /* ---- Trip log ---- */
+  .log-form{background:#fff;border:1px solid var(--parchment-2);border-radius:4px;padding:16px;margin-bottom:16px;}
+  .log-form-row{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+  .log-form input, .log-form select{font-family:'Inter',sans-serif;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--parchment);color:var(--ink);flex:1;min-width:110px;}
+  .log-form input[type="date"]{flex:1 1 130px;}
+  .log-form input[type="number"]{flex:0 1 90px;}
+  .log-form input[type="text"]{flex:2 1 180px;}
+  .add-btn{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;background:var(--teal);border:none;padding:9px 18px;border-radius:4px;cursor:pointer;width:100%;}
+  .add-btn:hover{background:#175753;}
+  .form-label{font-size:11px;color:var(--text-muted);margin:2px 0 8px;}
+  .chip-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+  .chip{font-family:'Inter',sans-serif;font-size:12.5px;padding:9px 14px;border-radius:20px;border:1px solid var(--line);background:var(--parchment);color:var(--text-muted);cursor:pointer;user-select:none;display:inline-flex;align-items:center;}
+  .chip.selected{background:var(--teal);border-color:var(--teal);color:#fff;}
+  .log-form textarea{font-family:'Inter',sans-serif;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--parchment);color:var(--ink);width:100%;resize:vertical;margin-bottom:8px;}
+  .trip-notes{font-size:12.5px;color:var(--ink-2);margin:6px 0 0;line-height:1.5;border-top:1px dashed var(--parchment-2);padding-top:6px;}
+  .trip-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+  .trip-tag{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;background:var(--teal-light);color:var(--teal);border-radius:10px;}
+  .trip-type-tag{background:var(--brass-light);color:var(--brass);}
+  .trip-detail-row{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-muted);margin:4px 0 0;}
+
+  .chip.tag-chip{border-color:var(--brass);}
+  .chip.tag-chip.selected{background:var(--brass);border-color:var(--brass);color:#fff;}
+
+  details.more-details{margin-bottom:10px;}
+  details.more-details summary{font-size:13px;color:var(--teal);cursor:pointer;font-weight:600;padding:10px 0;list-style:none;}
+  details.more-details summary::-webkit-details-marker{display:none;}
+  details.more-details summary::marker{content:'';}
+
+  .trip-warn{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--coral);margin:4px 0 0;font-weight:600;}
+  .field-error{border-color:var(--coral) !important;background:var(--coral-light) !important;}
+
+  #toast{position:fixed;left:50%;bottom:-70px;transform:translateX(-50%);background:var(--ink);color:var(--parchment);padding:11px 20px;border-radius:20px;font-size:12.5px;font-family:'Inter',sans-serif;box-shadow:0 4px 16px rgba(0,0,0,0.3);transition:bottom 0.3s ease;z-index:1000;max-width:90%;text-align:center;}
+  #toast.show{bottom:20px;}
+  #toast.error{background:var(--coral);}
+  .detail-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+  .field-col{flex:1;min-width:95px;}
+  .field-label{font-size:10.5px;color:var(--text-muted);display:block;margin-bottom:3px;}
+  .detail-grid input, .detail-grid select{width:100%;font-family:'Inter',sans-serif;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--parchment);color:var(--ink);}
+  .auto-hint{font-size:11px;color:var(--teal);margin:8px 0 0;line-height:1.5;background:var(--teal-light);padding:8px 10px;border-radius:4px;}
+  .fuel-total-line{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--brass);margin:8px 0 0;font-weight:600;background:var(--brass-light);padding:8px 10px;border-radius:4px;}
+
+  .plan-box{background:#fff;border:1px solid var(--parchment-2);border-radius:4px;padding:16px;margin-bottom:32px;}
+  .plan-result{margin-top:14px;padding-top:14px;border-top:1px dashed var(--parchment-2);}
+  .plan-line{font-size:13.5px;color:var(--ink-2);margin:0 0 7px;line-height:1.5;}
+  .plan-warn{font-size:12.5px;color:var(--coral);font-weight:600;margin:8px 0 0;background:var(--coral-light);padding:9px 11px;border-radius:4px;line-height:1.5;}
+  .plan-ok{font-size:12.5px;color:var(--teal);font-weight:600;margin:8px 0 0;background:var(--teal-light);padding:9px 11px;border-radius:4px;}
+
+  .level-box{background:var(--ink);color:var(--parchment);border-radius:4px;padding:18px 20px;margin-bottom:32px;}
+  .level-name{font-family:'Fraunces',serif;font-weight:500;font-size:19px;display:block;margin-bottom:4px;}
+  .level-detail{font-family:'JetBrains Mono',monospace;font-size:11px;color:#B8A98C;display:block;margin-bottom:12px;}
+  .level-progress-outer{height:6px;background:rgba(243,236,221,0.15);border-radius:3px;overflow:hidden;margin-bottom:6px;}
+  .level-progress-fill{height:100%;background:var(--brass);border-radius:3px;}
+  .level-next{font-size:11.5px;color:#B8A98C;display:block;margin-bottom:14px;}
+  .suggestion-item{font-size:12.5px;color:var(--parchment);line-height:1.6;margin:0 0 8px;padding-left:16px;position:relative;}
+  .suggestion-item::before{content:'→';position:absolute;left:0;color:var(--brass);}
+
+  .sync-box{background:#fff;border:1px solid var(--parchment-2);border-radius:4px;padding:16px;margin-bottom:16px;}
+  #sync-code-display{font-family:'JetBrains Mono',monospace;font-size:17px;letter-spacing:2px;color:var(--teal);}
+
+  .search-input{width:100%;font-family:'Inter',sans-serif;font-size:16px;padding:10px 14px;border:1px solid var(--line);border-radius:20px;background:#fff;color:var(--ink);margin-bottom:14px;}
+
+  .cancel-edit-row{text-align:right;margin-bottom:8px;}
+  .cancel-edit-btn{background:none;border:none;color:var(--coral);font-size:12px;cursor:pointer;text-decoration:underline;padding:0;}
+
+  .chart-section .empty-note{margin-bottom:32px;}
+  .chart-bars{display:flex;align-items:flex-end;gap:12px;background:#fff;border:1px solid var(--parchment-2);border-radius:4px;padding:14px 12px 10px;overflow-x:auto;margin-bottom:32px;}
+  .chart-col{display:flex;flex-direction:column;align-items:center;min-width:34px;flex-shrink:0;}
+  .chart-bar-track{height:70px;display:flex;align-items:flex-end;margin:4px 0;}
+  .chart-bar-fill{width:18px;background:var(--teal);border-radius:2px 2px 0 0;min-height:2px;}
+  .chart-val{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);}
+  .chart-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);white-space:nowrap;}
+
+  .trip-list{display:flex;flex-direction:column;gap:8px;margin-bottom:32px;}
+  .trip-card{background:#fff;border:1px solid var(--parchment-2);border-radius:4px;padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .trip-main{flex:1;}
+  .trip-route{font-size:13.5px;font-weight:600;margin:0 0 2px;}
+  .trip-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);}
+  .trip-nm{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--teal);font-weight:600;white-space:nowrap;}
+  .trip-actions{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+  .trip-icons{display:flex;gap:4px;}
+  .edit-btn{background:none;border:none;color:var(--teal);font-size:16px;cursor:pointer;padding:8px;line-height:1;}
+  .del-btn{background:none;border:none;color:var(--coral);font-size:17px;cursor:pointer;padding:8px;line-height:1;}
+  .empty-note{font-size:12.5px;color:var(--text-muted);font-style:italic;padding:14px;text-align:center;background:#fff;border:1px dashed var(--line);border-radius:4px;margin-bottom:32px;}
+
+  .reset-row{text-align:center;margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+  .reset-btn{font-family:'Inter',sans-serif;font-size:12px;color:var(--text-muted);background:none;border:1px solid var(--line);padding:8px 16px;border-radius:20px;cursor:pointer;}
+  .reset-btn:hover{border-color:var(--coral);color:var(--coral);}
+  .backup-btn{color:var(--teal);border-color:var(--teal);}
+  .backup-btn:hover{background:var(--teal);color:#fff;}
+
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
+  @media (max-width:480px){
+    .hero h1{font-size:22px;}
+    .stage{padding-left:52px;}
+    .stage-marker{width:40px;height:40px;font-size:13px;}
+    .route::before{left:19px;}
+  }
+</style>
+</head>
+<body>
+<h2 class="sr-only">Χάρτης ναυτικών μιλίων και γεωγραφικής εξέλιξης για το φουσκωτό ΩΡΙΩΝ, με 5 στάδια και ημερολόγιο εξορμήσεων.</h2>
+<div class="wrap">
+
+  <div class="hero">
+    <p class="hero-eyebrow">Χάρτης Εξέλιξης · ΩΡΙΩΝ</p>
+    <h1>Ναυτικά μίλια &amp; γεωγραφική κάλυψη</h1>
+    <div class="stat-row">
+      <div class="stat"><span class="num" id="stat-nm">0</span><span class="lbl">Σύνολο ν.μ.</span></div>
+      <div class="stat"><span class="num" id="stat-trips">0</span><span class="lbl">Εξορμήσεις</span></div>
+      <div class="stat"><span class="num" id="stat-areas">0%</span><span class="lbl">Κάλυψη περιοχών</span></div>
+    </div>
+    <div class="stage-pill" id="stage-pill">Στάδιο 1 · Κόλπος Χανίων / Δυτική Κρήτη</div>
+  </div>
+
+  <p class="section-title">Στάδια Γεωγραφικής Εξέλιξης</p>
+  <p class="section-sub">Τσέκαρε μια περιοχή όταν την έχεις καλύψει με το ΩΡΙΩΝ.</p>
+  <div class="route" id="route"></div>
+
+  <p class="section-title">Πόσο Καλός Καπετάνιος Είσαι</p>
+  <p class="section-sub">Βάσει όσων έχεις καταγράψει — μίλια, εμπειρία, γεωγραφία. Ενδεικτικό, όχι επίσημη κλίμακα.</p>
+  <div class="level-box" id="level-box"></div>
+
+  <p class="section-title">Πρόοδος στον Χρόνο</p>
+  <p class="section-sub">Ναυτικά μίλια ανά μήνα.</p>
+  <div class="chart-section" id="chart-section"></div>
+
+  <p class="section-title">Σχεδίασε την Επόμενη Εξόρμηση</p>
+  <p class="section-sub">Υπολογισμός καυσίμου/αυτονομίας πριν φύγεις — βάσει όσων έχει μάθει η εφαρμογή από τις καταγραφές σου.</p>
+  <div class="plan-box">
+    <div class="log-form-row">
+      <div class="field-col">
+        <span class="field-label">Εκτιμώμενα ν.μ. της εξόρμησης</span>
+        <input type="number" id="p-nm" min="0" step="0.1" placeholder="π.χ. 40">
+      </div>
+    </div>
+    <p class="form-label">Ρεζερβουάρ &amp; μπιτόνια ΩΡΙΩΝ (μία φορά, το θυμάται)</p>
+    <div class="detail-grid">
+      <div class="field-col">
+        <span class="field-label">Κύριο ντεπόζιτο (L)</span>
+        <input type="number" id="p-tank-main" min="0" step="1" placeholder="110">
+      </div>
+      <div class="field-col">
+        <span class="field-label">Εφεδρικό ντεπόζιτο (L)</span>
+        <input type="number" id="p-tank-aux" min="0" step="1" placeholder="24">
+      </div>
+      <div class="field-col">
+        <span class="field-label">Μπιτόνι (L/τεμ.)</span>
+        <input type="number" id="p-can-size" min="0" step="1" placeholder="20">
+      </div>
+    </div>
+    <div class="detail-grid" style="margin-top:8px;">
+      <div class="field-col">
+        <span class="field-label">Φορτίο</span>
+        <select id="p-load">
+          <option value="light">Ελαφρύ</option>
+          <option value="medium">Μέτριο</option>
+          <option value="heavy">Βαρύ</option>
+        </select>
+      </div>
+      <div class="field-col">
+        <span class="field-label">Άτομα</span>
+        <input type="number" id="p-people" min="1" max="8" step="1" placeholder="π.χ. 2">
+      </div>
+      <div class="field-col">
+        <span class="field-label">Αναμ. Beaufort</span>
+        <select id="p-bf">
+          <option value="">—</option>
+          <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+          <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+          <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+        </select>
+      </div>
+    </div>
+    <div id="plan-result" class="plan-result" style="display:none;"></div>
+  </div>
+
+  <p class="section-title">Ημερολόγιο Εξορμήσεων</p>
+  <p class="section-sub">Πρόσθεσε κάθε εξόρμηση — μίλια, περιοχές και μάθημα ενημερώνονται όλα μαζί, σε ένα βήμα.</p>
+  <div class="log-form">
+    <div class="cancel-edit-row" id="cancel-edit-row" style="display:none;">
+      <button class="cancel-edit-btn" id="cancel-edit-btn">Άκυρο (επεξεργασία)</button>
+    </div>
+    <div class="log-form-row">
+      <input type="date" id="f-date">
+      <input type="number" id="f-nm" placeholder="ν.μ." min="0" step="0.1">
+    </div>
+    <div class="log-form-row">
+      <input type="text" id="f-from" placeholder="Αφετηρία (π.χ. Σφακιά)">
+      <input type="text" id="f-to" placeholder="Προορισμός (π.χ. Γαύδος)">
+    </div>
+    <p class="form-label">Τύπος εξόρμησης (προαιρετικό)</p>
+    <div class="chip-list" id="tag-chips"></div>
+    <p class="form-label">Ποιες περιοχές κάλυψες; (προαιρετικό — τσεκάρει αυτόματα τα στάδια)</p>
+    <div class="chip-list" id="area-chips"></div>
+    <textarea id="f-notes" rows="2" placeholder="Τι πήγε καλά, τι θα άλλαζες, μάθημα... (προαιρετικό)"></textarea>
+    <details class="more-details">
+      <summary>+ Περισσότερες λεπτομέρειες (καιρός, κατανάλωση, πλήρωμα)</summary>
+      <div class="detail-grid">
+        <div class="field-col">
+          <span class="field-label">Beaufort</span>
+          <select id="f-bf">
+            <option value="">—</option>
+            <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+            <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+          </select>
+        </div>
+        <div class="field-col">
+          <span class="field-label">Κύμα (μ)</span>
+          <input type="number" id="f-wave" min="0" step="0.1" placeholder="π.χ. 0.5">
+        </div>
+        <div class="field-col">
+          <span class="field-label">Ώρες μηχανής</span>
+          <input type="number" id="f-hours" min="0" step="0.1" placeholder="π.χ. 2.5">
+        </div>
+        <div class="field-col">
+          <span class="field-label">Φορτίο</span>
+          <select id="f-load">
+            <option value="light">Ελαφρύ</option>
+            <option value="medium">Μέτριο</option>
+            <option value="heavy">Βαρύ</option>
+          </select>
+        </div>
+        <div class="field-col">
+          <span class="field-label">Άτομα</span>
+          <input type="number" id="f-people" min="1" max="8" step="1" placeholder="π.χ. 2">
+        </div>
+        <div class="field-col">
+          <span class="field-label">Κατανάλωση (L/ν.μ.)</span>
+          <input type="number" id="f-rate" min="0" step="0.01" placeholder="π.χ. 1.0">
+        </div>
+      </div>
+      <p class="fuel-total-line" id="fuel-total-line" style="display:none;"></p>
+      <div class="log-form-row" style="margin-top:8px;">
+        <input type="text" id="f-crew" placeholder="Πλήρωμα (π.χ. Βαγγέλης, Εμμανουέλα)">
+      </div>
+      <p class="auto-hint" id="auto-hint" style="display:none;"></p>
+    </details>
+    <button class="add-btn" id="f-add">+ Προσθήκη εξόρμησης</button>
+  </div>
+  <input type="text" class="search-input" id="f-search" placeholder="🔍 Αναζήτηση (διαδρομή, σημειώσεις, πλήρωμα...)">
+  <div id="trip-list-wrap"></div>
+
+  <p class="section-title">Συγχρονισμός Συσκευών</p>
+  <p class="section-sub">Ίδιος κωδικός σε κάθε συσκευή = ό,τι συμπληρώνεις σε μία, εμφανίζεται αυτόματα στην άλλη.</p>
+  <div class="sync-box">
+    <div id="sync-setup">
+      <button class="add-btn" id="sync-create-btn">Δημιουργία νέου κωδικού (πρώτη συσκευή)</button>
+      <p class="form-label" style="margin-top:10px;">Ή, αν έχεις ήδη κωδικό από άλλη συσκευή:</p>
+      <div class="log-form-row">
+        <input type="text" id="sync-code-input" placeholder="π.χ. K7XQ2M9PLR" style="text-transform:uppercase;">
+        <button class="add-btn" id="sync-join-btn" style="width:auto;flex:0 0 auto;">Σύνδεση</button>
+      </div>
+    </div>
+    <div id="sync-active" style="display:none;">
+      <p class="plan-line">Κωδικός συσκευής: <strong id="sync-code-display"></strong> <button class="edit-btn" id="sync-copy-btn" title="Αντιγραφή">📋</button></p>
+      <p class="plan-ok" id="sync-status">✓ Συγχρονισμός ενεργός</p>
+      <button class="reset-btn" id="sync-disconnect-btn">Αποσύνδεση συγχρονισμού</button>
+    </div>
+  </div>
+
+  <div class="reset-row">
+    <button class="reset-btn backup-btn" id="backup-btn">⬇ Αντίγραφο ασφαλείας</button>
+    <button class="reset-btn backup-btn" id="restore-btn">⬆ Επαναφορά από αρχείο</button>
+    <input type="file" id="restore-file" accept="application/json" style="display:none">
+  </div>
+  <div class="reset-row">
+    <button class="reset-btn" id="reset-btn">Διαγραφή όλων των δεδομένων</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+
+<script>
+const STAGES = [
+  {
+    id: 'stage1',
+    num: 1,
+    title: 'Κόλπος Χανίων / Δυτική Κρήτη',
+    desc: 'Τα οικεία νερά — σημείο αναφοράς.',
+    areas: ['Κόλπος Χανίων', 'Σούδα', 'Ακτές Δυτικής Κρήτης (Σφακιά–Παλαιόχωρα)']
+  },
+  {
+    id: 'stage2',
+    num: 2,
+    title: 'Ολόκληρη Κρήτη + Γαύδος, Αντικύθηρα',
+    desc: 'Νότιο/Λιβυκό, ανατολική Κρήτη, νησάκια γύρω από την Κρήτη.',
+    areas: ['Νότια Κρήτη / Λιβυκό (Σφακιά–Χ.Σφακίων)', 'Ανατολική Κρήτη', 'Γαύδος', 'Αντικύθηρα']
+  },
+  {
+    id: 'stage3',
+    num: 3,
+    title: 'Νότιο & Κεντρικό Αιγαίο',
+    desc: 'Κυκλάδες.',
+    areas: ['Κυκλάδες']
+  },
+  {
+    id: 'stage4',
+    num: 4,
+    title: 'Υπόλοιπη Ελλάδα',
+    desc: 'Ιόνιο, Δωδεκάνησα, Σποράδες.',
+    areas: ['Ιόνιο', 'Δωδεκάνησα', 'Σποράδες']
+  },
+  {
+    id: 'stage5',
+    num: 5,
+    title: 'Μεσόγειος',
+    desc: 'Πέρα από την Ελλάδα.',
+    areas: ['Κύπρος', 'Τουρκία', 'Ιταλία / Σικελία', 'Μάλτα', 'Δαλματία']
+  }
+];
+
+const TRIP_TAGS = ['Νυχτερινή', 'Άρόδου', 'Ανοιχτή διάπλευση', 'Πολυήμερη'];
+
+const STORAGE_KEY = 'orion-progress-data';
+let data = { areas: {}, trips: [], settings: {} };
+let openStages = new Set();
+let selectedChipIds = new Set();
+let selectedTagIds = new Set();
+let editingId = null;
+let searchTerm = '';
+let rateAutoFilled = false;
+
+// ---- Συγχρονισμός (Firebase) ----
+const firebaseConfig = {
+  apiKey: "AIzaSyDxn5u-3bNppl9MDAKDLncOhUGnRMIsm4o",
+  authDomain: "orion-milia.firebaseapp.com",
+  projectId: "orion-milia",
+  storageBucket: "orion-milia.firebasestorage.app",
+  messagingSenderId: "554263421154",
+  appId: "1:554263421154:web:21fcfc58c29fc90883bebb"
+};
+firebase.initializeApp(firebaseConfig);
+const fbAuth = firebase.auth();
+const db = firebase.firestore();
+db.enablePersistence({synchronizeTabs:true}).catch(() => {});
+
+const SYNC_CODE_KEY = 'orion-sync-code';
+let syncCode = localStorage.getItem(SYNC_CODE_KEY) || null;
+let syncEnabled = false;
+let syncUnsub = null;
+
+function allAreaIds(){
+  const ids = [];
+  STAGES.forEach(s => s.areas.forEach((_, i) => ids.push(s.id + '-' + i)));
+  return ids;
+}
+
+function areaNameById(id){
+  for(const s of STAGES){
+    const idx = s.areas.findIndex((_, i) => s.id + '-' + i === id);
+    if(idx !== -1) return s.areas[idx];
+  }
+  return id;
+}
+
+function escapeHtml(str){
+  if(str === null || str === undefined || str === '') return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+const LOAD_LEVELS = [
+  {id:'light', label:'Ελαφρύ', mult:1.0},
+  {id:'medium', label:'Μέτριο', mult:1.1},
+  {id:'heavy', label:'Βαρύ', mult:1.25}
+];
+const BASE_RATE = 1.0;   // L/ν.μ. — βάση με περιθώριο ασφαλείας (η μετρημένη τιμή σου ήταν 0.8)
+const BASE_PEOPLE = 2;
+const BASE_BF = 2;       // "καλός καιρός" ≈ Bf 0-2
+
+function loadLabel(id){
+  const l = LOAD_LEVELS.find(x => x.id === id);
+  return l ? l.label : id;
+}
+
+function weatherMultiplier(bf){
+  if(bf === null || bf === undefined || bf === '') return 1.0;
+  if(bf <= 2) return 1.0;
+  if(bf <= 4) return 1.15;
+  return 1.3;
+}
+
+function loadMultiplier(loadId){
+  const l = LOAD_LEVELS.find(x => x.id === loadId);
+  return l ? l.mult : 1.0;
+}
+
+function peopleMultiplier(people){
+  if(!people || people <= BASE_PEOPLE) return 1.0;
+  return 1 + (people - BASE_PEOPLE) * 0.03;
+}
+
+function estimateHours(nm){
+  const withHours = data.trips.filter(t => t.nm > 0 && t.hours);
+  let speed = 20;
+  if(withHours.length){
+    const tNm = withHours.reduce((s,t)=>s+t.nm,0);
+    const tH = withHours.reduce((s,t)=>s+t.hours,0);
+    if(tH > 0) speed = tNm / tH;
+  }
+  return Math.round((nm/speed)*10)/10;
+}
+
+function suggestRate(cond){
+  const bf = cond.bf, load = cond.load || 'light', people = cond.people || BASE_PEOPLE;
+
+  // 1) Ιστορικό με παρόμοιες συνθήκες (ίδιο φορτίο, κοντινό Bf, κοντινά άτομα)
+  const similar = data.trips.filter(t => t.rate &&
+    t.load === load &&
+    Math.abs((t.bf ?? BASE_BF) - (bf ?? BASE_BF)) <= 1 &&
+    Math.abs((t.people ?? BASE_PEOPLE) - people) <= 1
+  );
+  if(similar.length >= 2){
+    const avg = similar.reduce((s,t)=>s+t.rate,0) / similar.length;
+    return {rate: Math.round(avg*100)/100, source: `μέσος όρος από ${similar.length} παρόμοιες εξορμήσεις σου`};
+  }
+
+  // 2) Γενικός μέσος όρος όλων των πραγματικών σου μετρήσεων, προσαρμοσμένος στις τωρινές συνθήκες
+  const anyRates = data.trips.filter(t => t.rate);
+  let base = BASE_RATE;
+  if(anyRates.length){
+    base = anyRates.reduce((s,t)=>s+t.rate,0) / anyRates.length;
+  }
+  const est = base * weatherMultiplier(bf) * loadMultiplier(load) * peopleMultiplier(people);
+  return {
+    rate: Math.round(est*100)/100,
+    source: anyRates.length ? `γενικός μέσος όρος σου (${anyRates.length} καταγραφές) + προσαρμογή συνθηκών` : `η βάση ασφαλείας (1.0 L/ν.μ.) + προσαρμογή συνθηκών`
+  };
+}
+
+function showToast(msg, isError){
+  let t = document.getElementById('toast');
+  if(!t){
+    t = document.createElement('div');
+    t.id = 'toast';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.className = 'show' + (isError ? ' error' : '');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.className = ''; }, 3200);
+}
+
+function renderChips(){
+  const wrap = document.getElementById('area-chips');
+  wrap.innerHTML = STAGES.map(s => s.areas.map((area, i) => {
+    const id = s.id + '-' + i;
+    const sel = selectedChipIds.has(id);
+    return `<span class="chip ${sel?'selected':''}" data-id="${id}">Σ${s.num} · ${area}</span>`;
+  }).join('')).join('');
+
+  wrap.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const id = chip.dataset.id;
+      if(selectedChipIds.has(id)) selectedChipIds.delete(id); else selectedChipIds.add(id);
+      renderChips();
+    });
+  });
+}
+
+function renderTagChips(){
+  const wrap = document.getElementById('tag-chips');
+  wrap.innerHTML = TRIP_TAGS.map(tag => {
+    const sel = selectedTagIds.has(tag);
+    return `<span class="chip tag-chip ${sel?'selected':''}" data-tag="${tag}">${tag}</span>`;
+  }).join('');
+
+  wrap.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const tag = chip.dataset.tag;
+      if(selectedTagIds.has(tag)) selectedTagIds.delete(tag); else selectedTagIds.add(tag);
+      renderTagChips();
+    });
+  });
+}
+
+function stageStats(stage){
+  const total = stage.areas.length;
+  const done = stage.areas.filter((_, i) => data.areas[stage.id + '-' + i]).length;
+  return {total, done};
+}
+
+function currentStageLabel(){
+  let reached = STAGES[0];
+  STAGES.forEach(s => {
+    if(stageStats(s).done > 0) reached = s;
+  });
+  const st = stageStats(reached);
+  if(st.done === st.total){
+    if(reached.num === 5) return `🏆 Ολοκληρώθηκαν όλα τα στάδια · Μεσόγειος`;
+    const next = STAGES[reached.num];
+    return `Στάδιο ${reached.num} ολοκληρωμένο → επόμενο: ${next.title}`;
+  }
+  return `Στάδιο ${reached.num} (${st.done}/${st.total}) · ${reached.title}`;
+}
+
+function renderStages(){
+  const route = document.getElementById('route');
+  route.innerHTML = '';
+  STAGES.forEach(stage => {
+    const st = stageStats(stage);
+    const complete = st.done === st.total;
+    const partial = st.done > 0 && !complete;
+
+    const el = document.createElement('div');
+    el.className = 'stage' + (openStages.has(stage.id) ? ' open' : '');
+    el.id = 'st-' + stage.id;
+
+    el.innerHTML = `
+      <div class="stage-marker ${complete ? 'done' : partial ? 'partial' : ''}">${stage.num}</div>
+      <div class="stage-head" data-stage="${stage.id}">
+        <p class="stage-title"><span>${stage.title}</span><span class="chevron">&#9662;</span></p>
+        <p class="stage-desc">${stage.desc} — ${st.done}/${st.total} περιοχές</p>
+      </div>
+      <div class="stage-body">
+        <div class="area-list">
+          ${stage.areas.map((area, i) => {
+            const id = stage.id + '-' + i;
+            const checked = !!data.areas[id];
+            return `<label class="area-item ${checked?'checked':''}" data-id="${id}">
+              <input type="checkbox" ${checked?'checked':''} data-id="${id}">
+              <span>${area}</span>
+            </label>`;
+          }).join('')}
+        </div>
+      </div>
+    `;
+    route.appendChild(el);
+  });
+
+  document.querySelectorAll('.stage-head').forEach(h => {
+    h.addEventListener('click', () => {
+      const id = h.dataset.stage;
+      if(openStages.has(id)) openStages.delete(id); else openStages.add(id);
+      renderStages();
+    });
+  });
+
+  document.querySelectorAll('.area-item input').forEach(cb => {
+    cb.addEventListener('change', async () => {
+      data.areas[cb.dataset.id] = cb.checked;
+      await save();
+      renderAll();
+    });
+  });
+}
+
+function renderTrips(){
+  const wrap = document.getElementById('trip-list-wrap');
+  let list = [...data.trips];
+  if(searchTerm){
+    list = list.filter(t => {
+      const hay = [t.from, t.to, t.route, t.notes, t.crew, (t.tags||[]).join(' '), (t.areas||[]).map(areaNameById).join(' ')]
+        .filter(Boolean).join(' ').toLowerCase();
+      return hay.includes(searchTerm);
+    });
+  }
+  const sorted = list.sort((a,b) => (b.date || '').localeCompare(a.date || ''));
+
+  if(sorted.length === 0){
+    wrap.innerHTML = `<div class="empty-note">${data.trips.length === 0 ? 'Δεν έχουν καταγραφεί εξορμήσεις ακόμα.' : 'Καμία εξόρμηση δεν ταιριάζει με την αναζήτηση.'}</div>`;
+    return;
+  }
+
+  wrap.innerHTML = `<div class="trip-list">${sorted.map(t => {
+    const fromE = escapeHtml(t.from), toE = escapeHtml(t.to), routeE = escapeHtml(t.route);
+    const routeLabel = (t.from || t.to) ? `${fromE || '?'} → ${toE || '?'}` : (routeE || '(χωρίς περιγραφή)');
+    const overLimit = (t.bf !== null && t.bf !== undefined && t.bf > 6) || (t.wave !== null && t.wave !== undefined && t.wave > 2);
+    const detailParts = [];
+    if(t.bf !== null && t.bf !== undefined && t.bf !== '') detailParts.push('Bf ' + t.bf);
+    if(t.wave) detailParts.push(t.wave + 'μ κύμα');
+    if(t.hours) detailParts.push(t.hours + ' ώρες μηχ.');
+    if(t.rate) detailParts.push(t.rate + ' L/ν.μ.');
+    if(t.fuel) detailParts.push(t.fuel + 'L σύνολο');
+    if(t.load && t.load !== 'light') detailParts.push('Φορτίο: ' + loadLabel(t.load));
+    if(t.people) detailParts.push(t.people + ' άτομα');
+    if(t.crew) detailParts.push('Πλήρωμα: ' + escapeHtml(t.crew));
+    const tagsHtml = (t.tags||[]).map(tag => `<span class="trip-tag trip-type-tag">${escapeHtml(tag)}</span>`).join('');
+    const areasHtml = (t.areas||[]).map(id => `<span class="trip-tag">${escapeHtml(areaNameById(id))}</span>`).join('');
+    return `
+    <div class="trip-card" data-id="${t.id}">
+      <div class="trip-main">
+        <p class="trip-route">${routeLabel}</p>
+        <p class="trip-meta">${t.date || '—'}</p>
+        ${t.notes ? `<p class="trip-notes">${escapeHtml(t.notes)}</p>` : ''}
+        ${detailParts.length ? `<p class="trip-detail-row">${detailParts.join(' · ')}</p>` : ''}
+        ${overLimit ? `<p class="trip-warn">⚠ Εκτός ορίου σχεδίασης σκάφους (Bf 6 / 2μ)</p>` : ''}
+        ${(tagsHtml || areasHtml) ? `<div class="trip-tags">${tagsHtml}${areasHtml}</div>` : ''}
+      </div>
+      <div class="trip-actions">
+        <div class="trip-nm">${t.nm} ν.μ.</div>
+        <div class="trip-icons">
+          <button class="edit-btn" data-edit="${t.id}" title="Επεξεργασία">&#9998;</button>
+          <button class="del-btn" data-del="${t.id}" title="Διαγραφή">&#10005;</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+
+  wrap.querySelectorAll('.del-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.del;
+      const t = data.trips.find(tr => tr.id === id);
+      const label = t ? ((t.from || t.to) ? `${t.from||'?'} → ${t.to||'?'}` : (t.route || 'χωρίς περιγραφή')) : '';
+      if(!confirm(`Οριστική διαγραφή: "${label}" (${t ? t.nm : '?'} ν.μ.);\n\nΔεν αναιρείται.`)) return;
+      data.trips = data.trips.filter(tr => tr.id !== id);
+      const ok = await save();
+      if(ok) showToast('Διαγράφηκε η εξόρμηση');
+      renderAll();
+    });
+  });
+
+  wrap.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', () => startEdit(btn.dataset.edit));
+  });
+}
+
+function renderStats(){
+  const totalNm = data.trips.reduce((sum, t) => sum + (parseFloat(t.nm) || 0), 0);
+  document.getElementById('stat-nm').textContent = totalNm % 1 === 0 ? totalNm : totalNm.toFixed(1);
+  document.getElementById('stat-trips').textContent = data.trips.length;
+
+  const ids = allAreaIds();
+  const doneCount = ids.filter(id => data.areas[id]).length;
+  const pct = ids.length ? Math.round((doneCount/ids.length)*100) : 0;
+  document.getElementById('stat-areas').textContent = pct + '%';
+
+  document.getElementById('stage-pill').textContent = currentStageLabel();
+}
+
+function renderChart(){
+  const el = document.getElementById('chart-section');
+  if(data.trips.length === 0){
+    el.innerHTML = `<div class="empty-note">Θα εμφανιστεί μόλις καταγράψεις την πρώτη εξόρμηση.</div>`;
+    return;
+  }
+  const byMonth = {};
+  data.trips.forEach(t => {
+    if(!t.date) return;
+    const key = t.date.slice(0,7);
+    byMonth[key] = (byMonth[key] || 0) + (parseFloat(t.nm) || 0);
+  });
+  const keys = Object.keys(byMonth).sort();
+  const max = Math.max(...keys.map(k => byMonth[k]), 1);
+  const monthNames = ['Ιαν','Φεβ','Μαρ','Απρ','Μάι','Ιουν','Ιουλ','Αυγ','Σεπ','Οκτ','Νοε','Δεκ'];
+  el.innerHTML = `<div class="chart-bars">${keys.map(k => {
+    const [y,m] = k.split('-');
+    const val = byMonth[k];
+    const h = Math.max(4, Math.round((val/max)*70));
+    const valLabel = val % 1 === 0 ? val : val.toFixed(1);
+    return `<div class="chart-col">
+      <span class="chart-val">${valLabel}</span>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="height:${h}px"></div></div>
+      <span class="chart-lbl">${monthNames[parseInt(m,10)-1]} '${y.slice(2)}</span>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+const LEVELS = [
+  {name:'Αρχάριος Καπετάνιος', minNm:0},
+  {name:'Βασικός Καπετάνιος', minNm:50},
+  {name:'Έμπειρος Καπετάνιος', minNm:150},
+  {name:'Προχωρημένος Καπετάνιος', minNm:400},
+  {name:'Θαλασσοπόρος', minNm:1000}
+];
+
+function computeExperienceLevel(){
+  const totalNm = data.trips.reduce((s,t)=>s+(parseFloat(t.nm)||0),0);
+  let highestStageNum = 1;
+  STAGES.forEach(s => { if(stageStats(s).done > 0) highestStageNum = s.num; });
+  let idx = 0;
+  for(let i=LEVELS.length-1;i>=0;i--){ if(totalNm >= LEVELS[i].minNm){ idx = i; break; } }
+  const next = LEVELS[idx+1] || null;
+  const pct = next ? Math.min(100, Math.round(((totalNm-LEVELS[idx].minNm)/(next.minNm-LEVELS[idx].minNm))*100)) : 100;
+  return {name: LEVELS[idx].name, totalNm, totalTrips: data.trips.length, highestStageNum, next, pct};
+}
+
+function computeSuggestions(){
+  const s = [];
+  const loggedTags = new Set();
+  data.trips.forEach(t => (t.tags||[]).forEach(tag => loggedTags.add(tag)));
+
+  if(data.trips.length === 0){
+    return ['Πρόσθεσε την πρώτη σου εξόρμηση στο ημερολόγιο για να ξεκινήσει η εικόνα σου εδώ.'];
+  }
+  if(!loggedTags.has('Νυχτερινή')) s.push('Καμία καταγεγραμμένη νυχτερινή πλεύση ακόμα.');
+  if(!loggedTags.has('Άρόδου')) s.push('Καμία καταγεγραμμένη διανυκτέρευση άρόδου ακόμα.');
+  if(!loggedTags.has('Ανοιχτή διάπλευση')) s.push('Καμία καταγεγραμμένη ανοιχτή διάπλευση χωρίς καταφύγιο ακόμα.');
+  if(!loggedTags.has('Πολυήμερη')) s.push('Καμία καταγεγραμμένη πολυήμερη εξόρμηση ακόμα.');
+
+  STAGES.forEach(st => {
+    const stat = stageStats(st);
+    if(stat.done === 0 && st.num <= 2) s.push(`Στάδιο ${st.num} (${st.title}) — δεν έχει ξεκινήσει ακόμα.`);
+  });
+
+  if(data.trips.length < 5) s.push('Λίγες καταγεγραμμένες εξορμήσεις ακόμα — όσο πιο τακτικά καταγράφεις, τόσο πιο αξιόπιστη γίνεται η πρόβλεψη καυσίμου.');
+
+  s.push('Για δεξιότητες σε πιο απαιτητικές συνθήκες (κύμα, ελλιμενισμός, χειρισμός) — δες τις Φάσεις εκμάθησης στη σχετική συνομιλία του project, με τον δικό της ρυθμό και ασφάλεια, όχι επειδή "το λέει ένας δείκτης".');
+
+  return s.slice(0,4);
+}
+
+function renderLevel(){
+  const box = document.getElementById('level-box');
+  const lvl = computeExperienceLevel();
+  const sugg = computeSuggestions();
+  let html = `<span class="level-name">${lvl.name}</span>`;
+  html += `<span class="level-detail">${lvl.totalNm % 1===0 ? lvl.totalNm : lvl.totalNm.toFixed(1)} ν.μ. · ${lvl.totalTrips} εξορμήσεις · Στάδιο ${lvl.highestStageNum}</span>`;
+  if(lvl.next){
+    html += `<div class="level-progress-outer"><div class="level-progress-fill" style="width:${lvl.pct}%"></div></div>`;
+    const remaining = Math.max(0, Math.round((lvl.next.minNm - lvl.totalNm)*10)/10);
+    html += `<span class="level-next">Επόμενο: ${lvl.next.name} — ${remaining} ν.μ. ακόμα</span>`;
+  } else {
+    html += `<span class="level-next">🏆 Ανώτατο ενδεικτικό επίπεδο</span>`;
+  }
+  html += sugg.map(x => `<p class="suggestion-item">${x}</p>`).join('');
+  box.innerHTML = html;
+}
+
+function renderAll(){
+  renderStages();
+  renderTrips();
+  renderChips();
+  renderTagChips();
+  renderChart();
+  renderLevel();
+  renderStats();
+}
+
+async function save(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    if(syncEnabled) pushToSync(); // στο παρασκήνιο, δεν μπλοκάρει
+    return true;
+  }catch(err){
+    console.error('Storage error:', err);
+    showToast('⚠ Αποτυχία αποθήκευσης — δεν χωράει ή είναι μπλοκαρισμένος ο χώρος του browser', true);
+    return false;
+  }
+}
+
+function generateSyncCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // χωρίς μπερδεμένους χαρακτήρες (0/O, 1/I)
+  let code = '';
+  for(let i=0;i<10;i++) code += chars[Math.floor(Math.random()*chars.length)];
+  return code;
+}
+
+async function pushToSync(){
+  if(!syncEnabled || !syncCode) return;
+  try{
+    const payload = Object.assign({}, data, {updatedAt: Date.now()});
+    await db.collection('syncs').doc(syncCode).set(payload);
+  }catch(err){
+    console.error('Sync push error:', err);
+  }
+}
+
+function listenToSync(){
+  if(syncUnsub) syncUnsub();
+  syncUnsub = db.collection('syncs').doc(syncCode).onSnapshot(doc => {
+    if(!doc.exists) return;
+    const remote = doc.data();
+    if(!data.updatedAt || (remote.updatedAt && remote.updatedAt > data.updatedAt)){
+      data = { areas: remote.areas||{}, trips: remote.trips||[], settings: remote.settings||{}, updatedAt: remote.updatedAt||Date.now() };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      renderAll();
+    }
+  }, err => {
+    console.error('Sync listen error:', err);
+    document.getElementById('sync-status').textContent = '⚠ Πρόβλημα σύνδεσης — θα ξαναδοκιμάσει μόνο του';
+  });
+}
+
+async function createSyncCode(){
+  const code = generateSyncCode();
+  try{
+    await fbAuth.signInAnonymously();
+    syncCode = code;
+    syncEnabled = true;
+    localStorage.setItem(SYNC_CODE_KEY, code);
+    await pushToSync();
+    listenToSync();
+    renderSync();
+    showToast('✓ Δημιουργήθηκε κωδικός συγχρονισμού');
+  }catch(err){
+    console.error('Sync create error:', err);
+    showToast('⚠ Αποτυχία δημιουργίας συγχρονισμού — έλεγξε το ίντερνετ', true);
+  }
+}
+
+async function joinSyncCode(rawCode){
+  const code = (rawCode || '').trim().toUpperCase();
+  if(!code) return;
+  if(!confirm('Αυτό θα αντικαταστήσει τα τοπικά δεδομένα σε ΑΥΤΗ τη συσκευή με τα δεδομένα του κωδικού. Συνέχεια;')) return;
+  try{
+    await fbAuth.signInAnonymously();
+    const doc = await db.collection('syncs').doc(code).get();
+    if(!doc.exists){
+      showToast('⚠ Δεν βρέθηκε αυτός ο κωδικός', true);
+      return;
+    }
+    const remote = doc.data();
+    data = { areas: remote.areas||{}, trips: remote.trips||[], settings: remote.settings||{}, updatedAt: remote.updatedAt||Date.now() };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    syncCode = code;
+    syncEnabled = true;
+    localStorage.setItem(SYNC_CODE_KEY, code);
+    listenToSync();
+    renderAll();
+    renderSync();
+    showToast('✓ Συνδέθηκε και συγχρονίστηκε');
+  }catch(err){
+    console.error('Sync join error:', err);
+    showToast('⚠ Αποτυχία σύνδεσης — έλεγξε τον κωδικό και το ίντερνετ', true);
+  }
+}
+
+function disconnectSync(){
+  if(syncUnsub){ syncUnsub(); syncUnsub = null; }
+  syncEnabled = false;
+  syncCode = null;
+  localStorage.removeItem(SYNC_CODE_KEY);
+  renderSync();
+  showToast('Αποσυνδέθηκε ο συγχρονισμός — τα δεδομένα παραμένουν εδώ, τοπικά');
+}
+
+function renderSync(){
+  const setupEl = document.getElementById('sync-setup');
+  const activeEl = document.getElementById('sync-active');
+  if(syncEnabled && syncCode){
+    setupEl.style.display = 'none';
+    activeEl.style.display = 'block';
+    document.getElementById('sync-code-display').textContent = syncCode;
+  } else {
+    setupEl.style.display = 'block';
+    activeEl.style.display = 'none';
+  }
+}
+
+document.getElementById('sync-create-btn').addEventListener('click', createSyncCode);
+document.getElementById('sync-join-btn').addEventListener('click', () => {
+  joinSyncCode(document.getElementById('sync-code-input').value);
+});
+document.getElementById('sync-disconnect-btn').addEventListener('click', disconnectSync);
+document.getElementById('sync-copy-btn').addEventListener('click', () => {
+  if(navigator.clipboard) navigator.clipboard.writeText(syncCode).then(() => showToast('Αντιγράφηκε ο κωδικός')).catch(() => {});
+});
+
+async function load(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      data = { areas: parsed.areas || {}, trips: parsed.trips || [], settings: parsed.settings || {}, updatedAt: parsed.updatedAt || null };
+    }
+  }catch(err){
+    data = { areas: {}, trips: [], settings: {} };
+  }
+  if(data.settings){
+    const mainEl = document.getElementById('p-tank-main');
+    const auxEl = document.getElementById('p-tank-aux');
+    const canEl = document.getElementById('p-can-size');
+    if(mainEl) mainEl.value = data.settings.tankMain != null ? data.settings.tankMain : 110;
+    if(auxEl) auxEl.value = data.settings.tankAux != null ? data.settings.tankAux : 24;
+    if(canEl) canEl.value = data.settings.canSize != null ? data.settings.canSize : 20;
+  }
+  const dateEl = document.getElementById('f-date');
+  if(dateEl) dateEl.value = new Date().toISOString().slice(0,10);
+  renderAll();
+  renderSync();
+  if(syncCode){
+    syncEnabled = true;
+    try{
+      await fbAuth.signInAnonymously();
+      listenToSync();
+      renderSync();
+    }catch(err){
+      console.error('Sync auto-reconnect error:', err);
+    }
+  }
+}
+
+function startEdit(id){
+  const t = data.trips.find(tr => tr.id === id);
+  if(!t) return;
+  editingId = id;
+  document.getElementById('f-date').value = t.date || '';
+  document.getElementById('f-nm').value = t.nm != null ? t.nm : '';
+  document.getElementById('f-from').value = t.from || '';
+  document.getElementById('f-to').value = t.to || '';
+  document.getElementById('f-notes').value = t.notes || '';
+  document.getElementById('f-bf').value = (t.bf !== null && t.bf !== undefined) ? t.bf : '';
+  document.getElementById('f-wave').value = t.wave != null ? t.wave : '';
+  document.getElementById('f-hours').value = t.hours != null ? t.hours : '';
+  document.getElementById('f-load').value = t.load || 'light';
+  document.getElementById('f-people').value = t.people != null ? t.people : '';
+  document.getElementById('f-rate').value = t.rate != null ? t.rate : '';
+  document.getElementById('f-crew').value = t.crew || '';
+  selectedChipIds = new Set(t.areas || []);
+  selectedTagIds = new Set(t.tags || []);
+  rateAutoFilled = false;
+  renderChips();
+  renderTagChips();
+  document.getElementById('cancel-edit-row').style.display = 'block';
+  document.getElementById('f-add').textContent = '✓ Ενημέρωση εξόρμησης';
+  document.getElementById('auto-hint').style.display = 'none';
+  updateFuelPreview();
+  document.querySelector('.log-form').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function cancelEdit(){
+  editingId = null;
+  document.getElementById('f-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('f-nm').value = '';
+  document.getElementById('f-from').value = '';
+  document.getElementById('f-to').value = '';
+  document.getElementById('f-notes').value = '';
+  document.getElementById('f-bf').value = '';
+  document.getElementById('f-wave').value = '';
+  document.getElementById('f-hours').value = '';
+  document.getElementById('f-load').value = 'light';
+  document.getElementById('f-people').value = '';
+  document.getElementById('f-rate').value = '';
+  document.getElementById('f-crew').value = '';
+  selectedChipIds = new Set();
+  selectedTagIds = new Set();
+  rateAutoFilled = false;
+  renderChips();
+  renderTagChips();
+  document.getElementById('cancel-edit-row').style.display = 'none';
+  document.getElementById('f-add').textContent = '+ Προσθήκη εξόρμησης';
+  document.getElementById('auto-hint').style.display = 'none';
+  document.getElementById('fuel-total-line').style.display = 'none';
+}
+
+document.getElementById('cancel-edit-btn').addEventListener('click', cancelEdit);
+
+document.getElementById('f-add').addEventListener('click', async () => {
+  const addBtn = document.getElementById('f-add');
+  if(addBtn.disabled) return;
+
+  const dateEl = document.getElementById('f-date');
+  const nmEl = document.getElementById('f-nm');
+  const fromEl = document.getElementById('f-from');
+  const toEl = document.getElementById('f-to');
+  const notesEl = document.getElementById('f-notes');
+  const bfEl = document.getElementById('f-bf');
+  const waveEl = document.getElementById('f-wave');
+  const hoursEl = document.getElementById('f-hours');
+  const loadEl = document.getElementById('f-load');
+  const peopleEl = document.getElementById('f-people');
+  const rateEl = document.getElementById('f-rate');
+  const crewEl = document.getElementById('f-crew');
+  const nm = parseFloat(nmEl.value);
+
+  if(!nm || nm <= 0){
+    nmEl.classList.add('field-error');
+    nmEl.focus();
+    setTimeout(() => nmEl.classList.remove('field-error'), 1500);
+    showToast('Συμπλήρωσε τα ναυτικά μίλια', true);
+    return;
+  }
+
+  addBtn.disabled = true;
+  try{
+    const wasEditing = !!editingId;
+    const areaIds = [...selectedChipIds];
+    const tagIds = [...selectedTagIds];
+    const rate = rateEl.value !== '' ? parseFloat(rateEl.value) : null;
+    const trip = {
+      id: editingId || ('t' + Date.now()),
+      date: dateEl.value || new Date().toISOString().slice(0,10),
+      nm: nm,
+      from: fromEl.value.trim(),
+      to: toEl.value.trim(),
+      notes: notesEl.value.trim(),
+      areas: areaIds,
+      tags: tagIds,
+      bf: bfEl.value !== '' ? parseInt(bfEl.value, 10) : null,
+      wave: waveEl.value !== '' ? parseFloat(waveEl.value) : null,
+      hours: hoursEl.value !== '' ? parseFloat(hoursEl.value) : null,
+      load: loadEl.value || 'light',
+      people: peopleEl.value !== '' ? parseInt(peopleEl.value, 10) : null,
+      rate: rate,
+      fuel: rate !== null ? Math.round(rate * nm * 10) / 10 : null,
+      crew: crewEl.value.trim()
+    };
+
+    if(editingId){
+      const idx = data.trips.findIndex(t => t.id === editingId);
+      if(idx !== -1) data.trips[idx] = trip; else data.trips.push(trip);
+    } else {
+      data.trips.push(trip);
+    }
+    areaIds.forEach(id => { data.areas[id] = true; });
+
+    const ok = await save();
+    if(!ok) return; // κρατάμε τη φόρμα όπως είναι — δεν χάνεις ό,τι έγραψες
+
+    cancelEdit();
+    searchTerm = '';
+    const searchEl = document.getElementById('f-search');
+    if(searchEl) searchEl.value = '';
+    renderAll();
+    showToast(wasEditing ? '✓ Ενημερώθηκε η εξόρμηση' : `✓ Προστέθηκε — ${trip.nm} ν.μ.`);
+  } finally {
+    addBtn.disabled = false;
+  }
+});
+
+document.getElementById('f-search').addEventListener('input', (e) => {
+  searchTerm = e.target.value.trim().toLowerCase();
+  renderTrips();
+});
+
+function updatePlan(){
+  const mainEl = document.getElementById('p-tank-main');
+  const auxEl = document.getElementById('p-tank-aux');
+  const canEl = document.getElementById('p-can-size');
+  const nmEl = document.getElementById('p-nm');
+  const loadEl = document.getElementById('p-load');
+  const peopleEl = document.getElementById('p-people');
+  const bfEl = document.getElementById('p-bf');
+  const resultEl = document.getElementById('plan-result');
+
+  const main = parseFloat(mainEl.value) || 0;
+  const aux = parseFloat(auxEl.value) || 0;
+  const canSize = parseFloat(canEl.value) || 0;
+  const nm = parseFloat(nmEl.value);
+  const load = loadEl.value;
+  const people = peopleEl.value !== '' ? parseInt(peopleEl.value, 10) : null;
+  const bf = bfEl.value !== '' ? parseInt(bfEl.value, 10) : null;
+
+  data.settings = data.settings || {};
+  let changed = false;
+  if(main && data.settings.tankMain !== main){ data.settings.tankMain = main; changed = true; }
+  if(aux && data.settings.tankAux !== aux){ data.settings.tankAux = aux; changed = true; }
+  if(canSize && data.settings.canSize !== canSize){ data.settings.canSize = canSize; changed = true; }
+  if(changed) save();
+
+  if(!nm || nm <= 0){
+    resultEl.style.display = 'none';
+    return;
+  }
+
+  const sug = suggestRate({bf, load, people});
+  const litersBurn = Math.round(sug.rate * nm * 10) / 10;          // καύσιμο πλεύσης
+  const litersRequired = Math.round(litersBurn * 4/3 * 10) / 10;    // + 33% εφεδρεία (1/3 του καυσίμου)
+  const reserveLiters = Math.round((litersRequired - litersBurn) * 10) / 10;
+  const fixed = main + aux;
+
+  let html = `<p class="plan-line">Εκτιμώμενος ρυθμός: <strong>${sug.rate} L/ν.μ.</strong> — ${sug.source}</p>`;
+  html += `<p class="plan-line">Καύσιμο πλεύσης: <strong>≈ ${litersBurn}L</strong> για ${nm} ν.μ.</p>`;
+  html += `<p class="plan-line">+ Εφεδρεία 33% (1/3 του καυσίμου): <strong>≈ ${reserveLiters}L</strong></p>`;
+  html += `<p class="plan-line">Σύνολο που πρέπει να έχεις πάνω στο σκάφος: <strong>≈ ${litersRequired}L</strong></p>`;
+
+  if(fixed > 0){
+    if(litersRequired <= fixed){
+      html += `<p class="plan-ok">✓ Χωράει άνετα στο κύριο (${main}L) + εφεδρικό (${aux}L) — σύνολο ${fixed}L. Δεν χρειάζεσαι μπιτόνια.</p>`;
+    } else {
+      const shortfall = Math.round((litersRequired - fixed) * 10) / 10;
+      let cansMsg = 'δεν έχεις δηλώσει μέγεθος μπιτονιού.';
+      if(canSize > 0){
+        const cans = Math.ceil(shortfall / canSize);
+        cansMsg = `χρειάζεσαι <strong>${cans} μπιτόνια των ${canSize}L</strong> (=${cans*canSize}L) από την αποθήκη.`;
+      }
+      html += `<p class="plan-warn">⚠ Το κύριο+εφεδρικό (${fixed}L) δεν αρκεί — λείπουν ≈ ${shortfall}L: ${cansMsg}</p>`;
+      if(canSize > 0){
+        html += `<p class="plan-line" style="font-style:italic;">Σημείωση: τα μπιτόνια προσθέτουν βάρος στο σκάφος — μικρό επιπλέον περιθώριο άνεσης πάνω απ' αυτόν τον υπολογισμό δεν βλάπτει.</p>`;
+      }
+    }
+  }
+
+  if(bf !== null && bf > 6){
+    html += `<p class="plan-warn">⚠ Bf ${bf} είναι εκτός του επίσημου ορίου του ΩΡΙΩΝ (έως Bf 6, κύμα έως 2μ).</p>`;
+  }
+
+  resultEl.innerHTML = html;
+  resultEl.style.display = 'block';
+}
+
+['p-tank-main','p-tank-aux','p-can-size','p-nm','p-load','p-people','p-bf'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', updatePlan);
+  el.addEventListener('change', updatePlan);
+});
+
+function updateFuelPreview(){
+  const nm = parseFloat(document.getElementById('f-nm').value);
+  const rate = parseFloat(document.getElementById('f-rate').value);
+  const line = document.getElementById('fuel-total-line');
+  if(nm > 0 && rate > 0){
+    line.style.display = 'block';
+    line.textContent = `⛽ ≈ ${Math.round(nm*rate*10)/10} λίτρα συνολικά  (${rate} L/ν.μ. × ${nm} ν.μ.)`;
+  } else {
+    line.style.display = 'none';
+  }
+}
+
+function refreshRateSuggestion(){
+  const nm = parseFloat(document.getElementById('f-nm').value);
+  const rateEl = document.getElementById('f-rate');
+  if(!nm || nm <= 0) return;
+  if(rateEl.value !== '' && !rateAutoFilled) return; // ο χρήστης έχει βάλει δική του τιμή — δεν την πειράζουμε
+
+  const bf = document.getElementById('f-bf').value !== '' ? parseInt(document.getElementById('f-bf').value,10) : null;
+  const load = document.getElementById('f-load').value;
+  const people = document.getElementById('f-people').value !== '' ? parseInt(document.getElementById('f-people').value,10) : null;
+
+  const sug = suggestRate({bf, load, people});
+  rateEl.value = sug.rate;
+  rateAutoFilled = true;
+  document.querySelector('.more-details').open = true;
+  const hint = document.getElementById('auto-hint');
+  hint.style.display = 'block';
+  hint.textContent = `≈ ${sug.rate} L/ν.μ. — ${sug.source}. Άλλαξέ το αν ξέρεις την πραγματική κατανάλωση αυτής της φοράς.`;
+  updateFuelPreview();
+}
+
+document.getElementById('f-nm').addEventListener('blur', () => {
+  const nmEl = document.getElementById('f-nm');
+  const hoursEl = document.getElementById('f-hours');
+  const nm = parseFloat(nmEl.value);
+  if(!nm || nm <= 0) return;
+  if(hoursEl.value === ''){
+    hoursEl.value = estimateHours(nm);
+    document.querySelector('.more-details').open = true;
+  }
+  refreshRateSuggestion();
+});
+
+document.getElementById('f-nm').addEventListener('input', updateFuelPreview);
+
+document.getElementById('f-load').addEventListener('change', refreshRateSuggestion);
+document.getElementById('f-people').addEventListener('input', refreshRateSuggestion);
+document.getElementById('f-bf').addEventListener('change', refreshRateSuggestion);
+
+document.getElementById('f-hours').addEventListener('input', () => {
+  document.getElementById('auto-hint').style.display = 'none';
+});
+document.getElementById('f-rate').addEventListener('input', () => {
+  rateAutoFilled = false; // ο χρήστης πλέον έγραψε δική του τιμή
+  document.getElementById('auto-hint').style.display = 'none';
+  updateFuelPreview();
+});
+
+document.getElementById('reset-btn').addEventListener('click', async () => {
+  const n = data.trips.length;
+  const syncNote = syncEnabled ? '\n\n⚠ Ο συγχρονισμός είναι ενεργός — θα διαγραφεί σε ΟΛΕΣ τις συνδεδεμένες συσκευές, όχι μόνο εδώ.' : '';
+  if(!confirm(`Οριστική διαγραφή ΟΛΩΝ των δεδομένων (${n} εξορμήσεις, όλα τα στάδια);${syncNote}\n\nΣκέψου πρώτα να πάρεις "Αντίγραφο ασφαλείας". Δεν αναιρείται.`)) return;
+  data = { areas: {}, trips: [], settings: {} };
+  openStages = new Set();
+  const ok = await save();
+  if(ok) showToast('Διαγράφηκαν όλα τα δεδομένα');
+  renderAll();
+});
+
+document.getElementById('backup-btn').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'orion-milia-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Λήφθηκε το αντίγραφο ασφαλείας');
+});
+
+document.getElementById('restore-btn').addEventListener('click', () => {
+  document.getElementById('restore-file').click();
+});
+
+document.getElementById('restore-file').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+    if(parsed && typeof parsed === 'object'){
+      const incoming = (parsed.trips || []).length;
+      const current = data.trips.length;
+      const syncNote = syncEnabled ? '\n\n⚠ Ο συγχρονισμός είναι ενεργός — θα ενημερωθούν ΟΛΕΣ οι συνδεδεμένες συσκευές με αυτά τα δεδομένα.' : '';
+      if(!confirm(`Το αρχείο έχει ${incoming} εξορμήσεις.\nΤώρα έχεις ${current} καταγεγραμμένες.\n\nΗ επαναφορά θα ΑΝΤΙΚΑΤΑΣΤΗΣΕΙ όλα τα τρέχοντα δεδομένα.${syncNote} Συνέχεια;`)){
+        e.target.value = '';
+        return;
+      }
+      data = { areas: parsed.areas || {}, trips: parsed.trips || [], settings: parsed.settings || {}, updatedAt: Date.now() };
+      openStages = new Set();
+      const ok = await save();
+      if(ok) showToast('Έγινε επαναφορά από το αρχείο');
+      renderAll();
+    }
+  }catch(err){
+    console.error('Restore error:', err);
+    showToast('⚠ Το αρχείο δεν διαβάστηκε σωστά', true);
+  }
+  e.target.value = '';
+});
+
+load();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {
+      // Αν δεν βρεθεί sw.js (π.χ. πριν ανέβει στο GitHub Pages), η εφαρμογή λειτουργεί κανονικά online.
+    });
+  });
+}
+</script>
+</body>
+</html>
