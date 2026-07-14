@@ -216,107 +216,11 @@
     <div class="stage-pill" id="stage-pill">Στάδιο 1</div>
   </div>
 
-  <p class="section-title">Στάδια Γεωγραφικής Εξέλιξης</p>
+  <p class="section-title">1. Στάδια Γεωγραφικής Εξέλιξης</p>
   <p class="section-sub">Τσέκαρε μια περιοχή όταν την έχεις καλύψει με το ΩΡΙΩΝ.</p>
   <div class="route" id="route"></div>
 
-  <p class="section-title">Captain's Level</p>
-  <p class="section-sub">Πλήρης ανάλυση βάσει όσων έχεις καταγράψει. Ενδεικτική κλίμακα, όχι επίσημη πιστοποίηση.</p>
-  <div class="level-box" id="level-box"></div>
-
-  <p class="section-title">Πρόοδος στον Χρόνο</p>
-  <p class="section-sub">Ναυτικά μίλια ανά μήνα.</p>
-  <div class="chart-section" id="chart-section"></div>
-
-  <p class="section-title">Σχεδίασε την Επόμενη Εξόρμηση</p>
-  <p class="section-sub">Υπολογισμός καυσίμου/αυτονομίας πριν φύγεις — βάσει όσων έχει μάθει η εφαρμογή. Μπορείς πάντα να προσαρμόσεις εσύ την εκτίμηση.</p>
-  <div class="plan-box">
-    <div class="log-form-row">
-      <div class="field-col">
-        <span class="field-label">Εκτιμώμενα ν.μ. της εξόρμησης</span>
-        <input type="number" id="p-nm" min="0" step="0.1" placeholder="π.χ. 40">
-      </div>
-    </div>
-    <p class="form-label">Ρεζερβουάρ &amp; μπιτόνια ΩΡΙΩΝ (μία φορά, το θυμάται)</p>
-    <div class="detail-grid">
-      <div class="field-col">
-        <span class="field-label">Κύριο ντεπόζιτο (L)</span>
-        <input type="number" id="p-tank-main" min="0" step="1" placeholder="110">
-      </div>
-      <div class="field-col">
-        <span class="field-label">Εφεδρικό ντεπόζιτο (L)</span>
-        <input type="number" id="p-tank-aux" min="0" step="1" placeholder="24">
-      </div>
-      <div class="field-col">
-        <span class="field-label">Μπιτόνι (L/τεμ.)</span>
-        <input type="number" id="p-can-size" min="0" step="1" placeholder="20">
-      </div>
-    </div>
-    <div class="detail-grid" style="margin-top:8px;">
-      <div class="field-col">
-        <span class="field-label">Φορτίο</span>
-        <select id="p-load">
-          <option value="light">Ελαφρύ (&lt;35%, ~&lt;440kg)</option>
-          <option value="medium">Μέτριο (35-65%, ~440-810kg)</option>
-          <option value="heavy">Βαρύ (&gt;65%, ~810-1250kg)</option>
-        </select>
-      </div>
-      <div class="field-col">
-        <span class="field-label">Άτομα</span>
-        <input type="number" id="p-people" min="1" max="8" step="1" placeholder="π.χ. 2">
-      </div>
-      <div class="field-col">
-        <span class="field-label">Αναμ. Beaufort</span>
-        <select id="p-bf">
-          <option value="">—</option>
-          <option value="0">0</option><option value="1">1</option><option value="2">2</option>
-          <option value="3">3</option><option value="4">4</option><option value="5">5</option>
-          <option value="6">6</option><option value="7">7</option><option value="8">8</option>
-        </select>
-      </div>
-    </div>
-    <div class="detail-grid" style="margin-top:8px;">
-      <div class="field-col">
-        <span class="field-label">Εκτιμώμενη κατανάλωση (L/ν.μ.) — προσάρμοσέ τη αν διαφωνείς</span>
-        <input type="number" id="p-rate" min="0" step="0.01" placeholder="αυτόματο">
-      </div>
-    </div>
-    <div id="plan-result" class="plan-result" style="display:none;"></div>
-  </div>
-
-  <p class="section-title">Μελλοντικές Εξορμήσεις (Σχέδια)</p>
-  <p class="section-sub">Κράτα ιδέες, σύγκρινέ τες με βάση πόσους πόντους θα σου έδιναν, ανάκλησέ τες και επεξεργάσου τες όποτε θες.</p>
-  <div class="log-form">
-    <div class="cancel-edit-row" id="pt-cancel-row" style="display:none;">
-      <button class="cancel-edit-btn" id="pt-cancel-btn">Άκυρο (επεξεργασία)</button>
-    </div>
-    <div class="log-form-row">
-      <input type="text" id="pt-name" placeholder="Όνομα/περιγραφή (π.χ. Κύθηρα καλοκαίρι)">
-    </div>
-    <div class="log-form-row">
-      <input type="date" id="pt-date">
-      <input type="text" id="pt-location" placeholder="Τοποθεσία/προορισμός">
-    </div>
-    <div class="log-form-row">
-      <input type="number" id="pt-nm" placeholder="Εκτιμώμενα ν.μ." min="0" step="0.1">
-      <select id="pt-bf">
-        <option value="">Αναμ. Beaufort —</option>
-        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
-        <option value="3">3</option><option value="4">4</option><option value="5">5</option>
-        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
-      </select>
-    </div>
-    <p class="form-label">Αναμενόμενοι τύποι εξόρμησης</p>
-    <div class="chip-list" id="pt-tag-chips"></div>
-    <p class="form-label">Αναμενόμενες περιοχές</p>
-    <div class="chip-list" id="pt-area-chips"></div>
-    <p class="plan-ok" id="pt-points-preview" style="display:none;"></p>
-    <textarea id="pt-notes" rows="2" placeholder="Σημειώσεις, ιδέες, τι χρειάζεται να ετοιμάσεις..."></textarea>
-    <button class="add-btn" id="pt-add-btn">+ Αποθήκευση σχεδίου</button>
-  </div>
-  <div id="planned-trips-list"></div>
-
-  <p class="section-title">Ημερολόγιο Εξορμήσεων</p>
+  <p class="section-title">2. Ημερολόγιο Εξορμήσεων</p>
   <p class="section-sub">Πρόσθεσε κάθε εξόρμηση — μίλια, περιοχές και μάθημα ενημερώνονται όλα μαζί, σε ένα βήμα.</p>
   <div class="log-form">
     <div class="cancel-edit-row" id="cancel-edit-row" style="display:none;">
@@ -423,6 +327,29 @@
           <span class="field-label">Κατανάλωση (L/ν.μ.)</span>
           <input type="number" id="f-rate" min="0" step="0.01" placeholder="π.χ. 1.0">
         </div>
+        <div class="field-col">
+          <span class="field-label">Διεύθυνση ανέμου (προαιρ.)</span>
+          <select id="f-wind-dir">
+            <option value="">—</option>
+            <option value="Β">Β</option><option value="ΒΑ">ΒΑ</option><option value="Α">Α</option>
+            <option value="ΝΑ">ΝΑ</option><option value="Ν">Ν</option><option value="ΝΔ">ΝΔ</option>
+            <option value="Δ">Δ</option><option value="ΒΔ">ΒΔ</option>
+          </select>
+        </div>
+        <div class="field-col">
+          <span class="field-label">Πίεση (hPa, προαιρ.)</span>
+          <input type="number" id="f-pressure" min="900" max="1100" step="1" placeholder="π.χ. 1015">
+        </div>
+        <div class="field-col">
+          <span class="field-label">Ορατότητα (προαιρ.)</span>
+          <select id="f-visibility">
+            <option value="">—</option>
+            <option value="Καλή">Καλή</option>
+            <option value="Μέτρια">Μέτρια</option>
+            <option value="Χαμηλή">Χαμηλή</option>
+            <option value="Ομίχλη">Ομίχλη</option>
+          </select>
+        </div>
       </div>
       <p class="fuel-total-line" id="fuel-total-line" style="display:none;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--brass);margin:8px 0 0;font-weight:600;background:var(--brass-light);padding:8px 10px;border-radius:4px;"></p>
       <div class="log-form-row" style="margin-top:8px;">
@@ -449,7 +376,90 @@
   <input type="text" class="search-input" id="f-search" placeholder="🔍 Αναζήτηση (διαδρομή, σημειώσεις, πλήρωμα...)">
   <div id="trip-list-wrap"></div>
 
-  <p class="section-title">Συγχρονισμός Συσκευών</p>
+  <p class="section-title">3. Σχεδίασε την Επόμενη Εξόρμηση</p>
+  <p class="section-sub">Όνομα, ημερομηνία, μίλια, συνθήκες — υπολογισμός καυσίμου/αυτονομίας και πόντων μαζί. Αποθήκευσε το σχέδιο για να το ανακαλέσεις όποτε θες.</p>
+  <div class="plan-box">
+    <div class="cancel-edit-row" id="pt-cancel-row" style="display:none;">
+      <button class="cancel-edit-btn" id="pt-cancel-btn">Άκυρο (επεξεργασία)</button>
+    </div>
+    <div class="log-form-row">
+      <input type="text" id="pt-name" placeholder="Όνομα/περιγραφή (π.χ. Κύθηρα καλοκαίρι)">
+    </div>
+    <div class="log-form-row">
+      <input type="date" id="pt-date">
+      <input type="text" id="pt-location" placeholder="Τοποθεσία/προορισμός">
+    </div>
+    <div class="log-form-row">
+      <div class="field-col">
+        <span class="field-label">Εκτιμώμενα ν.μ. της εξόρμησης</span>
+        <input type="number" id="p-nm" min="0" step="0.1" placeholder="π.χ. 40">
+      </div>
+    </div>
+    <p class="form-label">Ρεζερβουάρ &amp; μπιτόνια ΩΡΙΩΝ (μία φορά, το θυμάται)</p>
+    <div class="detail-grid">
+      <div class="field-col">
+        <span class="field-label">Κύριο ντεπόζιτο (L)</span>
+        <input type="number" id="p-tank-main" min="0" step="1" placeholder="110">
+      </div>
+      <div class="field-col">
+        <span class="field-label">Εφεδρικό ντεπόζιτο (L)</span>
+        <input type="number" id="p-tank-aux" min="0" step="1" placeholder="24">
+      </div>
+      <div class="field-col">
+        <span class="field-label">Μπιτόνι (L/τεμ.)</span>
+        <input type="number" id="p-can-size" min="0" step="1" placeholder="20">
+      </div>
+    </div>
+    <div class="detail-grid" style="margin-top:8px;">
+      <div class="field-col">
+        <span class="field-label">Φορτίο</span>
+        <select id="p-load">
+          <option value="light">Ελαφρύ (&lt;35%, ~&lt;440kg)</option>
+          <option value="medium">Μέτριο (35-65%, ~440-810kg)</option>
+          <option value="heavy">Βαρύ (&gt;65%, ~810-1250kg)</option>
+        </select>
+      </div>
+      <div class="field-col">
+        <span class="field-label">Άτομα</span>
+        <input type="number" id="p-people" min="1" max="8" step="1" placeholder="π.χ. 2">
+      </div>
+      <div class="field-col">
+        <span class="field-label">Αναμ. Beaufort</span>
+        <select id="p-bf">
+          <option value="">—</option>
+          <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+          <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+          <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+        </select>
+      </div>
+    </div>
+    <div class="detail-grid" style="margin-top:8px;">
+      <div class="field-col">
+        <span class="field-label">Εκτιμώμενη κατανάλωση (L/ν.μ.) — προσάρμοσέ τη αν διαφωνείς</span>
+        <input type="number" id="p-rate" min="0" step="0.01" placeholder="αυτόματο">
+      </div>
+    </div>
+    <div id="plan-result" class="plan-result" style="display:none;"></div>
+
+    <p class="form-label" style="margin-top:14px;">Αναμενόμενοι τύποι εξόρμησης</p>
+    <div class="chip-list" id="pt-tag-chips"></div>
+    <p class="form-label">Αναμενόμενες περιοχές</p>
+    <div class="chip-list" id="pt-area-chips"></div>
+    <p class="plan-ok" id="pt-points-preview" style="display:none;"></p>
+    <textarea id="pt-notes" rows="2" placeholder="Σημειώσεις, ιδέες, τι χρειάζεται να ετοιμάσεις..."></textarea>
+    <button class="add-btn" id="pt-add-btn">+ Αποθήκευση σχεδίου</button>
+  </div>
+  <div id="planned-trips-list"></div>
+
+  <p class="section-title">4. Captain's Level</p>
+  <p class="section-sub">Πλήρης ανάλυση βάσει όσων έχεις καταγράψει. Ενδεικτική κλίμακα, όχι επίσημη πιστοποίηση.</p>
+  <div class="level-box" id="level-box"></div>
+
+  <p class="section-title">5. Πρόοδος στον Χρόνο</p>
+  <p class="section-sub">Ναυτικά μίλια ανά μήνα.</p>
+  <div class="chart-section" id="chart-section"></div>
+
+  <p class="section-title">6. Συγχρονισμός Συσκευών</p>
   <p class="section-sub">Σύνδεση με τον προσωπικό σου λογαριασμό Google — μόνο εσύ έχεις πρόσβαση. Ίδιος λογαριασμός σε κάθε συσκευή = αυτόματος συγχρονισμός.</p>
   <div class="sync-box">
     <div id="sync-setup">
@@ -620,7 +630,7 @@ let currentBookMaterial = [];
 let selectedPtTagIds = new Set();
 let selectedPtAreaIds = new Set();
 
-/* ================= FIREBASE ================= */
+/* ================= FIREBASE (με πλήρη ανθεκτικότητα σε αποτυχία/offline) ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyDxn5u-3bNppl9MDAKDLncOhUGnRMIsm4o",
   authDomain: "orion-milia.firebaseapp.com",
@@ -629,18 +639,31 @@ const firebaseConfig = {
   messagingSenderId: "554263421154",
   appId: "1:554263421154:web:21fcfc58c29fc90883bebb"
 };
-firebase.initializeApp(firebaseConfig);
-const fbAuth = firebase.auth();
-const db = firebase.firestore();
-db.enablePersistence({synchronizeTabs:true}).catch(() => {});
-const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+let fbAuth = null;
+let db = null;
+let googleProvider = null;
+let firebaseReady = false;
+
+try{
+  if(typeof firebase === 'undefined') throw new Error('Το Firebase SDK δεν φορτώθηκε (πιθανόν χωρίς σύνδεση)');
+  firebase.initializeApp(firebaseConfig);
+  fbAuth = firebase.auth();
+  db = firebase.firestore();
+  db.enablePersistence({synchronizeTabs:true}).catch(() => {});
+  googleProvider = new firebase.auth.GoogleAuthProvider();
+  firebaseReady = true;
+}catch(err){
+  console.error('Firebase μη διαθέσιμο — η εφαρμογή συνεχίζει κανονικά τοπικά:', err);
+  firebaseReady = false;
+}
 
 let syncEnabled = false;
 let syncUid = null;
 let syncUnsub = null;
 
 async function pushToSync(){
-  if(!syncEnabled || !syncUid) return;
+  if(!firebaseReady || !syncEnabled || !syncUid || !db) return;
   try{
     const payload = Object.assign({}, data, {updatedAt: Date.now()});
     await db.collection('syncs').doc(syncUid).set(payload);
@@ -650,6 +673,7 @@ async function pushToSync(){
 }
 
 function listenToSync(){
+  if(!firebaseReady || !db || !syncUid) return;
   if(syncUnsub) syncUnsub();
   syncUnsub = db.collection('syncs').doc(syncUid).onSnapshot(doc => {
     if(!doc.exists){ pushToSync(); return; }
@@ -670,6 +694,10 @@ function listenToSync(){
 }
 
 function signInWithGoogle(){
+  if(!firebaseReady || !fbAuth){
+    showToast('⚠ Ο συγχρονισμός χρειάζεται σύνδεση στο ίντερνετ — δοκίμασε ξανά όταν έχεις σήμα', true);
+    return;
+  }
   fbAuth.signInWithRedirect(googleProvider).catch(err => {
     console.error('Sign-in start error:', err);
     showToast('⚠ Αποτυχία έναρξης σύνδεσης Google', true);
@@ -677,6 +705,7 @@ function signInWithGoogle(){
 }
 
 function disconnectSync(){
+  if(!firebaseReady || !fbAuth) return;
   fbAuth.signOut().catch(err => console.error(err));
   showToast('Αποσυνδέθηκες — τα δεδομένα παραμένουν εδώ, τοπικά');
 }
@@ -684,6 +713,16 @@ function disconnectSync(){
 function renderSync(){
   const setupEl = document.getElementById('sync-setup');
   const activeEl = document.getElementById('sync-active');
+  const googleBtn = document.getElementById('sync-google-btn');
+  if(!firebaseReady){
+    setupEl.style.display = 'block';
+    activeEl.style.display = 'none';
+    if(googleBtn){
+      googleBtn.textContent = '🔒 Σύνδεση με Google (χρειάζεται ίντερνετ)';
+    }
+    return;
+  }
+  if(googleBtn) googleBtn.textContent = '🔒 Σύνδεση με Google';
   if(syncEnabled && syncUid){
     setupEl.style.display = 'none';
     activeEl.style.display = 'block';
@@ -695,19 +734,21 @@ function renderSync(){
   }
 }
 
-fbAuth.onAuthStateChanged(user => {
-  if(user){
-    syncEnabled = true;
-    syncUid = user.uid;
-    listenToSync();
-    renderSync();
-  } else {
-    if(syncUnsub){ syncUnsub(); syncUnsub = null; }
-    syncEnabled = false;
-    syncUid = null;
-    renderSync();
-  }
-});
+if(firebaseReady && fbAuth){
+  fbAuth.onAuthStateChanged(user => {
+    if(user){
+      syncEnabled = true;
+      syncUid = user.uid;
+      listenToSync();
+      renderSync();
+    } else {
+      if(syncUnsub){ syncUnsub(); syncUnsub = null; }
+      syncEnabled = false;
+      syncUid = null;
+      renderSync();
+    }
+  });
+}
 
 /* ================= ΒΟΗΘΗΤΙΚΑ ================= */
 function escapeHtml(str){
@@ -1385,6 +1426,9 @@ function renderTrips(){
     const detailParts = [];
     if(t.bf !== null && t.bf !== undefined && t.bf !== '') detailParts.push('Bf ' + t.bf);
     if(t.wave) detailParts.push(t.wave + 'μ κύμα');
+    if(t.windDir) detailParts.push('άνεμος ' + t.windDir);
+    if(t.pressure) detailParts.push(t.pressure + 'hPa');
+    if(t.visibility) detailParts.push('ορατότητα: ' + t.visibility);
     if(t.hours) detailParts.push(t.hours + ' ώρες μηχ.');
     if(t.rate) detailParts.push(t.rate + ' L/ν.μ.');
     if(t.fuel) detailParts.push(t.fuel + 'L σύνολο');
@@ -1413,7 +1457,7 @@ function renderTrips(){
         ${(tagsHtml || areasHtml) ? `<div class="trip-tags">${tagsHtml}${areasHtml}</div>` : ''}
         ${bookHtml}
         <p class="trip-contrib" data-contrib="${t.id}">🎯 +${contrib.total} πόντοι στο Captain's Level (πάτα για ανάλυση)</p>
-        <div class="trip-contrib-detail" id="contrib-${t.id}">
+        <div class="trip-contrib-detail" id="contrib-${t.id}" style="display:none;">
           Μίλια (σταθμισμένα με δυσκολία): +${contrib.nmPts}<br>
           Νέες περιοχές: ${contribAreaTxt} — σύνολο +${contrib.areaPts}<br>
           Νέοι τύποι εξόρμησης: ${contribTagTxt} — σύνολο +${contrib.tagPts}<br>
@@ -1524,6 +1568,9 @@ function startEdit(id){
   document.getElementById('f-load').value = t.load || 'light';
   document.getElementById('f-people').value = t.people != null ? t.people : '';
   document.getElementById('f-rate').value = t.rate != null ? t.rate : '';
+  document.getElementById('f-wind-dir').value = t.windDir || '';
+  document.getElementById('f-pressure').value = t.pressure != null ? t.pressure : '';
+  document.getElementById('f-visibility').value = t.visibility || '';
   document.getElementById('f-crew').value = t.crew || '';
   document.getElementById('f-overnight').value = t.overnightType || 'none';
   document.getElementById('f-overnight-location').value = t.overnightLocation || '';
@@ -1555,6 +1602,9 @@ function cancelEdit(){
   document.getElementById('f-load').value = 'light';
   document.getElementById('f-people').value = '';
   document.getElementById('f-rate').value = '';
+  document.getElementById('f-wind-dir').value = '';
+  document.getElementById('f-pressure').value = '';
+  document.getElementById('f-visibility').value = '';
   document.getElementById('f-crew').value = '';
   document.getElementById('f-overnight').value = 'none';
   document.getElementById('f-overnight-location').value = '';
@@ -1589,6 +1639,9 @@ document.getElementById('f-add').addEventListener('click', async () => {
   const loadEl = document.getElementById('f-load');
   const peopleEl = document.getElementById('f-people');
   const rateEl = document.getElementById('f-rate');
+  const windDirEl = document.getElementById('f-wind-dir');
+  const pressureEl = document.getElementById('f-pressure');
+  const visibilityEl = document.getElementById('f-visibility');
   const crewEl = document.getElementById('f-crew');
   const overnightEl = document.getElementById('f-overnight');
   const overnightLocEl = document.getElementById('f-overnight-location');
@@ -1628,6 +1681,9 @@ document.getElementById('f-add').addEventListener('click', async () => {
       people: peopleEl.value !== '' ? parseInt(peopleEl.value, 10) : null,
       rate: rate,
       fuel: rate !== null ? Math.round(rate * nm * 10) / 10 : null,
+      windDir: windDirEl.value || '',
+      pressure: pressureEl.value !== '' ? parseFloat(pressureEl.value) : null,
+      visibility: visibilityEl.value || '',
       crew: crewEl.value.trim(),
       overnightType: overnightEl.value || 'none',
       overnightLocation: overnightLocEl.value.trim(),
@@ -1704,8 +1760,8 @@ function renderPtAreaChips(){
 }
 
 function estimatePlannedPoints(){
-  const nm = parseFloat(document.getElementById('pt-nm').value) || 0;
-  const bf = document.getElementById('pt-bf').value !== '' ? parseInt(document.getElementById('pt-bf').value,10) : null;
+  const nm = parseFloat(document.getElementById('p-nm').value) || 0;
+  const bf = document.getElementById('p-bf').value !== '' ? parseInt(document.getElementById('p-bf').value,10) : null;
   const tags = [...selectedPtTagIds];
   const areas = [...selectedPtAreaIds];
 
@@ -1730,7 +1786,7 @@ function estimatePlannedPoints(){
 }
 
 function updatePtPointsPreview(){
-  const nm = parseFloat(document.getElementById('pt-nm').value);
+  const nm = parseFloat(document.getElementById('p-nm').value);
   const el = document.getElementById('pt-points-preview');
   if(!nm || nm <= 0){ el.style.display = 'none'; return; }
   const est = estimatePlannedPoints();
@@ -1738,8 +1794,8 @@ function updatePtPointsPreview(){
   el.textContent = `🎯 Εκτίμηση: +${est.total} πόντοι αν την κάνεις όπως τη σχεδιάζεις (μίλια ${est.nmPts} · νέες περιοχές ${est.areaPts} · νέοι τύποι ${est.tagPts} · συνέπεια ${est.tripPts})`;
 }
 
-document.getElementById('pt-nm').addEventListener('input', updatePtPointsPreview);
-document.getElementById('pt-bf').addEventListener('change', updatePtPointsPreview);
+document.getElementById('p-nm').addEventListener('input', updatePtPointsPreview);
+document.getElementById('p-bf').addEventListener('change', updatePtPointsPreview);
 
 function renderPlannedTrips(){
   const wrap = document.getElementById('planned-trips-list');
@@ -1754,7 +1810,7 @@ function renderPlannedTrips(){
     return `
     <div class="planned-card" data-id="${p.id}">
       <p class="planned-name">${escapeHtml(p.name) || '(χωρίς όνομα)'}</p>
-      <p class="planned-meta">${p.targetDate ? p.targetDate : 'χωρίς ημερομηνία'}${p.location ? ' · ' + escapeHtml(p.location) : ''}${p.nm ? ' · ' + p.nm + ' ν.μ. εκτ.' : ''}</p>
+      <p class="planned-meta">${p.targetDate ? p.targetDate : 'χωρίς ημερομηνία'}${p.location ? ' · ' + escapeHtml(p.location) : ''}${p.nm ? ' · ' + p.nm + ' ν.μ. εκτ.' : ''}${p.estimatedFuelL ? ' · ≈' + p.estimatedFuelL + 'L με εφεδρεία' : ''}</p>
       ${p.notes ? `<p class="planned-notes">${escapeHtml(p.notes)}</p>` : ''}
       ${(tagsHtml||areasHtml) ? `<div class="trip-tags">${tagsHtml}${areasHtml}</div>` : ''}
       ${p.estimatedPoints ? `<p class="planned-notes" style="color:var(--teal);font-weight:600;">🎯 Εκτίμηση: +${p.estimatedPoints} πόντοι</p>` : ''}
@@ -1773,6 +1829,9 @@ function renderPlannedTrips(){
       document.getElementById('f-to').value = p.location || '';
       if(p.targetDate) document.getElementById('f-date').value = p.targetDate;
       if(p.nm) document.getElementById('f-nm').value = p.nm;
+      if(p.bf !== null && p.bf !== undefined) document.getElementById('f-bf').value = p.bf;
+      if(p.load) document.getElementById('f-load').value = p.load;
+      if(p.people) document.getElementById('f-people').value = p.people;
       document.querySelector('.log-form').scrollIntoView({behavior:'smooth', block:'start'});
       showToast('Συμπληρώθηκε στη φόρμα εξόρμησης — συνέχισε από εκεί');
     });
@@ -1799,15 +1858,19 @@ function startEditPlanned(id){
   document.getElementById('pt-name').value = p.name || '';
   document.getElementById('pt-date').value = p.targetDate || '';
   document.getElementById('pt-location').value = p.location || '';
-  document.getElementById('pt-nm').value = p.nm || '';
-  document.getElementById('pt-bf').value = (p.bf !== null && p.bf !== undefined) ? p.bf : '';
+  document.getElementById('p-nm').value = p.nm || '';
+  document.getElementById('p-bf').value = (p.bf !== null && p.bf !== undefined) ? p.bf : '';
+  document.getElementById('p-load').value = p.load || 'light';
+  document.getElementById('p-people').value = p.people != null ? p.people : '';
+  document.getElementById('p-rate').value = p.rate != null ? p.rate : '';
+  planRateManual = p.rate != null;
   document.getElementById('pt-notes').value = p.notes || '';
   selectedPtTagIds = new Set(p.expectedTags || []);
   selectedPtAreaIds = new Set(p.expectedAreas || []);
-  renderPtTagChips(); renderPtAreaChips(); updatePtPointsPreview();
+  renderPtTagChips(); renderPtAreaChips(); updatePtPointsPreview(); updatePlan();
   document.getElementById('pt-cancel-row').style.display = 'block';
   document.getElementById('pt-add-btn').textContent = '✓ Ενημέρωση σχεδίου';
-  document.getElementById('pt-name').scrollIntoView({behavior:'smooth', block:'center'});
+  document.querySelector('.plan-box').scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 function cancelEditPlanned(){
@@ -1815,13 +1878,18 @@ function cancelEditPlanned(){
   document.getElementById('pt-name').value = '';
   document.getElementById('pt-date').value = '';
   document.getElementById('pt-location').value = '';
-  document.getElementById('pt-nm').value = '';
-  document.getElementById('pt-bf').value = '';
+  document.getElementById('p-nm').value = '';
+  document.getElementById('p-bf').value = '';
+  document.getElementById('p-load').value = 'light';
+  document.getElementById('p-people').value = '';
+  document.getElementById('p-rate').value = '';
+  planRateManual = false;
   document.getElementById('pt-notes').value = '';
   selectedPtTagIds = new Set();
   selectedPtAreaIds = new Set();
   renderPtTagChips(); renderPtAreaChips();
   document.getElementById('pt-points-preview').style.display = 'none';
+  document.getElementById('plan-result').style.display = 'none';
   document.getElementById('pt-cancel-row').style.display = 'none';
   document.getElementById('pt-add-btn').textContent = '+ Αποθήκευση σχεδίου';
 }
@@ -1833,16 +1901,26 @@ document.getElementById('pt-add-btn').addEventListener('click', async () => {
   const targetDate = document.getElementById('pt-date').value;
   const location = document.getElementById('pt-location').value.trim();
   const notes = document.getElementById('pt-notes').value.trim();
-  const nm = parseFloat(document.getElementById('pt-nm').value) || null;
-  const bf = document.getElementById('pt-bf').value !== '' ? parseInt(document.getElementById('pt-bf').value,10) : null;
+  const nm = parseFloat(document.getElementById('p-nm').value) || null;
+  const bf = document.getElementById('p-bf').value !== '' ? parseInt(document.getElementById('p-bf').value,10) : null;
+  const load = document.getElementById('p-load').value || 'light';
+  const people = document.getElementById('p-people').value !== '' ? parseInt(document.getElementById('p-people').value,10) : null;
+  const rate = document.getElementById('p-rate').value !== '' ? parseFloat(document.getElementById('p-rate').value) : null;
   if(!name){ showToast('Δώσε ένα όνομα στο σχέδιο', true); return; }
 
   const est = nm ? estimatePlannedPoints() : null;
+  let estimatedFuelL = null;
+  if(nm){
+    const usedRate = rate !== null ? rate : suggestRate({bf, load, people}).rate;
+    estimatedFuelL = Math.round(usedRate * nm * 4/3 * 10) / 10;
+  }
+
   data.plannedTrips = data.plannedTrips || [];
   const planned = {
-    id: editingPlannedId || ('pt' + Date.now()), name, targetDate, location, notes, nm, bf,
+    id: editingPlannedId || ('pt' + Date.now()), name, targetDate, location, notes, nm, bf, load, people, rate,
     expectedTags: [...selectedPtTagIds], expectedAreas: [...selectedPtAreaIds],
-    estimatedPoints: est ? est.total : null
+    estimatedPoints: est ? est.total : null,
+    estimatedFuelL
   };
   if(editingPlannedId){
     const idx = data.plannedTrips.findIndex(x => x.id === editingPlannedId);

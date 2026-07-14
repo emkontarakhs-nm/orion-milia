@@ -1,4 +1,4 @@
-const CACHE_NAME = 'orion-milia-v1';
+const CACHE_NAME = 'orion-milia-v2';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -24,7 +24,11 @@ self.addEventListener('fetch', (event) => {
     caches.match(event.request).then((cached) => {
       const network = fetch(event.request)
         .then((response) => {
-          if (response && response.status === 200) {
+          // response.status === 200 για ίδιας-προέλευσης αιτήματα.
+          // response.type === 'opaque' για cross-origin (π.χ. Firebase SDK, γραμματοσειρές) —
+          // δεν μπορούμε να δούμε το πραγματικό status τους, αλλά πρέπει να τα αποθηκεύσουμε ούτως ή άλλως
+          // αλλιώς ποτέ δεν μπαίνουν στην cache και η εφαρμογή σπάει offline.
+          if (response && (response.status === 200 || response.type === 'opaque')) {
             const clone = response.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
           }
