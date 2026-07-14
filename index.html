@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Orion — Χάρτης Ναυτικών Μιλίων</title>
+<title>ΩΡΙΩΝ — Χάρτης Ναυτικών Μιλίων</title>
 
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Orion">
+<meta name="apple-mobile-web-app-title" content="ΩΡΙΩΝ">
 <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjM2IiBmaWxsPSIjMTQyOTNEIi8+PGNpcmNsZSBjeD0iOTAiIGN5PSI5MCIgcj0iNjQiIHN0cm9rZT0iI0I1NzIyRSIgc3Ryb2tlLXdpZHRoPSI0IiBmaWxsPSJub25lIi8+PGNpcmNsZSBjeD0iOTAiIGN5PSI5MCIgcj0iNiIgZmlsbD0iI0YzRUNERCIvPjxwYXRoIGQ9Ik05MCAyOCBMMTAxIDgyIEw5MCA5MCBMNzkgODIgWiIgZmlsbD0iI0YzRUNERCIvPjxwYXRoIGQ9Ik05MCAxNTIgTDEwMSA5OCBMOTAgOTAgTDc5IDk4IFoiIGZpbGw9IiM1QzZCNzgiLz48cGF0aCBkPSJNMjggOTAgTDgyIDc5IEw5MCA5MCBMODIgMTAxIFoiIGZpbGw9IiM4RkEwQUQiLz48cGF0aCBkPSJNMTUyIDkwIEw5OCA3OSBMOTAgOTAgTDk4IDEwMSBaIiBmaWxsPSIjOEZBMEFEIi8+PC9zdmc+Cg==">
 <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjM2IiBmaWxsPSIjMTQyOTNEIi8+PGNpcmNsZSBjeD0iOTAiIGN5PSI5MCIgcj0iNjQiIHN0cm9rZT0iI0I1NzIyRSIgc3Ryb2tlLXdpZHRoPSI0IiBmaWxsPSJub25lIi8+PGNpcmNsZSBjeD0iOTAiIGN5PSI5MCIgcj0iNiIgZmlsbD0iI0YzRUNERCIvPjxwYXRoIGQ9Ik05MCAyOCBMMTAxIDgyIEw5MCA5MCBMNzkgODIgWiIgZmlsbD0iI0YzRUNERCIvPjxwYXRoIGQ9Ik05MCAxNTIgTDEwMSA5OCBMOTAgOTAgTDc5IDk4IFoiIGZpbGw9IiM1QzZCNzgiLz48cGF0aCBkPSJNMjggOTAgTDgyIDc5IEw5MCA5MCBMODIgMTAxIFoiIGZpbGw9IiM4RkEwQUQiLz48cGF0aCBkPSJNMTUyIDkwIEw5OCA3OSBMOTAgOTAgTDk4IDEwMSBaIiBmaWxsPSIjOEZBMEFEIi8+PC9zdmc+Cg==">
-<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiT3Jpb24iLCJzaG9ydF9uYW1lIjoiT3Jpb24iLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzE0MjkzRCIsInRoZW1lX2NvbG9yIjoiIzE0MjkzRCIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZzlJakFnTUNBeE9EQWdNVGd3SWo0OGNtVmpkQ0IzYVdSMGFEMGlNVGd3SWlCb1pXbG5hSFE5SWpFNE1DSWdjbmc5SWpNMklpQm1hV3hzUFNJak1UUXlPVE5FSWk4K1BHTnBjbU5zWlNCamVEMGlPVEFpSUdONVBTSTVNQ0lnY2owaU5pSWdabWxzYkQwaUkwWXpSVU5FUkNJdlBqeHdZWFJvSUdROUlrMDVNQ0F5T0NCTU1UQXhJRGd5SUV3NU1DQTVNQ0JNTnprZ09ESWdXaUlnWm1sc2JEMGlJMFl6UlVORVJDSXZQanh3WVhSb0lHUTlJazA1TUNBeE5USWdUREV3TVNBNU9DQk1PVEFnT1RBZ1REYzVJRGs0SUZvaUlHWnBiR3c5SWlNMVF6WkNOemdpTHo0OGNHRjBhQ0JrUFNKTk1qZ2dPVEFnVERneUlEYzVJRXc1TUNBNU1DQk1PRElnTVRBeElGb2lJR1pwYkd3OUlpTTRSa0V3UVVRaUx6NDhjR0YwYUNCa1BTSk5NVFV5SURrd0lFdzVPQ0EzT1NCTU9UQWdPVEFnVERrNElERXdNU0JhSWlCbWFXeHNQU0lqT0VaQk1FRkVJaTgrUEM5emRtYytDZz09Iiwic2l6ZXMiOiIxODB4MTgwIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjogIs6pzqHOmc6pzp0iLCAic2hvcnRfbmFtZSI6ICLOqc6hzpnOqc6dIiwgInN0YXJ0X3VybCI6ICIuIiwgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMxNDI5M0QiLCAidGhlbWVfY29sb3IiOiAiIzE0MjkzRCIsICJpY29ucyI6IFt7InNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZzlJakFnTUNBeE9EQWdNVGd3SWo0OGNtVmpkQ0IzYVdSMGFEMGlNVGd3SWlCb1pXbG5hSFE5SWpFNE1DSWdjbmc5SWpNMklpQm1hV3hzUFNJak1UUXlPVE5FSWk4K1BHTnBjbU5zWlNCamVEMGlPVEFpSUdONVBTSTVNQ0lnY2owaU5qUWlJSE4wY205clpUMGlJMEkxTnpJeVJTSWdjM1J5YjJ0bExYZHBaSFJvUFNJMElpQm1hV3hzUFNKdWIyNWxJaTgrUEdOcGNtTnNaU0JqZUQwaU9UQWlJR041UFNJNU1DSWdjajBpTmlJZ1ptbHNiRDBpSTBZelJVTkVSQ0l2UGp4d1lYUm9JR1E5SWswNU1DQXlPQ0JNTVRBeElEZ3lJRXc1TUNBNU1DQk1OemtnT0RJZ1dpSWdabWxzYkQwaUkwWXpSVU5FUkNJdlBqeHdZWFJvSUdROUlrMDVNQ0F4TlRJZ1RERXdNU0E1T0NCTU9UQWdPVEFnVERjNUlEazRJRm9pSUdacGJHdzlJaU0xUXpaQ056Z2lMejQ4Y0dGMGFDQmtQU0pOTWpnZ09UQWdURGd5SURjNUlFdzVNQ0E1TUNCTU9ESWdNVEF4SUZvaUlHWnBiR3c5SWlNNFJrRXdRVVFpTHo0OGNHRjBhQ0JrUFNKTk1UVXlJRGt3SUV3NU9DQTNPU0JNT1RBZ09UQWdURGs0SURFd01TQmFJaUJtYVd4c1BTSWpPRVpCTUVGRUlpOCtQQzl6ZG1jK0NnPT0iLCAic2l6ZXMiOiAiMTgweDE4MCIsICJ0eXBlIjogImltYWdlL3N2Zyt4bWwifV19">
 <meta name="theme-color" content="#14293D">
 <meta name="mobile-web-app-capable" content="yes">
 
@@ -42,7 +42,8 @@
   .stat .lbl{font-size:10px;color:#8FA0AD;letter-spacing:0.06em;text-transform:uppercase;}
   .stage-pill{display:inline-block;margin-top:16px;padding:6px 14px;background:rgba(181,114,46,0.25);border:1px solid var(--brass);border-radius:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--brass-light);position:relative;}
 
-  .section-title{font-family:'Fraunces',serif;font-weight:500;font-size:18px;margin:0 0 4px;}
+  .section-title{font-family:'Fraunces',serif;font-weight:500;font-size:18px;margin:0 0 4px;position:relative;padding-left:14px;}
+  .section-title::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:3px;background:var(--brass);border-radius:2px;}
   .section-sub{font-size:12.5px;color:var(--text-muted);margin:0 0 14px;}
 
   .route{position:relative;margin-top:8px;margin-bottom:32px;}
@@ -67,13 +68,14 @@
   .area-item span{font-size:13.5px;}
   .area-group-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.05em;text-transform:uppercase;color:var(--brass);background:var(--brass-light);padding:8px 16px;}
 
-  .log-form{background:#fff;border:1px solid var(--parchment-2);border-radius:4px;padding:16px;margin-bottom:16px;}
+  .log-form{background:#fff;border:1px solid var(--parchment-2);border-radius:4px;padding:16px;margin-bottom:16px;box-shadow:0 1px 4px rgba(20,41,61,0.05);}
   .log-form-row{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
   .log-form input, .log-form select{font-family:'Inter',sans-serif;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--parchment);color:var(--ink);flex:1;min-width:110px;}
   .log-form input[type="date"]{flex:1 1 130px;}
   .log-form input[type="number"]{flex:0 1 90px;}
   .log-form input[type="text"]{flex:2 1 180px;}
-  .add-btn{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;background:var(--teal);border:none;padding:9px 18px;border-radius:4px;cursor:pointer;width:100%;}
+  .add-btn{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;background:var(--teal);border:none;padding:9px 18px;border-radius:4px;cursor:pointer;width:100%;transition:background 0.15s ease, transform 0.1s ease;}
+  .add-btn:active{transform:scale(0.98);}
   .add-btn:hover{background:#175753;}
   .add-btn:disabled{opacity:0.6;cursor:default;}
   .form-label{font-size:11px;color:var(--text-muted);margin:2px 0 8px;}
@@ -89,6 +91,8 @@
   .trip-type-tag{background:var(--brass-light);color:var(--brass);}
   .trip-detail-row{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-muted);margin:4px 0 0;}
   .trip-book{font-size:12px;color:var(--ink-2);margin:6px 0 0;padding:8px 10px;background:var(--parchment);border-radius:4px;border-left:3px solid var(--brass);}
+  .trip-contrib{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--teal);font-weight:600;margin:6px 0 0;cursor:pointer;}
+  .trip-contrib-detail{display:none;font-size:11.5px;color:var(--text-muted);line-height:1.6;margin:4px 0 0;padding:8px 10px;background:var(--teal-light);border-radius:4px;}
   .trip-book strong{color:var(--brass);}
 
   details.more-details{margin-bottom:10px;}
@@ -122,7 +126,8 @@
   .chart-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-muted);white-space:nowrap;}
 
   .trip-list{display:flex;flex-direction:column;gap:8px;margin-bottom:32px;}
-  .trip-card{background:#fff;border:1px solid var(--parchment-2);border-radius:4px;padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .trip-card{background:#fff;border:1px solid var(--parchment-2);border-radius:4px;padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;box-shadow:0 1px 3px rgba(20,41,61,0.06);transition:box-shadow 0.2s ease;}
+  .trip-card:hover{box-shadow:0 3px 10px rgba(20,41,61,0.1);}
   .trip-main{flex:1;min-width:0;}
   .trip-route{font-size:13.5px;font-weight:600;margin:0 0 2px;}
   .trip-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);}
@@ -139,13 +144,13 @@
   .backup-btn{color:var(--teal);border-color:var(--teal);}
   .backup-btn:hover{background:var(--teal);color:#fff;}
 
-  .plan-box{background:#fff;border:1px solid var(--parchment-2);border-radius:4px;padding:16px;margin-bottom:32px;}
+  .plan-box{background:#fff;border:1px solid var(--parchment-2);border-radius:4px;padding:16px;margin-bottom:32px;box-shadow:0 1px 4px rgba(20,41,61,0.05);}
   .plan-result{margin-top:14px;padding-top:14px;border-top:1px dashed var(--parchment-2);}
   .plan-line{font-size:13.5px;color:var(--ink-2);margin:0 0 7px;line-height:1.5;}
   .plan-warn{font-size:12.5px;color:var(--coral);font-weight:600;margin:8px 0 0;background:var(--coral-light);padding:9px 11px;border-radius:4px;line-height:1.5;}
   .plan-ok{font-size:12.5px;color:var(--teal);font-weight:600;margin:8px 0 0;background:var(--teal-light);padding:9px 11px;border-radius:4px;}
 
-  .level-box{background:var(--ink);color:var(--parchment);border-radius:4px;padding:18px 20px;margin-bottom:32px;}
+  .level-box{background:var(--ink);color:var(--parchment);border-radius:4px;padding:18px 20px;margin-bottom:32px;box-shadow:0 4px 14px rgba(20,41,61,0.25);}
   .level-name{font-family:'Fraunces',serif;font-weight:500;font-size:20px;display:block;margin-bottom:2px;}
   .level-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--brass-light);display:block;margin-bottom:10px;}
   .level-detail{font-family:'JetBrains Mono',monospace;font-size:11px;color:#B8A98C;display:block;margin-bottom:12px;}
@@ -160,10 +165,10 @@
   .suggestion-item{font-size:12.5px;color:var(--parchment);line-height:1.6;margin:0 0 8px;padding-left:16px;position:relative;}
   .suggestion-item::before{content:'→';position:absolute;left:0;color:var(--brass);}
 
-  .sync-box{background:#fff;border:1px solid var(--parchment-2);border-radius:4px;padding:16px;margin-bottom:16px;}
+  .sync-box{background:#fff;border:1px solid var(--parchment-2);border-radius:4px;padding:16px;margin-bottom:16px;box-shadow:0 1px 4px rgba(20,41,61,0.05);}
   #sync-account-display{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--teal);}
 
-  .planned-card{background:#fff;border:1px solid var(--parchment-2);border-radius:4px;padding:12px 14px;margin-bottom:8px;}
+  .planned-card{background:#fff;border:1px solid var(--parchment-2);border-radius:4px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(20,41,61,0.06);}
   .planned-name{font-size:13.5px;font-weight:600;margin:0 0 2px;}
   .planned-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);margin-bottom:4px;}
   .planned-notes{font-size:12.5px;color:var(--ink-2);margin:4px 0;}
@@ -173,6 +178,17 @@
   .planned-actions button.del-plan-btn{border-color:var(--coral);color:var(--coral);}
 
   #toast{position:fixed;left:50%;bottom:-70px;transform:translateX(-50%);background:var(--ink);color:var(--parchment);padding:11px 20px;border-radius:20px;font-size:12.5px;font-family:'Inter',sans-serif;box-shadow:0 4px 16px rgba(0,0,0,0.3);transition:bottom 0.3s ease;z-index:1000;max-width:90%;text-align:center;}
+
+  .suggestion-detail{font-size:12px;color:#B8A98C;line-height:1.6;margin:-4px 0 10px 16px;padding-left:0;}
+
+  .modal-overlay{position:fixed;inset:0;background:rgba(20,41,61,0.75);z-index:2000;display:flex;align-items:flex-end;justify-content:center;}
+  .modal-box{background:var(--parchment);border-radius:12px 12px 0 0;max-width:760px;width:100%;max-height:85vh;overflow-y:auto;padding:24px;position:relative;}
+  .modal-close{position:absolute;top:14px;right:14px;background:none;border:none;font-size:16px;color:var(--text-muted);cursor:pointer;padding:8px;}
+  .modal-content h3{font-family:'Fraunces',serif;font-weight:500;font-size:18px;margin:0 24px 12px 0;}
+  .modal-content p{font-size:13px;line-height:1.6;color:var(--ink-2);margin:0 0 10px;}
+  .modal-content table{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:12.5px;}
+  .modal-content table td{padding:6px 8px;border-bottom:1px solid var(--parchment-2);text-align:left;}
+  @media (min-width:600px){ .modal-overlay{align-items:center;} .modal-box{border-radius:12px;} }
   #toast.show{bottom:20px;}
   #toast.error{background:var(--coral);}
 
@@ -186,12 +202,12 @@
 </style>
 </head>
 <body>
-<h2 class="sr-only">Orion — χάρτης ναυτικών μιλίων, γεωγραφικής εξέλιξης, σχεδιασμού εξορμήσεων και υλικού βιβλίου για το φουσκωτό ΩΡΙΩΝ.</h2>
+<h2 class="sr-only">ΩΡΙΩΝ — χάρτης ναυτικών μιλίων, γεωγραφικής εξέλιξης, σχεδιασμού εξορμήσεων και υλικού βιβλίου για το φουσκωτό ΩΡΙΩΝ.</h2>
 <div class="wrap">
 
   <div class="hero">
     <p class="hero-eyebrow">Χάρτης Εξέλιξης</p>
-    <h1>Orion — Ναυτικά μίλια &amp; γεωγραφική κάλυψη</h1>
+    <h1>ΩΡΙΩΝ — Ναυτικά μίλια &amp; γεωγραφική κάλυψη</h1>
     <div class="stat-row">
       <div class="stat"><span class="num" id="stat-nm">0</span><span class="lbl">Σύνολο ν.μ.</span></div>
       <div class="stat"><span class="num" id="stat-trips">0</span><span class="lbl">Εξορμήσεις</span></div>
@@ -240,9 +256,9 @@
       <div class="field-col">
         <span class="field-label">Φορτίο</span>
         <select id="p-load">
-          <option value="light">Ελαφρύ</option>
-          <option value="medium">Μέτριο</option>
-          <option value="heavy">Βαρύ</option>
+          <option value="light">Ελαφρύ (&lt;35%, ~&lt;440kg)</option>
+          <option value="medium">Μέτριο (35-65%, ~440-810kg)</option>
+          <option value="heavy">Βαρύ (&gt;65%, ~810-1250kg)</option>
         </select>
       </div>
       <div class="field-col">
@@ -269,7 +285,7 @@
   </div>
 
   <p class="section-title">Μελλοντικές Εξορμήσεις (Σχέδια)</p>
-  <p class="section-sub">Κράτα ιδέες για εξορμήσεις που σχεδιάζεις — ανάκλησέ τες και επεξεργάσου τες όποτε θες.</p>
+  <p class="section-sub">Κράτα ιδέες, σύγκρινέ τες με βάση πόσους πόντους θα σου έδιναν, ανάκλησέ τες και επεξεργάσου τες όποτε θες.</p>
   <div class="log-form">
     <div class="cancel-edit-row" id="pt-cancel-row" style="display:none;">
       <button class="cancel-edit-btn" id="pt-cancel-btn">Άκυρο (επεξεργασία)</button>
@@ -281,6 +297,20 @@
       <input type="date" id="pt-date">
       <input type="text" id="pt-location" placeholder="Τοποθεσία/προορισμός">
     </div>
+    <div class="log-form-row">
+      <input type="number" id="pt-nm" placeholder="Εκτιμώμενα ν.μ." min="0" step="0.1">
+      <select id="pt-bf">
+        <option value="">Αναμ. Beaufort —</option>
+        <option value="0">0</option><option value="1">1</option><option value="2">2</option>
+        <option value="3">3</option><option value="4">4</option><option value="5">5</option>
+        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+      </select>
+    </div>
+    <p class="form-label">Αναμενόμενοι τύποι εξόρμησης</p>
+    <div class="chip-list" id="pt-tag-chips"></div>
+    <p class="form-label">Αναμενόμενες περιοχές</p>
+    <div class="chip-list" id="pt-area-chips"></div>
+    <p class="plan-ok" id="pt-points-preview" style="display:none;"></p>
     <textarea id="pt-notes" rows="2" placeholder="Σημειώσεις, ιδέες, τι χρειάζεται να ετοιμάσεις..."></textarea>
     <button class="add-btn" id="pt-add-btn">+ Αποθήκευση σχεδίου</button>
   </div>
@@ -330,10 +360,10 @@
           <span class="field-label">Διανυκτέρευση</span>
           <select id="f-overnight">
             <option value="none">Καμία (ημερήσια)</option>
-            <option value="rooms">Δωμάτια</option>
-            <option value="dock">Δεμένος σε ντόκο/μαρίνα</option>
-            <option value="anchor">Άρόδου (στο σκάφος)</option>
-            <option value="camping">Camping σε παραλία</option>
+            <option value="rooms_dock">Κατάλυμα + σκάφος στο ντόκο</option>
+            <option value="boat_dock">Στο σκάφος + δέσιμο ντόκο/μαρίνα</option>
+            <option value="boat_anchor">Στο σκάφος + δέσιμο άρόδου</option>
+            <option value="camping_anchor">Camping παραλία + σκάφος άρόδου</option>
           </select>
         </div>
         <div class="field-col">
@@ -346,12 +376,12 @@
           <span class="field-label">Πρόσδεση / Αγκυροβόλιο</span>
           <select id="f-mooring">
             <option value="">—</option>
-            <option value="bow">Πλωροδέτηση</option>
+            <option value="bow">Πλωριοδέτηση</option>
             <option value="stern">Πρυμνοδέτηση</option>
             <option value="side">Πλαγιοδέτηση</option>
-            <option value="anchor1">Άρόδου – 1 πλωριά άγκυρα</option>
-            <option value="anchorV">Άρόδου – 2 πλωριές άγκυρες (V)</option>
-            <option value="anchorBowStern">Άρόδου – πλωριά + πρυμνιά</option>
+            <option value="anchor1">Άρόδου με 1 πλωριά άγκυρα</option>
+            <option value="anchorV">Άρόδου με 2 πλωριές άγκυρες (V)</option>
+            <option value="anchorBowStern">Άρόδου με 1 πλωριά άγκυρα και 1 πρυμνιά</option>
           </select>
         </div>
       </div>
@@ -380,9 +410,9 @@
         <div class="field-col">
           <span class="field-label">Φορτίο</span>
           <select id="f-load">
-            <option value="light">Ελαφρύ</option>
-            <option value="medium">Μέτριο</option>
-            <option value="heavy">Βαρύ</option>
+            <option value="light">Ελαφρύ (&lt;35%, ~&lt;440kg)</option>
+            <option value="medium">Μέτριο (35-65%, ~440-810kg)</option>
+            <option value="heavy">Βαρύ (&gt;65%, ~810-1250kg)</option>
           </select>
         </div>
         <div class="field-col">
@@ -439,6 +469,13 @@
   </div>
   <div class="reset-row">
     <button class="reset-btn" id="reset-btn">Διαγραφή όλων των δεδομένων</button>
+  </div>
+</div>
+
+<div id="modal-overlay" class="modal-overlay" style="display:none;">
+  <div class="modal-box">
+    <button class="modal-close" id="modal-close-btn">&#10005;</button>
+    <div class="modal-content" id="modal-content"></div>
   </div>
 </div>
 
@@ -504,7 +541,20 @@ const STAGES = [
   }
 ];
 
-const TRIP_TAGS = ['Νυχτερινή', 'Άρόδου', 'Ανοιχτή διάπλευση', 'Παράκτια διάπλευση', 'Πολυήμερη'];
+const TRIP_TAGS = ['Παράκτια διάπλευση', 'Άρόδου', 'Ψάρεμα/Κατάδυση', 'Νυχτερινή', 'Πολυήμερη', 'Ανοιχτή διάπλευση', 'Ρυμούλκηση', 'Απρόβλεπτη επιδείνωση καιρού', 'Βοήθεια σε άλλο σκάφος'];
+
+// Βάρος κάθε τύπου στη βαθμολογία εμπειρίας — αντανακλά πραγματική δυσκολία/σημασία, όχι ίση κατανομή
+const TAG_WEIGHTS = {
+  'Παράκτια διάπλευση': 10,
+  'Άρόδου': 20,
+  'Ψάρεμα/Κατάδυση': 10,
+  'Νυχτερινή': 30,
+  'Πολυήμερη': 30,
+  'Ανοιχτή διάπλευση': 40,
+  'Ρυμούλκηση': 35,
+  'Απρόβλεπτη επιδείνωση καιρού': 45,
+  'Βοήθεια σε άλλο σκάφος': 40
+};
 
 const BOOK_CATEGORIES = [
   'Ημερολόγιο πλεύσης', 'Πορτρέτα ανθρώπων', 'Αισθητηριακές σημειώσεις',
@@ -515,29 +565,40 @@ const BOOK_CATEGORIES = [
   'Απόφαση/Δίλημμα', 'Χιούμορ/περιστατικό', 'Θρύλος/ιστορία τοπίου'
 ];
 
+// Κατηγορίες φορτίου δεμένες με το πραγματικό μέγιστο επιτρεπόμενο φορτίο του ΩΡΙΩΝ (1250kg στην άδεια)
+// Ελαφρύ <35% (~<440kg, π.χ. 2 άτομα + ελαφρύς εξοπλισμός)
+// Μέτριο 35-65% (~440-810kg, π.χ. 4-5 άτομα ή 2 άτομα + πολύ εξοπλισμό/καύσιμο)
+// Βαρύ >65% (~810-1250kg, π.χ. 6-8 άτομα ή βαρύς εξοπλισμός/μπιτόνια)
+const MAX_BOAT_WEIGHT_KG = 1250;
 const LOAD_LEVELS = [
-  {id:'light', label:'Ελαφρύ', mult:1.0},
-  {id:'medium', label:'Μέτριο', mult:1.1},
-  {id:'heavy', label:'Βαρύ', mult:1.25}
+  {id:'light', label:'Ελαφρύ (<35%, ~<440kg)', mult:1.0},
+  {id:'medium', label:'Μέτριο (35-65%, ~440-810kg)', mult:1.12},
+  {id:'heavy', label:'Βαρύ (>65%, ~810-1250kg)', mult:1.28}
 ];
-const OVERNIGHT_LABELS = {none:'Καμία', rooms:'Δωμάτια', dock:'Ντόκο/μαρίνα', anchor:'Άρόδου', camping:'Camping παραλία'};
+const OVERNIGHT_LABELS = {
+  none: 'Καμία (ημερήσια)',
+  rooms_dock: 'Κατάλυμα + σκάφος δεμένο σε ντόκο/προβλήτα',
+  boat_dock: 'Διανυκτέρευση στο σκάφος + δέσιμο σε ντόκο/μαρίνα',
+  boat_anchor: 'Διανυκτέρευση στο σκάφος + δέσιμο άρόδου',
+  camping_anchor: 'Camping σε παραλία + σκάφος άρόδου'
+};
 const MOORING_LABELS = {
-  bow:'Πλωροδέτηση', stern:'Πρυμνοδέτηση', side:'Πλαγιοδέτηση',
-  anchor1:'Άρόδου – 1 πλωριά άγκυρα', anchorV:'Άρόδου – 2 πλωριές (V)',
-  anchorBowStern:'Άρόδου – πλωριά+πρυμνιά'
+  bow:'Πλωριοδέτηση', stern:'Πρυμνοδέτηση', side:'Πλαγιοδέτηση',
+  anchor1:'Άρόδου με 1 πλωριά άγκυρα', anchorV:'Άρόδου με 2 πλωριές άγκυρες (V)',
+  anchorBowStern:'Άρόδου με 1 πλωριά άγκυρα και 1 πρυμνιά'
 };
 
 const LEVELS = [
   {name:'Ναυτόπουλο', min:0},
-  {name:'Μαθητευόμενος Καπετάνιος', min:40},
-  {name:'Βοηθός Καπετάνιου', min:100},
-  {name:'Βασικός Καπετάνιος', min:200},
-  {name:'Ικανός Καπετάνιος', min:350},
-  {name:'Έμπειρος Καπετάνιος', min:550},
-  {name:'Προχωρημένος Καπετάνιος', min:800},
-  {name:'Καπετάνιος Ανοιχτής Θάλασσας', min:1200},
-  {name:'Θαλασσοπόρος', min:1800},
-  {name:'Καπετάνιος της Μεσογείου', min:2600}
+  {name:'Μαθητευόμενος Καπετάνιος', min:80},
+  {name:'Βοηθός Καπετάνιου', min:200},
+  {name:'Βασικός Καπετάνιος', min:400},
+  {name:'Ικανός Καπετάνιος', min:700},
+  {name:'Έμπειρος Καπετάνιος', min:1100},
+  {name:'Προχωρημένος Καπετάνιος', min:1700},
+  {name:'Καπετάνιος Ανοιχτής Θάλασσας', min:2500},
+  {name:'Θαλασσοπόρος', min:3600},
+  {name:'Καπετάνιος της Μεσογείου', min:5000}
 ];
 
 const BASE_RATE = 1.0;
@@ -556,6 +617,8 @@ let searchTerm = '';
 let rateAutoFilled = false;
 let currentStops = [];
 let currentBookMaterial = [];
+let selectedPtTagIds = new Set();
+let selectedPtAreaIds = new Set();
 
 /* ================= FIREBASE ================= */
 const firebaseConfig = {
@@ -849,22 +912,68 @@ function renderStages(){
 }
 
 /* ================= CAPTAIN'S LEVEL ================= */
+function tripDifficultyMultiplier(t){
+  let mult = 1.0;
+  const bf = t.bf;
+  if(bf !== null && bf !== undefined && bf !== ''){
+    if(bf >= 6) mult += 0.5;
+    else if(bf >= 4) mult += 0.3;
+  }
+  const tags = t.tags || [];
+  if(tags.includes('Νυχτερινή')) mult += 0.4;
+  if(tags.includes('Ανοιχτή διάπλευση')) mult += 0.5;
+  if(tags.includes('Πολυήμερη')) mult += 0.3;
+  if(tags.includes('Απρόβλεπτη επιδείνωση καιρού')) mult += 0.4;
+  if(tags.includes('Ρυμούλκηση')) mult += 0.3;
+  if(tags.includes('Βοήθεια σε άλλο σκάφος')) mult += 0.3;
+  if(t.overnightType === 'boat_anchor' || t.overnightType === 'camping_anchor') mult += 0.2;
+  if(t.mooringType) mult += 0.1;
+  return Math.min(mult, 3.0);
+}
+
+function findUnlockingTripNm(areaId){
+  const trips = data.trips.filter(t => (t.areas||[]).includes(areaId) && t.date);
+  if(trips.length === 0) return null;
+  trips.sort((a,b) => a.date.localeCompare(b.date));
+  return parseFloat(trips[0].nm) || null;
+}
+
+function areaBonusPoints(stageNum, unlockingNm){
+  const base = stageNum * 5;
+  if(unlockingNm === null || unlockingNm === undefined) return base; // καμία εξόρμηση δεν τη συνδέει ρητά — fallback στη βασική τιμή
+  const REF_NM = 15; // ν.μ. αναφοράς — τυπική τοπική εξόρμηση
+  const factor = Math.min(2.0, Math.max(0.5, unlockingNm / REF_NM));
+  return Math.round(base * factor);
+}
+
 function computeExperienceScore(){
   const totalNm = data.trips.reduce((s,t)=>s+(parseFloat(t.nm)||0),0);
-  const areaIds = allAreaIds();
-  const areasCovered = areaIds.filter(id => data.areas[id]).length;
+  let weightedNm = 0;
+  data.trips.forEach(t => { weightedNm += (parseFloat(t.nm)||0) * tripDifficultyMultiplier(t); });
+  const nmPts = Math.round(weightedNm);
+
+  let areaPts = 0, areasCovered = 0;
+  STAGES.forEach(s => {
+    s.areas.forEach((_, i) => {
+      const id = s.id + '-' + i;
+      if(data.areas[id]){
+        areasCovered++;
+        areaPts += areaBonusPoints(s.num, findUnlockingTripNm(id));
+      }
+    });
+  });
+
   const loggedTags = new Set();
   data.trips.forEach(t => (t.tags||[]).forEach(tag => loggedTags.add(tag)));
+  let tagPts = 0;
+  loggedTags.forEach(tag => { tagPts += TAG_WEIGHTS[tag] || 10; });
   const tagDiversity = loggedTags.size;
+
   const tripsCount = data.trips.length;
+  const tripPts = Math.min(tripsCount, 30) * 2;
 
-  const nmPts = Math.round(totalNm);
-  const areaPts = areasCovered * 8;
-  const tagPts = tagDiversity * 25;
-  const tripPts = tripsCount * 3;
   const total = nmPts + areaPts + tagPts + tripPts;
-
-  return {totalNm, areasCovered, tagDiversity, tripsCount, nmPts, areaPts, tagPts, tripPts, total};
+  return {totalNm, weightedNm, areasCovered, tagDiversity, tripsCount, nmPts, areaPts, tagPts, tripPts, total};
 }
 
 function computeExperienceLevel(){
@@ -876,24 +985,57 @@ function computeExperienceLevel(){
   return {name: LEVELS[idx].name, num: idx+1, next, pct, score: sc};
 }
 
+function tagSuggestionDetail(tag){
+  const details = {
+    'Παράκτια διάπλευση': 'Παράπλευση ακτής χωρίς ανοιχτή διάπλευση χωρίς καταφύγιο. Επίλεξέ το ως τύπο στην επόμενη κοντινή εξόρμηση.',
+    'Άρόδου': 'Διανυκτέρευση ή στάση με αγκυροβόλιο (όχι σε ντόκο/μαρίνα) — επίλεξε "Άρόδου" στους τύπους εξόρμησης.',
+    'Ψάρεμα/Κατάδυση': 'Εξόρμηση με σκοπό ή στάση για ψάρεμα, κατάδυση ή snorkeling.',
+    'Νυχτερινή': 'Πλεύση μετά τη δύση του ηλίου, με φώτα ναυσιπλοΐας — ελεγχόμενη, κοντά στη βάση σου πρώτη φορά.',
+    'Πολυήμερη': 'Εξόρμηση με ημερομηνία λήξης διαφορετική από την έναρξη (2+ ημέρες) — γέμισε το πεδίο "Ημ. λήξης".',
+    'Ανοιχτή διάπλευση': 'Διάπλευση χωρίς ενδιάμεσο καταφύγιο σε ανοιχτή θάλασσα (π.χ. Γαύδος) — ο πιο απαιτητικός τύπος, γι\' αυτό και η μεγαλύτερη βαθμολογία.',
+    'Ρυμούλκηση': 'Ρυμούλκηση άλλου σκάφους σε πραγματική ανάγκη — σπάνιο αλλά σημαντικό μάθημα χειρισμού.',
+    'Απρόβλεπτη επιδείνωση καιρού': 'Καταγραφή μιας φοράς που ο καιρός επιδεινώθηκε απρόβλεπτα και χρειάστηκε προσαρμογή. Πολύτιμο μάθημα — όχι κάτι να αναζητήσεις επίτηδες.',
+    'Βοήθεια σε άλλο σκάφος': 'Βοήθησες άλλο σκάφος σε δυσκολία.'
+  };
+  return details[tag] || '';
+}
+
 function computeSuggestions(){
   const s = [];
   const loggedTags = new Set();
   data.trips.forEach(t => (t.tags||[]).forEach(tag => loggedTags.add(tag)));
 
   if(data.trips.length === 0){
-    return ['Πρόσθεσε την πρώτη σου εξόρμηση στο ημερολόγιο για να ξεκινήσει η ανάλυση εδώ.'];
+    return [{title:'Πρόσθεσε την πρώτη σου εξόρμηση', detail:'Η ανάλυση και οι προτάσεις ενεργοποιούνται μόλις υπάρχει έστω μία καταγεγραμμένη εξόρμηση.', points:null}];
   }
   TRIP_TAGS.forEach(tag => {
-    if(!loggedTags.has(tag)) s.push(`Καμία καταγεγραμμένη εξόρμηση τύπου "${tag}" ακόμα.`);
+    if(!loggedTags.has(tag)){
+      s.push({ title: `Καμία εξόρμηση τύπου "${tag}" ακόμα`, detail: tagSuggestionDetail(tag), points: TAG_WEIGHTS[tag] });
+    }
   });
   STAGES.forEach(st => {
     const stat = stageStats(st);
-    if(stat.done === 0 && st.num <= 2) s.push(`Στάδιο ${st.num} (${st.title}) — δεν έχει ξεκινήσει ακόμα.`);
+    if(stat.done === 0 && st.num <= 3){
+      s.push({
+        title: `Στάδιο ${st.num} (${st.title}) δεν έχει ξεκινήσει`,
+        detail: `Κάθε νέα περιοχή εκεί αξίζει ${st.num*5} πόντους (${stat.total} περιοχές διαθέσιμες εκεί).`,
+        points: st.num*5
+      });
+    }
   });
-  if(data.trips.length < 5) s.push('Λίγες καταγεγραμμένες εξορμήσεις ακόμα — όσο πιο τακτικά καταγράφεις, τόσο πιο αξιόπιστη γίνεται η πρόβλεψη καυσίμου και η ανάλυση εδώ.');
-  s.push('Για δεξιότητες σε πιο απαιτητικές συνθήκες (κύμα, ελλιμενισμός, χειρισμός) — δες τις Φάσεις εκμάθησης στη σχετική συνομιλία του project, με τον δικό της ρυθμό και ασφάλεια.');
-  return s.slice(0,5);
+  if(data.trips.length < 10){
+    s.push({
+      title: 'Λίγες καταγεγραμμένες εξορμήσεις ακόμα',
+      detail: 'Κάθε εξόρμηση αξίζει 2 πόντους συνέπειας, έως 30 εξορμήσεις (60 πόντοι ανώτατο). Μετά, η ποιότητα/ποικιλία μετράει πιο πολύ από την ποσότητα.',
+      points: 2
+    });
+  }
+  s.push({
+    title: 'Δεξιότητες σε πιο απαιτητικές συνθήκες',
+    detail: 'Για κύμα, ελλιμενισμό, χειρισμό — δες τις Φάσεις εκμάθησης στη σχετική συνομιλία του project, με τον δικό της ρυθμό. Μην αναζητάς επίτηδες χειρότερο καιρό μόνο για πόντους — η ασφάλεια πάει πρώτα, πάντα.',
+    points: null
+  });
+  return s.slice(0,6);
 }
 
 function renderLevel(){
@@ -902,8 +1044,16 @@ function renderLevel(){
   const sugg = computeSuggestions();
   const sc = lvl.score;
 
-  let html = `<span class="level-name">${lvl.name}</span>`;
-  html += `<span class="level-num">Επίπεδο ${lvl.num} / ${LEVELS.length}</span>`;
+  let html = `<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+    <div>
+      <span class="level-name">${lvl.name}</span>
+      <span class="level-num">Επίπεδο ${lvl.num} / ${LEVELS.length}</span>
+    </div>
+    <div style="display:flex;gap:6px;flex-shrink:0;">
+      <button id="level-info-btn" title="Πώς υπολογίζεται" style="background:none;color:var(--parchment);border:1px solid rgba(243,236,221,0.3);border-radius:4px;font-size:13px;padding:6px 10px;cursor:pointer;">ℹ️</button>
+      <button id="level-chart-btn" title="Πρόοδος στον χρόνο" style="background:none;color:var(--parchment);border:1px solid rgba(243,236,221,0.3);border-radius:4px;font-size:13px;padding:6px 10px;cursor:pointer;">📈</button>
+    </div>
+  </div>`;
   html += `<span class="level-detail">${sc.totalNm % 1===0 ? sc.totalNm : sc.totalNm.toFixed(1)} ν.μ. · ${sc.tripsCount} εξορμήσεις · ${sc.areasCovered} περιοχές · ${sc.tagDiversity}/${TRIP_TAGS.length} τύποι εμπειρίας</span>`;
 
   if(lvl.next){
@@ -916,19 +1066,98 @@ function renderLevel(){
 
   html += `<div class="level-breakdown">
     <p class="level-breakdown-title">Πώς προέκυψε ο βαθμός</p>
-    <div class="level-breakdown-row"><span>Ναυτικά μίλια</span><span>${sc.nmPts} πόντοι</span></div>
-    <div class="level-breakdown-row"><span>Γεωγραφική κάλυψη (${sc.areasCovered} περιοχές × 8)</span><span>${sc.areaPts} πόντοι</span></div>
-    <div class="level-breakdown-row"><span>Ποικιλία εμπειρίας (${sc.tagDiversity} τύποι × 25)</span><span>${sc.tagPts} πόντοι</span></div>
-    <div class="level-breakdown-row"><span>Συνέπεια (${sc.tripsCount} εξορμήσεις × 3)</span><span>${sc.tripPts} πόντοι</span></div>
+    <div class="level-breakdown-row"><span>Μίλια (σταθμισμένα με δυσκολία)</span><span>${sc.nmPts} πόντοι</span></div>
+    <div class="level-breakdown-row"><span>Γεωγραφική κάλυψη (${sc.areasCovered} περιοχές)</span><span>${sc.areaPts} πόντοι</span></div>
+    <div class="level-breakdown-row"><span>Ποικιλία εμπειρίας (${sc.tagDiversity}/${TRIP_TAGS.length} τύποι)</span><span>${sc.tagPts} πόντοι</span></div>
+    <div class="level-breakdown-row"><span>Συνέπεια (${Math.min(sc.tripsCount,30)}/30 εξορμήσεις)</span><span>${sc.tripPts} πόντοι</span></div>
     <div class="level-breakdown-row"><span>Σύνολο</span><span>${sc.total} πόντοι</span></div>
   </div>`;
 
-  html += `<p class="suggestion-title">Προτάσεις για αναβάθμιση</p>`;
-  html += sugg.map(x => `<p class="suggestion-item">${x}</p>`).join('');
+  html += `<p class="suggestion-title">Προτάσεις για αναβάθμιση (πάτα για λεπτομέρειες)</p>`;
+  html += `<div>` + sugg.map((x,i) => `
+    <div>
+      <p class="suggestion-item" data-sugg-idx="${i}" style="cursor:pointer;">${x.title}${x.points ? ` <span style="color:var(--brass-light);font-weight:600;">(+${x.points} πόντοι)</span>` : ''}</p>
+      <p class="suggestion-detail" id="sugg-detail-${i}" style="display:none;">${x.detail}</p>
+    </div>
+  `).join('') + `</div>`;
+
   box.innerHTML = html;
+
+  document.querySelectorAll('[data-sugg-idx]').forEach(el => {
+    el.addEventListener('click', () => {
+      const d = document.getElementById('sugg-detail-' + el.dataset.suggIdx);
+      d.style.display = d.style.display === 'none' ? 'block' : 'none';
+    });
+  });
+  document.getElementById('level-info-btn').addEventListener('click', openScoringModal);
+  document.getElementById('level-chart-btn').addEventListener('click', openLevelChartModal);
 }
 
 /* ================= ΓΡΑΦΗΜΑ ================= */
+/* ================= MODAL ================= */
+function openModal(html){
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+function closeModal(){
+  document.getElementById('modal-overlay').style.display = 'none';
+}
+document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+document.getElementById('modal-overlay').addEventListener('click', (e) => {
+  if(e.target.id === 'modal-overlay') closeModal();
+});
+
+function openScoringModal(){
+  const html = `<h3>Πώς υπολογίζεται το Captain's Level</h3>
+  <p>Ο βαθμός είναι άθροισμα τεσσάρων συνιστωσών. Είναι σκόπιμα αυστηρός — μετράει τεκμηριωμένη εμπειρία, όχι απλή συμμετοχή.</p>
+  <p><strong>1. Μίλια σταθμισμένα με δυσκολία.</strong> Κάθε ν.μ. ξεκινάει από πολλαπλασιαστή 1.0× και προστίθενται (ανώτατο 3.0× ανά εξόρμηση):</p>
+  <table>
+    <tr><td>Bf 4-5 στην εξόρμηση</td><td>+0.3×</td></tr>
+    <tr><td>Bf 6+ (στο όριο ΩΡΙΩΝ)</td><td>+0.5×</td></tr>
+    <tr><td>Νυχτερινή</td><td>+0.4×</td></tr>
+    <tr><td>Ανοιχτή διάπλευση</td><td>+0.5×</td></tr>
+    <tr><td>Πολυήμερη</td><td>+0.3×</td></tr>
+    <tr><td>Απρόβλεπτη επιδείνωση καιρού</td><td>+0.4×</td></tr>
+    <tr><td>Ρυμούλκηση</td><td>+0.3×</td></tr>
+    <tr><td>Βοήθεια σε άλλο σκάφος</td><td>+0.3×</td></tr>
+    <tr><td>Διανυκτέρευση άρόδου</td><td>+0.2×</td></tr>
+    <tr><td>Καταγεγραμμένη πρόσδεση/αγκυροβόλιο</td><td>+0.1×</td></tr>
+  </table>
+  <p><strong>2. Γεωγραφική κάλυψη.</strong> Κάθε περιοχή έχει βασική αξία (αριθμός σταδίου × 5), αλλά προσαρμόζεται στα πραγματικά μίλια της εξόρμησης που πρώτη την κάλυψε: μια περιοχή που έφτασες με 60 ν.μ. από μακριά αξίζει έως 2× παραπάνω από την ίδια περιοχή αν την έφτασες με 8 ν.μ. από κοντά. Η αφετηρία σου μετράει.</p>
+  <p><strong>Η επανάληψη μετράει.</strong> Τα μίλια (σημείο 1) δεν έχουν κανένα όριο επανάληψης — 10 φορές η ίδια διαδρομή δίνουν 10× τα μίλια-πόντους μιας φοράς. Μόνο η γεωγραφία και η ποικιλία τύπων είναι "μία φορά ανά νέο πράγμα" — έχει νόημα, αφού δεν χρειάζεσαι διπλή αναγνώριση για να ξανακαλύψεις κάτι που ήδη έχεις καλύψει.</p>
+  <p><strong>3. Ποικιλία εμπειρίας.</strong> Για κάθε ΤΥΠΟ εξόρμησης που έχεις καταγράψει έστω μία φορά (όχι κάθε επανάληψη), κερδίζεις τους πόντους του τύπου — από 10 (Παράκτια διάπλευση) έως 45 (Απρόβλεπτη επιδείνωση καιρού), ανάλογα με πραγματική δυσκολία/σημασία.</p>
+  <p><strong>4. Συνέπεια.</strong> 2 πόντοι ανά καταγεγραμμένη εξόρμηση, με ανώτατο όριο 30 εξορμήσεις (60 πόντοι). Μετά, η ποσότητα από μόνη της δεν αυξάνει άλλο τον βαθμό — μετράει η ποιότητα/ποικιλία, όχι το σπαμάρισμα καταχωρήσεων.</p>
+  <p style="font-style:italic;">Τα βάρη είναι δικός μας σχεδιασμός, όχι επίσημο ναυτικό πρότυπο — αλλά σκόπιμα συντηρητικά, ώστε ο βαθμός να αντανακλά κάτι πραγματικό.</p>`;
+  openModal(html);
+}
+
+function openLevelChartModal(){
+  const sorted = [...data.trips].filter(t=>t.date).sort((a,b)=>a.date.localeCompare(b.date));
+  if(sorted.length === 0){
+    openModal('<h3>Πρόοδος στον χρόνο</h3><p>Θα εμφανιστεί μόλις καταγράψεις εξορμήσεις.</p>');
+    return;
+  }
+  const byMonth = {};
+  let cum = 0;
+  sorted.forEach(t => {
+    const key = t.date.slice(0,7);
+    cum += (parseFloat(t.nm)||0) * tripDifficultyMultiplier(t);
+    byMonth[key] = Math.round(cum);
+  });
+  const keys = Object.keys(byMonth);
+  const max = Math.max(...keys.map(k=>byMonth[k]), 1);
+  const monthNames = ['Ιαν','Φεβ','Μαρ','Απρ','Μάι','Ιουν','Ιουλ','Αυγ','Σεπ','Οκτ','Νοε','Δεκ'];
+  const bars = keys.map(k => {
+    const [y,m] = k.split('-');
+    const val = byMonth[k];
+    const h = Math.max(4, Math.round((val/max)*70));
+    return `<div class="chart-col"><span class="chart-val">${val}</span><div class="chart-bar-track"><div class="chart-bar-fill" style="height:${h}px"></div></div><span class="chart-lbl">${monthNames[parseInt(m,10)-1]} '${y.slice(2)}</span></div>`;
+  }).join('');
+  openModal(`<h3>Πρόοδος στον χρόνο</h3>
+    <p>Αθροιστικά σταθμισμένα μίλια (ο μεγαλύτερος παράγοντας του βαθμού) ανά μήνα. Δεν περιλαμβάνει γεωγραφική κάλυψη/ποικιλία — αυτά δεν έχουν ιστορική χρονοσήμανση, οπότε δεν μπορούμε να δείξουμε αξιόπιστα πώς εξελίχθηκαν στον χρόνο.</p>
+    <div class="chart-bars">${bars}</div>`);
+}
+
 function renderChart(){
   const el = document.getElementById('chart-section');
   if(data.trips.length === 0){
@@ -974,7 +1203,7 @@ function peopleMultiplier(people){
 }
 function estimateHours(nm){
   const withHours = data.trips.filter(t => t.nm > 0 && t.hours);
-  let speed = 20;
+  let speed = 24.5; // μέσος όρος πραγματικής ταχύτητας ταξιδέματος ΩΡΙΩΝ σε μέτριες συνθήκες (22-27kn), μέχρι να έχεις δικά σου δεδομένα
   if(withHours.length){
     const tNm = withHours.reduce((s,t)=>s+t.nm,0);
     const tH = withHours.reduce((s,t)=>s+t.hours,0);
@@ -1094,6 +1323,40 @@ function buildRouteLabel(t){
   return parts.join(' → ');
 }
 
+function computeTripContribution(trip){
+  const nmPts = Math.round((parseFloat(trip.nm)||0) * tripDifficultyMultiplier(trip));
+
+  let areaPts = 0;
+  const areaDetails = [];
+  (trip.areas||[]).forEach(id => {
+    const unlockers = data.trips.filter(t => (t.areas||[]).includes(id) && t.date).sort((a,b)=>a.date.localeCompare(b.date));
+    if(unlockers.length > 0 && unlockers[0].id === trip.id){
+      const stageNum = parseInt(id.replace('stage','').split('-')[0], 10);
+      const pts = areaBonusPoints(stageNum, parseFloat(trip.nm)||null);
+      areaPts += pts;
+      areaDetails.push({name: areaNameById(id), pts});
+    }
+  });
+
+  let tagPts = 0;
+  const tagDetails = [];
+  (trip.tags||[]).forEach(tag => {
+    const firstTrips = data.trips.filter(t => (t.tags||[]).includes(tag) && t.date).sort((a,b)=>a.date.localeCompare(b.date));
+    if(firstTrips.length > 0 && firstTrips[0].id === trip.id){
+      const pts = TAG_WEIGHTS[tag] || 10;
+      tagPts += pts;
+      tagDetails.push({name: tag, pts});
+    }
+  });
+
+  const allSorted = [...data.trips].filter(t=>t.date).sort((a,b)=>a.date.localeCompare(b.date));
+  const idx = allSorted.findIndex(t => t.id === trip.id);
+  const tripPts = (idx !== -1 && idx < 30) ? 2 : 0;
+
+  const total = nmPts + areaPts + tagPts + tripPts;
+  return {nmPts, areaPts, tagPts, tripPts, total, areaDetails, tagDetails};
+}
+
 function renderTrips(){
   const wrap = document.getElementById('trip-list-wrap');
   let list = [...data.trips];
@@ -1135,6 +1398,10 @@ function renderTrips(){
     const areasHtml = (t.areas||[]).map(id => `<span class="trip-tag">${escapeHtml(areaNameById(id))}</span>`).join('');
     const bookHtml = (t.bookMaterial||[]).map(b => `<p class="trip-book"><strong>${escapeHtml(b.category)}:</strong> ${escapeHtml(b.text)}</p>`).join('');
 
+    const contrib = computeTripContribution(t);
+    const contribAreaTxt = contrib.areaDetails.length ? contrib.areaDetails.map(a=>`${a.name} (+${a.pts})`).join(', ') : 'καμία νέα (ήδη καλυμμένες ή δεν επιλέχθηκαν)';
+    const contribTagTxt = contrib.tagDetails.length ? contrib.tagDetails.map(x=>`${x.name} (+${x.pts})`).join(', ') : 'κανένας νέος (ήδη καταγεγραμμένοι ή δεν επιλέχθηκαν)';
+
     return `
     <div class="trip-card" data-id="${t.id}">
       <div class="trip-main">
@@ -1145,6 +1412,13 @@ function renderTrips(){
         ${overLimit ? `<p class="trip-detail-row" style="color:var(--coral);font-weight:600;">⚠ Εκτός ορίου σχεδίασης σκάφους (Bf 6 / 2μ)</p>` : ''}
         ${(tagsHtml || areasHtml) ? `<div class="trip-tags">${tagsHtml}${areasHtml}</div>` : ''}
         ${bookHtml}
+        <p class="trip-contrib" data-contrib="${t.id}">🎯 +${contrib.total} πόντοι στο Captain's Level (πάτα για ανάλυση)</p>
+        <div class="trip-contrib-detail" id="contrib-${t.id}">
+          Μίλια (σταθμισμένα με δυσκολία): +${contrib.nmPts}<br>
+          Νέες περιοχές: ${contribAreaTxt} — σύνολο +${contrib.areaPts}<br>
+          Νέοι τύποι εξόρμησης: ${contribTagTxt} — σύνολο +${contrib.tagPts}<br>
+          Συνέπεια: +${contrib.tripPts}
+        </div>
       </div>
       <div class="trip-actions">
         <div class="trip-nm">${t.nm} ν.μ.</div>
@@ -1156,6 +1430,12 @@ function renderTrips(){
     </div>`;
   }).join('')}</div>`;
 
+  wrap.querySelectorAll('[data-contrib]').forEach(el => {
+    el.addEventListener('click', () => {
+      const d = document.getElementById('contrib-' + el.dataset.contrib);
+      d.style.display = d.style.display === 'none' ? 'block' : 'none';
+    });
+  });
   wrap.querySelectorAll('.del-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       const id = btn.dataset.del;
@@ -1326,6 +1606,7 @@ document.getElementById('f-add').addEventListener('click', async () => {
   addBtn.disabled = true;
   try{
     const wasEditing = !!editingId;
+    const scoreBefore = wasEditing ? null : computeExperienceScore().total;
     const areaIds = [...selectedChipIds];
     const tagIds = [...selectedTagIds];
     const rate = rateEl.value !== '' ? parseFloat(rateEl.value) : null;
@@ -1370,7 +1651,13 @@ document.getElementById('f-add').addEventListener('click', async () => {
     const searchEl = document.getElementById('f-search');
     if(searchEl) searchEl.value = '';
     renderAll();
-    showToast(wasEditing ? '✓ Ενημερώθηκε η εξόρμηση' : `✓ Προστέθηκε — ${trip.nm} ν.μ.`);
+    if(wasEditing){
+      showToast('✓ Ενημερώθηκε η εξόρμηση');
+    } else {
+      const scoreAfter = computeExperienceScore().total;
+      const delta = scoreAfter - scoreBefore;
+      showToast(`✓ Προστέθηκε — ${trip.nm} ν.μ. (+${delta} πόντοι στο Captain's Level)`);
+    }
   } finally {
     addBtn.disabled = false;
   }
@@ -1382,6 +1669,78 @@ document.getElementById('f-search').addEventListener('input', (e) => {
 });
 
 /* ================= ΜΕΛΛΟΝΤΙΚΕΣ ΕΞΟΡΜΗΣΕΙΣ (ΣΧΕΔΙΑ) ================= */
+function renderPtTagChips(){
+  const wrap = document.getElementById('pt-tag-chips');
+  wrap.innerHTML = TRIP_TAGS.map(tag => {
+    const sel = selectedPtTagIds.has(tag);
+    return `<span class="chip tag-chip ${sel?'selected':''}" data-pt-tag="${tag}">${tag}</span>`;
+  }).join('');
+  wrap.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const tag = chip.dataset.ptTag;
+      if(selectedPtTagIds.has(tag)) selectedPtTagIds.delete(tag); else selectedPtTagIds.add(tag);
+      renderPtTagChips();
+      updatePtPointsPreview();
+    });
+  });
+}
+
+function renderPtAreaChips(){
+  const wrap = document.getElementById('pt-area-chips');
+  wrap.innerHTML = STAGES.map(s => s.areas.map((area, i) => {
+    const id = s.id + '-' + i;
+    const sel = selectedPtAreaIds.has(id);
+    const already = !!data.areas[id];
+    return `<span class="chip ${sel?'selected':''}" data-pt-area="${id}" style="${already?'opacity:0.55;':''}">Σ${s.num} · ${area}${already?' ✓':''}</span>`;
+  }).join('')).join('');
+  wrap.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const id = chip.dataset.ptArea;
+      if(selectedPtAreaIds.has(id)) selectedPtAreaIds.delete(id); else selectedPtAreaIds.add(id);
+      renderPtAreaChips();
+      updatePtPointsPreview();
+    });
+  });
+}
+
+function estimatePlannedPoints(){
+  const nm = parseFloat(document.getElementById('pt-nm').value) || 0;
+  const bf = document.getElementById('pt-bf').value !== '' ? parseInt(document.getElementById('pt-bf').value,10) : null;
+  const tags = [...selectedPtTagIds];
+  const areas = [...selectedPtAreaIds];
+
+  const syntheticTrip = { bf, tags, overnightType: tags.includes('Άρόδου') ? 'boat_anchor' : null, mooringType: null };
+  const nmPts = Math.round(nm * tripDifficultyMultiplier(syntheticTrip));
+
+  const loggedTags = new Set();
+  data.trips.forEach(t => (t.tags||[]).forEach(tag => loggedTags.add(tag)));
+  let tagPts = 0;
+  tags.forEach(tag => { if(!loggedTags.has(tag)) tagPts += TAG_WEIGHTS[tag] || 10; });
+
+  let areaPts = 0;
+  areas.forEach(id => {
+    if(data.areas[id]) return; // ήδη καλυμμένη, δεν φέρνει νέους πόντους
+    const stageNum = parseInt(id.replace('stage','').split('-')[0], 10);
+    areaPts += areaBonusPoints(stageNum, nm);
+  });
+
+  const tripPts = data.trips.length < 30 ? 2 : 0;
+  const total = nmPts + tagPts + areaPts + tripPts;
+  return {nmPts, tagPts, areaPts, tripPts, total};
+}
+
+function updatePtPointsPreview(){
+  const nm = parseFloat(document.getElementById('pt-nm').value);
+  const el = document.getElementById('pt-points-preview');
+  if(!nm || nm <= 0){ el.style.display = 'none'; return; }
+  const est = estimatePlannedPoints();
+  el.style.display = 'block';
+  el.textContent = `🎯 Εκτίμηση: +${est.total} πόντοι αν την κάνεις όπως τη σχεδιάζεις (μίλια ${est.nmPts} · νέες περιοχές ${est.areaPts} · νέοι τύποι ${est.tagPts} · συνέπεια ${est.tripPts})`;
+}
+
+document.getElementById('pt-nm').addEventListener('input', updatePtPointsPreview);
+document.getElementById('pt-bf').addEventListener('change', updatePtPointsPreview);
+
 function renderPlannedTrips(){
   const wrap = document.getElementById('planned-trips-list');
   const list = [...(data.plannedTrips||[])].sort((a,b) => (a.targetDate||'9999').localeCompare(b.targetDate||'9999'));
@@ -1389,18 +1748,23 @@ function renderPlannedTrips(){
     wrap.innerHTML = `<div class="empty-note">Δεν έχεις αποθηκευμένα σχέδια ακόμα.</div>`;
     return;
   }
-  wrap.innerHTML = list.map(p => `
+  wrap.innerHTML = list.map(p => {
+    const tagsHtml = (p.expectedTags||[]).map(t => `<span class="trip-tag trip-type-tag">${escapeHtml(t)}</span>`).join('');
+    const areasHtml = (p.expectedAreas||[]).map(id => `<span class="trip-tag">${escapeHtml(areaNameById(id))}</span>`).join('');
+    return `
     <div class="planned-card" data-id="${p.id}">
       <p class="planned-name">${escapeHtml(p.name) || '(χωρίς όνομα)'}</p>
-      <p class="planned-meta">${p.targetDate ? p.targetDate : 'χωρίς ημερομηνία'}${p.location ? ' · ' + escapeHtml(p.location) : ''}</p>
+      <p class="planned-meta">${p.targetDate ? p.targetDate : 'χωρίς ημερομηνία'}${p.location ? ' · ' + escapeHtml(p.location) : ''}${p.nm ? ' · ' + p.nm + ' ν.μ. εκτ.' : ''}</p>
       ${p.notes ? `<p class="planned-notes">${escapeHtml(p.notes)}</p>` : ''}
+      ${(tagsHtml||areasHtml) ? `<div class="trip-tags">${tagsHtml}${areasHtml}</div>` : ''}
+      ${p.estimatedPoints ? `<p class="planned-notes" style="color:var(--teal);font-weight:600;">🎯 Εκτίμηση: +${p.estimatedPoints} πόντοι</p>` : ''}
       <div class="planned-actions">
         <button class="use-btn" data-use="${p.id}">Χρήση για νέα εξόρμηση</button>
         <button data-edit-plan="${p.id}">Επεξεργασία</button>
         <button class="del-plan-btn" data-del-plan="${p.id}">Διαγραφή</button>
       </div>
     </div>
-  `).join('');
+  `;}).join('');
 
   wrap.querySelectorAll('[data-use]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1408,6 +1772,7 @@ function renderPlannedTrips(){
       if(!p) return;
       document.getElementById('f-to').value = p.location || '';
       if(p.targetDate) document.getElementById('f-date').value = p.targetDate;
+      if(p.nm) document.getElementById('f-nm').value = p.nm;
       document.querySelector('.log-form').scrollIntoView({behavior:'smooth', block:'start'});
       showToast('Συμπληρώθηκε στη φόρμα εξόρμησης — συνέχισε από εκεί');
     });
@@ -1434,7 +1799,12 @@ function startEditPlanned(id){
   document.getElementById('pt-name').value = p.name || '';
   document.getElementById('pt-date').value = p.targetDate || '';
   document.getElementById('pt-location').value = p.location || '';
+  document.getElementById('pt-nm').value = p.nm || '';
+  document.getElementById('pt-bf').value = (p.bf !== null && p.bf !== undefined) ? p.bf : '';
   document.getElementById('pt-notes').value = p.notes || '';
+  selectedPtTagIds = new Set(p.expectedTags || []);
+  selectedPtAreaIds = new Set(p.expectedAreas || []);
+  renderPtTagChips(); renderPtAreaChips(); updatePtPointsPreview();
   document.getElementById('pt-cancel-row').style.display = 'block';
   document.getElementById('pt-add-btn').textContent = '✓ Ενημέρωση σχεδίου';
   document.getElementById('pt-name').scrollIntoView({behavior:'smooth', block:'center'});
@@ -1445,7 +1815,13 @@ function cancelEditPlanned(){
   document.getElementById('pt-name').value = '';
   document.getElementById('pt-date').value = '';
   document.getElementById('pt-location').value = '';
+  document.getElementById('pt-nm').value = '';
+  document.getElementById('pt-bf').value = '';
   document.getElementById('pt-notes').value = '';
+  selectedPtTagIds = new Set();
+  selectedPtAreaIds = new Set();
+  renderPtTagChips(); renderPtAreaChips();
+  document.getElementById('pt-points-preview').style.display = 'none';
   document.getElementById('pt-cancel-row').style.display = 'none';
   document.getElementById('pt-add-btn').textContent = '+ Αποθήκευση σχεδίου';
 }
@@ -1457,10 +1833,17 @@ document.getElementById('pt-add-btn').addEventListener('click', async () => {
   const targetDate = document.getElementById('pt-date').value;
   const location = document.getElementById('pt-location').value.trim();
   const notes = document.getElementById('pt-notes').value.trim();
+  const nm = parseFloat(document.getElementById('pt-nm').value) || null;
+  const bf = document.getElementById('pt-bf').value !== '' ? parseInt(document.getElementById('pt-bf').value,10) : null;
   if(!name){ showToast('Δώσε ένα όνομα στο σχέδιο', true); return; }
 
+  const est = nm ? estimatePlannedPoints() : null;
   data.plannedTrips = data.plannedTrips || [];
-  const planned = { id: editingPlannedId || ('pt' + Date.now()), name, targetDate, location, notes };
+  const planned = {
+    id: editingPlannedId || ('pt' + Date.now()), name, targetDate, location, notes, nm, bf,
+    expectedTags: [...selectedPtTagIds], expectedAreas: [...selectedPtAreaIds],
+    estimatedPoints: est ? est.total : null
+  };
   if(editingPlannedId){
     const idx = data.plannedTrips.findIndex(x => x.id === editingPlannedId);
     if(idx !== -1) data.plannedTrips[idx] = planned; else data.plannedTrips.push(planned);
@@ -1471,7 +1854,7 @@ document.getElementById('pt-add-btn').addEventListener('click', async () => {
   if(!ok) return;
   cancelEditPlanned();
   renderAll();
-  showToast('✓ Αποθηκεύτηκε το σχέδιο');
+  showToast('✓ Αποθηκεύτηκε το σχέδιο' + (est ? ` (εκτίμηση +${est.total} πόντοι)` : ''));
 });
 
 /* ================= ΣΤΑΤΙΣΤΙΚΑ / RENDER ALL ================= */
@@ -1491,6 +1874,8 @@ function renderAll(){
   renderTrips();
   renderChips();
   renderTagChips();
+  renderPtTagChips();
+  renderPtAreaChips();
   renderChart();
   renderLevel();
   renderPlannedTrips();
