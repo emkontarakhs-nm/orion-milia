@@ -665,8 +665,7 @@ let syncUnsub = null;
 async function pushToSync(){
   if(!firebaseReady || !syncEnabled || !syncUid || !db) return;
   try{
-    const payload = Object.assign({}, data, {updatedAt: Date.now()});
-    await db.collection('syncs').doc(syncUid).set(payload);
+    await db.collection('syncs').doc(syncUid).set(data);
   }catch(err){
     console.error('Sync push error:', err);
   }
@@ -1963,6 +1962,7 @@ function renderAll(){
 /* ================= ΑΠΟΘΗΚΕΥΣΗ / ΦΟΡΤΩΣΗ ================= */
 async function save(){
   try{
+    data.updatedAt = Date.now(); // ΚΡΙΣΙΜΟ: ενημέρωση ΠΡΙΝ την αποθήκευση, ώστε το τοπικό αντίγραφο να "ξέρει" ότι είναι το πιο πρόσφατο
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     if(syncEnabled) pushToSync();
     return true;
