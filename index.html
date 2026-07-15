@@ -700,22 +700,9 @@ function signInWithGoogle(){
     showToast('⚠ Ο συγχρονισμός χρειάζεται σύνδεση στο ίντερνετ — δοκίμασε ξανά όταν έχεις σήμα', true);
     return;
   }
-  showToast('Άνοιξε το παράθυρο σύνδεσης Google...');
-  let settled = false;
-  const timeoutId = setTimeout(() => {
-    if(!settled){
-      showToast('⚠ Η σύνδεση δεν απάντησε μέσα σε 10 δευτ. — πιθανό πρόβλημα browser/popup. Δες την κονσόλα (F12) στον υπολογιστή για το ακριβές σφάλμα.', true);
-    }
-  }, 10000);
-  fbAuth.signInWithPopup(googleProvider).then(result => {
-    settled = true;
-    clearTimeout(timeoutId);
-    showToast('✓ Συνδέθηκες με Google');
-  }).catch(err => {
-    settled = true;
-    clearTimeout(timeoutId);
-    console.error('Sign-in error:', err);
-    showToast('⚠ Αποτυχία σύνδεσης: ' + (err.code || err.message || 'άγνωστο σφάλμα'), true);
+  fbAuth.signInWithRedirect(googleProvider).catch(err => {
+    console.error('Sign-in start error:', err);
+    showToast('⚠ Αποτυχία έναρξης σύνδεσης: ' + (err.code || err.message || 'άγνωστο σφάλμα'), true);
   });
 }
 
@@ -750,6 +737,15 @@ function renderSync(){
 }
 
 if(firebaseReady && fbAuth){
+  fbAuth.getRedirectResult().then(result => {
+    if(result && result.user){
+      showToast('✓ Συνδέθηκες με Google');
+    }
+  }).catch(err => {
+    console.error('Redirect result error:', err);
+    showToast('⚠ Αποτυχία σύνδεσης: ' + (err.code || err.message || 'άγνωστο σφάλμα'), true);
+  });
+
   fbAuth.onAuthStateChanged(user => {
     if(user){
       syncEnabled = true;
