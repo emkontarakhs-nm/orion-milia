@@ -227,6 +227,9 @@
       <button class="cancel-edit-btn" id="cancel-edit-btn">Άκυρο (επεξεργασία)</button>
     </div>
     <div class="log-form-row">
+      <input type="text" id="f-name" placeholder="Ονομασία εξόρμησης (προαιρετικό, π.χ. Γαύδος καλοκαίρι)">
+    </div>
+    <div class="log-form-row">
       <div class="field-col">
         <span class="field-label">Ημερομηνία έναρξης</span>
         <input type="date" id="f-date">
@@ -1402,7 +1405,7 @@ function renderTrips(){
   let list = [...data.trips];
   if(searchTerm){
     list = list.filter(t => {
-      const hay = [t.from, t.to, t.route, t.notes, t.crew, t.overnightLocation,
+      const hay = [t.name, t.from, t.to, t.route, t.notes, t.crew, t.overnightLocation,
         (t.tags||[]).join(' '), (t.areas||[]).map(areaNameById).join(' '),
         (t.stops||[]).map(s=>s.name).join(' '),
         (t.bookMaterial||[]).map(b=>b.category+' '+b.text).join(' ')]
@@ -1419,6 +1422,7 @@ function renderTrips(){
 
   wrap.innerHTML = `<div class="trip-list">${sorted.map(t => {
     const routeLabel = (t.from || t.to || (t.stops&&t.stops.length)) ? buildRouteLabel(t) : (escapeHtml(t.route) || '(χωρίς περιγραφή)');
+    const nameLabel = t.name ? escapeHtml(t.name) : null;
     const overLimit = (t.bf !== null && t.bf !== undefined && t.bf > 6) || (t.wave !== null && t.wave !== undefined && t.wave > 2);
     const dateLabel = t.endDate && t.endDate !== t.date ? `${t.date} → ${t.endDate}` : (t.date || '—');
 
@@ -1448,7 +1452,8 @@ function renderTrips(){
     return `
     <div class="trip-card" data-id="${t.id}">
       <div class="trip-main">
-        <p class="trip-route">${routeLabel}</p>
+        <p class="trip-route">${nameLabel || routeLabel}</p>
+        ${nameLabel ? `<p class="trip-detail-row" style="margin-top:-2px;">${routeLabel}</p>` : ''}
         <p class="trip-meta">${dateLabel}</p>
         ${t.notes ? `<p class="trip-notes">${escapeHtml(t.notes)}</p>` : ''}
         ${detailParts.length ? `<p class="trip-detail-row">${detailParts.join(' · ')}</p>` : ''}
@@ -1555,6 +1560,7 @@ function startEdit(id){
   const t = data.trips.find(tr => tr.id === id);
   if(!t) return;
   editingId = id;
+  document.getElementById('f-name').value = t.name || '';
   document.getElementById('f-date').value = t.date || '';
   document.getElementById('f-end-date').value = t.endDate || '';
   document.getElementById('f-nm').value = t.nm != null ? t.nm : '';
@@ -1589,6 +1595,7 @@ function startEdit(id){
 
 function cancelEdit(){
   editingId = null;
+  document.getElementById('f-name').value = '';
   document.getElementById('f-date').value = new Date().toISOString().slice(0,10);
   document.getElementById('f-end-date').value = '';
   document.getElementById('f-nm').value = '';
@@ -1626,6 +1633,7 @@ document.getElementById('f-add').addEventListener('click', async () => {
   const addBtn = document.getElementById('f-add');
   if(addBtn.disabled) return;
 
+  const nameEl = document.getElementById('f-name');
   const dateEl = document.getElementById('f-date');
   const endDateEl = document.getElementById('f-end-date');
   const nmEl = document.getElementById('f-nm');
@@ -1664,6 +1672,7 @@ document.getElementById('f-add').addEventListener('click', async () => {
     const rate = rateEl.value !== '' ? parseFloat(rateEl.value) : null;
     const trip = {
       id: editingId || ('t' + Date.now()),
+      name: nameEl.value.trim(),
       date: dateEl.value || new Date().toISOString().slice(0,10),
       endDate: endDateEl.value || null,
       nm: nm,
