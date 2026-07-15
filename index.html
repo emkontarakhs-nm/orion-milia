@@ -700,11 +700,21 @@ function signInWithGoogle(){
     showToast('⚠ Ο συγχρονισμός χρειάζεται σύνδεση στο ίντερνετ — δοκίμασε ξανά όταν έχεις σήμα', true);
     return;
   }
+  showToast('Άνοιξε το παράθυρο σύνδεσης Google...');
+  let settled = false;
+  const timeoutId = setTimeout(() => {
+    if(!settled){
+      showToast('⚠ Η σύνδεση δεν απάντησε μέσα σε 10 δευτ. — πιθανό πρόβλημα browser/popup. Δες την κονσόλα (F12) στον υπολογιστή για το ακριβές σφάλμα.', true);
+    }
+  }, 10000);
   fbAuth.signInWithPopup(googleProvider).then(result => {
+    settled = true;
+    clearTimeout(timeoutId);
     showToast('✓ Συνδέθηκες με Google');
   }).catch(err => {
+    settled = true;
+    clearTimeout(timeoutId);
     console.error('Sign-in error:', err);
-    // Δείχνουμε το πραγματικό κωδικό σφάλματος — έτσι ξέρουμε ακριβώς τι πήγε στραβά αν ξανασυμβεί
     showToast('⚠ Αποτυχία σύνδεσης: ' + (err.code || err.message || 'άγνωστο σφάλμα'), true);
   });
 }
