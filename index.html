@@ -700,9 +700,12 @@ function signInWithGoogle(){
     showToast('⚠ Ο συγχρονισμός χρειάζεται σύνδεση στο ίντερνετ — δοκίμασε ξανά όταν έχεις σήμα', true);
     return;
   }
-  fbAuth.signInWithRedirect(googleProvider).catch(err => {
-    console.error('Sign-in start error:', err);
-    showToast('⚠ Αποτυχία έναρξης σύνδεσης Google', true);
+  fbAuth.signInWithPopup(googleProvider).then(result => {
+    showToast('✓ Συνδέθηκες με Google');
+  }).catch(err => {
+    console.error('Sign-in error:', err);
+    // Δείχνουμε το πραγματικό κωδικό σφάλματος — έτσι ξέρουμε ακριβώς τι πήγε στραβά αν ξανασυμβεί
+    showToast('⚠ Αποτυχία σύνδεσης: ' + (err.code || err.message || 'άγνωστο σφάλμα'), true);
   });
 }
 
