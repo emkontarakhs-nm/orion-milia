@@ -635,8 +635,15 @@
     </div>
     <div id="trip-tags-readonly" style="display:none;font-size:var(--fs-sm);color:var(--text-muted);background:var(--parchment);padding:8px 10px;border-radius:var(--r-sm);"></div>
     <p class="form-label">Ποιες περιοχές κάλυψες; (προαιρετικό — τσεκάρει αυτόματα τα στάδια)</p>
-    <div class="chip-list" id="area-chips"></div>
+    <div id="trip-areas-editable">
+      <div class="chip-list" id="area-chips"></div>
+    </div>
+    <div id="trip-areas-readonly" style="display:none;font-size:var(--fs-sm);color:var(--text-muted);background:var(--parchment);padding:8px 10px;border-radius:var(--r-sm);margin-bottom:8px;"></div>
+
     <textarea id="f-notes" rows="2" placeholder="Τι πήγε καλά, τι θα άλλαζες, μάθημα... (προαιρετικό)"></textarea>
+    <p class="auto-hint" id="f-notes-hint" style="display:none;font-size:var(--fs-xs);color:var(--text-muted);margin:2px 0 8px;"></p>
+
+    <div id="trip-conditions-summary" style="display:none;font-size:var(--fs-sm);color:var(--ink);background:var(--teal-light);padding:10px 12px;border-radius:var(--r-sm);margin-top:8px;line-height:1.6;"></div>
 
     <details class="more-details" id="daily-stays-details">
       <summary>+ Διανυκτέρευση &amp; αγκυροβόλιο (ανά ημέρα)</summary>
@@ -1126,10 +1133,14 @@ const LOAD_LEVELS = [
 const OVERNIGHT_LABELS = {
   none: 'Καμία (ημερήσια)',
   rooms_dock: 'Κατάλυμα + σκάφος δεμένο σε ντόκο/προβλήτα',
+  rooms_anchor: 'Κατάλυμα + σκάφος δεμένο άρόδου',
   boat_dock: 'Διανυκτέρευση στο σκάφος + δέσιμο σε ντόκο/μαρίνα',
   boat_anchor: 'Διανυκτέρευση στο σκάφος + δέσιμο άρόδου',
   camping_anchor: 'Camping σε παραλία + σκάφος άρόδου'
 };
+const COMPASS_DIRECTIONS = ['Β','ΒΑ','Α','ΝΑ','Ν','ΝΔ','Δ','ΒΔ'];
+const VISIBILITY_LEVELS = ['Καλή','Μέτρια','Κακή','Ομίχλη'];
+const CURRENT_INTENSITIES = ['Ασθενές','Μέτριο','Ισχυρό'];
 const MOORING_LABELS = {
   bow:'Πλωριοδέτηση', stern:'Πρυμνοδέτηση', side:'Πλαγιοδέτηση',
   anchor1:'Άρόδου με 1 πλωριά άγκυρα', anchorV:'Άρόδου με 2 πλωριές άγκυρες (V)',
@@ -1993,6 +2004,13 @@ function stopAreaChipsHtml(stop){
   }).join('');
 }
 
+function directionChipsHtml(currentValue, dataAttr){
+  return COMPASS_DIRECTIONS.map(dir => {
+    const sel = currentValue === dir;
+    return `<span class="stop-tag-chip${sel?' selected':''}" data-${dataAttr}="${dir}" tabindex="0" role="radio" aria-checked="${sel}">${dir}</span>`;
+  }).join('');
+}
+
 function renderStopDetailCard(stop, idx, prevPointName){
   const sug = suggestRate({bf: stop.bf, load: stop.load||'light', people: stop.people||BASE_PEOPLE, wave: stop.wave});
   const autoHours = computeStopEngineHours(stop);
@@ -2002,6 +2020,10 @@ function renderStopDetailCard(stop, idx, prevPointName){
     return `<span class="stop-tag-chip${sel?' selected':''}" data-stop-tag="${escapeHtml(tag)}" tabindex="0" role="checkbox" aria-checked="${sel}">${escapeHtml(tag)}</span>`;
   }).join('');
   const routeLabel = `${escapeHtml(prevPointName || 'Αφετηρία')} → ${escapeHtml(stop.name)}`;
+  const visibilityChipsHtml = VISIBILITY_LEVELS.map(v => {
+    const sel = stop.visibility === v;
+    return `<span class="stop-tag-chip${sel?' selected':''}" data-stop-visibility="${v}" tabindex="0" role="radio" aria-checked="${sel}">${v}</span>`;
+  }).join('');
 
   return `<details class="stop-detail-card" data-stop-detail="${stop.id}">
     <summary>
@@ -2009,6 +2031,8 @@ function renderStopDetailCard(stop, idx, prevPointName){
       <span class="stop-detail-badge">${stop.nm} ν.μ.${overnightActive?' · 🌙':''}${(stop.tags&&stop.tags.length)?' · '+stop.tags.length+' τύπ.':''}</span>
     </summary>
     <div class="stop-detail-body">
+      ${idx > 0 ? `<button type="button" class="stop-copy-prev-btn ripple-btn" data-stop="${stop.id}" style="font-size:var(--fs-xs);background:none;border:1px dashed var(--line);color:var(--text-muted);padding:5px 10px;border-radius:var(--r-sm);cursor:pointer;margin-bottom:10px;">↺ Ίδιες συνθήκες με προηγούμενη στάση</button>` : ''}
+
       <p class="form-label">Τύπος στάσης</p>
       <div style="margin-bottom:10px;">${tagsHtml}</div>
 
@@ -2018,21 +2042,36 @@ function renderStopDetailCard(stop, idx, prevPointName){
       <div class="detail-grid">
         <div class="field-col"><span class="field-label">Beaufort</span>
           <input type="number" class="stop-bf" data-stop="${stop.id}" min="0" max="12" value="${stop.bf ?? ''}" placeholder="π.χ. 3"></div>
+        <div class="field-col"><span class="field-label">Ριπές (Beaufort)</span>
+          <input type="number" class="stop-gusts" data-stop="${stop.id}" min="0" max="12" value="${stop.gusts ?? ''}" placeholder="π.χ. 5"></div>
         <div class="field-col"><span class="field-label">Κύμα (μ)</span>
           <input type="number" class="stop-wave" data-stop="${stop.id}" min="0" step="0.1" value="${stop.wave ?? ''}" placeholder="π.χ. 0.5"></div>
-        <div class="field-col"><span class="field-label">Άνεμος από</span>
-          <input type="text" class="stop-winddir" data-stop="${stop.id}" value="${escapeHtml(stop.windDir||'')}" placeholder="π.χ. Β, ΒΔ"></div>
-        <div class="field-col"><span class="field-label">Ρεύμα (κατεύθυνση + ένταση)</span>
-          <input type="text" class="stop-current" data-stop="${stop.id}" value="${escapeHtml(stop.current||'')}" placeholder="π.χ. προς Δ, 1kn"></div>
-        <div class="field-col"><span class="field-label">Ορατότητα</span>
-          <input type="text" class="stop-visibility" data-stop="${stop.id}" value="${escapeHtml(stop.visibility||'')}" placeholder="π.χ. καλή"></div>
+        <div class="field-col"><span class="field-label">Πίεση (hPa)</span>
+          <input type="number" class="stop-pressure" data-stop="${stop.id}" min="900" max="1100" step="1" value="${stop.pressure ?? ''}" placeholder="π.χ. 1015"></div>
       </div>
+
+      <p class="form-label" style="margin-top:10px;">Άνεμος από</p>
+      <div style="margin-bottom:10px;">${directionChipsHtml(stop.windDir, 'stop-wind-dir')}</div>
+
+      <p class="form-label">Κύμα από</p>
+      <div style="margin-bottom:10px;">${directionChipsHtml(stop.waveDir, 'stop-wave-dir')}</div>
+
+      <p class="form-label">Ρεύμα — κατεύθυνση</p>
+      <div style="margin-bottom:6px;">${directionChipsHtml(stop.currentDir, 'stop-current-dir')}</div>
+      <div class="field-col" style="max-width:200px;margin-bottom:10px;"><span class="field-label">Ρεύμα — ένταση</span>
+        <select class="stop-current-intensity" data-stop="${stop.id}">
+          <option value="">—</option>
+          ${CURRENT_INTENSITIES.map(i => `<option value="${i}" ${stop.currentIntensity===i?'selected':''}>${i}</option>`).join('')}
+        </select></div>
+
+      <p class="form-label">Ορατότητα</p>
+      <div style="margin-bottom:10px;">${visibilityChipsHtml}</div>
 
       <div class="detail-grid" style="margin-top:8px;">
         <div class="field-col"><span class="field-label">Μέση ταχύτητα (kn)</span>
           <input type="number" class="stop-speed" data-stop="${stop.id}" min="0" step="0.5" value="${stop.avgSpeed ?? ''}" placeholder="π.χ. 22"></div>
         <div class="field-col"><span class="field-label">Ώρες μηχανής${stop.engineHoursManual?'':' (αυτόματο)'}</span>
-          <input type="number" class="stop-hours" data-stop="${stop.id}" min="0" step="0.1" value="${(stop.engineHoursManual ? stop.engineHours : autoHours) ?? ''}" placeholder="από ταχύτητα"></div>
+          <input type="number" class="stop-hours" data-stop="${stop.id}" min="0" step="0.01" value="${(stop.engineHoursManual ? stop.engineHours : autoHours) ?? ''}" placeholder="από ταχύτητα"></div>
       </div>
 
       <div class="detail-grid" style="margin-top:8px;">
@@ -2052,6 +2091,9 @@ function renderStopDetailCard(stop, idx, prevPointName){
           <input type="number" class="stop-rate" data-stop="${stop.id}" min="0" step="0.01" value="${(stop.rateManual ? stop.rate : (stop.rate ?? '')) ?? ''}" placeholder="${sug ? sug.rate : 'π.χ. 1.0'}"></div>
       </div>
       ${sug && !stop.rateManual ? `<p class="stop-auto-hint">Πρόταση: ${sug.rate} L/ν.μ. — ${sug.source}</p>` : ''}
+
+      <p class="form-label" style="margin-top:10px;">Σχόλιο για αυτή τη στάση/πορεία</p>
+      <textarea class="stop-comment" data-stop="${stop.id}" rows="2" placeholder="Τι πήγε καλά, τι θα άλλαζες, μάθημα... (προαιρετικό)" style="margin-bottom:10px;">${escapeHtml(stop.comment||'')}</textarea>
 
       <p class="form-label" style="margin-top:10px;">
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
@@ -2134,6 +2176,23 @@ function renderStopsList(){
 
 function findStop(id){ return currentStops.find(s => s.id === id); }
 
+// Η πιο συχνή τιμή ανάμεσα σε μια λίστα (π.χ. ποια κατεύθυνση ανέμου εμφανίστηκε τις περισσότερες φορές)
+function dominantValue(values){
+  if(!values || values.length === 0) return null;
+  const counts = {};
+  values.forEach(v => { counts[v] = (counts[v]||0) + 1; });
+  let best = null, bestCount = 0;
+  Object.entries(counts).forEach(([v,c]) => { if(c > bestCount){ best = v; bestCount = c; } });
+  return best;
+}
+
+// Ενώνει τα σχόλια των στάσεων σε ένα ενιαίο, ευανάγνωστο κείμενο — νέα γραμμή μετά από κάθε τελεία
+function formatConcatenatedComments(comments){
+  const joined = comments.map(c => (c||'').trim()).filter(Boolean).join(' ');
+  if(!joined) return '';
+  return joined.replace(/\.\s*/g, '.\n').trim();
+}
+
 function updateFormLayoutForStops(){
   const hasStops = currentStops.length > 0;
 
@@ -2155,6 +2214,24 @@ function updateFormLayoutForStops(){
     }
   }
 
+  // 1β. Περιοχές — ίδια λογική με τον τύπο εξόρμησης: είτε εδώ (χωρίς στάσεις) είτε ανά στάση (με στάσεις)
+  const areasEditableDiv = document.getElementById('trip-areas-editable');
+  const areasReadonlyDiv = document.getElementById('trip-areas-readonly');
+  if(areasEditableDiv && areasReadonlyDiv){
+    if(hasStops){
+      areasEditableDiv.style.display = 'none';
+      const allStopAreas = new Set();
+      currentStops.forEach(s => (s.areaIds||[]).forEach(id => allStopAreas.add(id)));
+      areasReadonlyDiv.style.display = 'block';
+      areasReadonlyDiv.textContent = allStopAreas.size
+        ? `Περιοχές (από τις στάσεις): ${[...allStopAreas].map(getAreaDisplayName).join(', ')}`
+        : 'Επίλεξε περιοχές μέσα σε κάθε κάρτα στάσης παραπάνω.';
+    } else {
+      areasEditableDiv.style.display = '';
+      areasReadonlyDiv.style.display = 'none';
+    }
+  }
+
   // 2. Διανυκτέρευση "ανά ημέρα" — κρύβεται όταν υπάρχουν στάσεις, γιατί η διανυκτέρευση καταγράφεται πλέον ανά στάση (με δική της ημερομηνία)
   const dailyStaysDetails = document.getElementById('daily-stays-details');
   if(dailyStaysDetails) dailyStaysDetails.style.display = hasStops ? 'none' : '';
@@ -2164,11 +2241,15 @@ function updateFormLayoutForStops(){
   const hoursHint = document.getElementById('f-hours-hint');
   const rateHint = document.getElementById('f-rate-hint');
   const speedCol = document.getElementById('f-avgspeed-col');
+  const notesHint = document.getElementById('f-notes-hint');
+  const conditionsSummary = document.getElementById('trip-conditions-summary');
   if(!bfHint) return; // ασφάλεια αν καλεστεί πριν φορτωθεί πλήρως η φόρμα
 
   if(!hasStops){
     [bfHint, waveHint, hoursHint, rateHint].forEach(el => el.style.display = 'none');
     speedCol.style.display = 'none';
+    if(notesHint) notesHint.style.display = 'none';
+    if(conditionsSummary) conditionsSummary.style.display = 'none';
     return;
   }
 
@@ -2222,6 +2303,55 @@ function updateFormLayoutForStops(){
     speedDisplay.textContent = (Math.round((totalNm/totalHoursFromStops)*10)/10) + ' kn';
     speedCol.style.display = 'block';
   } else speedCol.style.display = 'none';
+
+  // 7. Σχόλιο — ενοποίηση των σχολίων κάθε στάσης σε ένα ευανάγνωστο κείμενο (νέα γραμμή μετά από κάθε τελεία)
+  const notesEl = document.getElementById('f-notes');
+  const stopComments = currentStops.map(s => s.comment).filter(c => c && c.trim());
+  if(stopComments.length){
+    notesEl.value = formatConcatenatedComments(stopComments);
+    notesHint.textContent = `Ενοποιημένο από ${stopComments.length} στάσ${stopComments.length===1?'η':'εις'} — επεξεργάσου το σχόλιο μέσα στην κάθε στάση, όχι εδώ`;
+    notesHint.style.display = 'block';
+  } else {
+    notesHint.style.display = 'none';
+  }
+
+  // 8. Συνολική ανάλυση συνθηκών — ριπές, κατευθύνσεις ανέμου/κύματος/ρεύματος, πίεση, ορατότητα,
+  // όλα υπολογισμένα αυτόματα από τις στάσεις (μέσος όρος ή κυρίαρχη τιμή, ανάλογα τη φύση του στοιχείου)
+  const stopsWithGusts = currentStops.filter(s => s.gusts !== null && s.gusts !== undefined);
+  const stopsWithPressure = currentStops.filter(s => s.pressure !== null && s.pressure !== undefined);
+  const windDirs = currentStops.map(s => s.windDir).filter(Boolean);
+  const waveDirs = currentStops.map(s => s.waveDir).filter(Boolean);
+  const currentDirs = currentStops.map(s => s.currentDir).filter(Boolean);
+  const currentIntensities = currentStops.map(s => s.currentIntensity).filter(Boolean);
+  const visibilities = currentStops.map(s => s.visibility).filter(Boolean);
+
+  const summaryLines = [];
+  if(stopsWithGusts.length){
+    const avgGusts = Math.round(stopsWithGusts.reduce((s,x)=>s+x.gusts,0) / stopsWithGusts.length);
+    summaryLines.push(`💨 Ριπές: μέσος όρος Bf${avgGusts}`);
+  }
+  const domWindDir = dominantValue(windDirs);
+  if(domWindDir) summaryLines.push(`🧭 Άνεμος κυρίως από: ${domWindDir}`);
+  const domWaveDir = dominantValue(waveDirs);
+  if(domWaveDir) summaryLines.push(`🌊 Κύμα κυρίως από: ${domWaveDir}`);
+  const domCurrentDir = dominantValue(currentDirs);
+  const domCurrentInt = dominantValue(currentIntensities);
+  if(domCurrentDir || domCurrentInt) summaryLines.push(`↪️ Ρεύμα: ${[domCurrentDir, domCurrentInt].filter(Boolean).join(' · ')}`);
+  if(stopsWithPressure.length){
+    const avgPressure = Math.round(stopsWithPressure.reduce((s,x)=>s+x.pressure,0) / stopsWithPressure.length);
+    summaryLines.push(`🌡️ Πίεση: μέσος όρος ${avgPressure} hPa`);
+  }
+  const domVisibility = dominantValue(visibilities);
+  if(domVisibility) summaryLines.push(`👁️ Ορατότητα κυρίως: ${domVisibility}`);
+
+  if(conditionsSummary){
+    if(summaryLines.length){
+      conditionsSummary.innerHTML = '<strong>Συνολική εικόνα συνθηκών (από τις στάσεις):</strong><br>' + summaryLines.map(escapeHtml).join('<br>');
+      conditionsSummary.style.display = 'block';
+    } else {
+      conditionsSummary.style.display = 'none';
+    }
+  }
 }
 
 function wireStopDetailListeners(container){
@@ -2251,27 +2381,98 @@ function wireStopDetailListeners(container){
       if(idx === -1) stop.areaIds.push(id); else stop.areaIds.splice(idx,1);
       chip.classList.toggle('selected');
       chip.setAttribute('aria-checked', stop.areaIds.includes(id));
+      updateFormLayoutForStops();
     };
     chip.addEventListener('click', toggle);
     chip.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } });
   });
 
   const simpleFieldMap = [
-    ['.stop-bf','bf',parseFloat], ['.stop-wave','wave',parseFloat],
-    ['.stop-winddir','windDir',v=>v], ['.stop-current','current',v=>v], ['.stop-visibility','visibility',v=>v],
+    ['.stop-bf','bf',parseFloat], ['.stop-gusts','gusts',parseFloat], ['.stop-wave','wave',parseFloat],
+    ['.stop-pressure','pressure',parseFloat],
+    ['.stop-current-intensity','currentIntensity',v=>v],
     ['.stop-load','load',v=>v], ['.stop-people','people',parseInt],
-    ['.stop-crew','crew',v=>v]
+    ['.stop-crew','crew',v=>v], ['.stop-comment','comment',v=>v]
   ];
   simpleFieldMap.forEach(([sel, field, cast]) => {
     container.querySelectorAll(sel).forEach(input => {
-      const evt = input.tagName === 'SELECT' ? 'change' : 'input';
+      const evt = (input.tagName === 'SELECT') ? 'change' : 'input';
       input.addEventListener(evt, () => {
         const stop = findStop(input.dataset.stop);
         if(!stop) return;
         const v = input.value;
         stop[field] = v === '' ? null : cast(v);
-        if(field === 'bf' || field === 'wave') updateFormLayoutForStops();
+        if(['bf','gusts','wave','pressure','comment','currentIntensity'].includes(field)) updateFormLayoutForStops();
       });
+    });
+  });
+
+  // Κατεύθυνση ανέμου/κύματος/ρεύματος — chips με μοναδική επιλογή (radio-like), όχι πολλαπλή σαν τα tags
+  const directionGroups = [
+    ['[data-stop-wind-dir]', 'stopWindDir', 'windDir'],
+    ['[data-stop-wave-dir]', 'stopWaveDir', 'waveDir'],
+    ['[data-stop-current-dir]', 'stopCurrentDir', 'currentDir']
+  ];
+  directionGroups.forEach(([sel, dataKey, field]) => {
+    container.querySelectorAll(sel).forEach(chip => {
+      chip.addEventListener('click', () => {
+        const card = chip.closest('[data-stop-detail]');
+        const stop = findStop(card.dataset.stopDetail);
+        if(!stop) return;
+        const val = chip.dataset[dataKey];
+        const newVal = stop[field] === val ? null : val; // ξανά κλικ στο ίδιο = αποεπιλογή
+        stop[field] = newVal;
+        card.querySelectorAll(sel).forEach(c => {
+          const isSel = c.dataset[dataKey] === newVal;
+          c.classList.toggle('selected', isSel);
+          c.setAttribute('aria-checked', isSel);
+        });
+        updateFormLayoutForStops();
+      });
+      chip.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); chip.click(); } });
+    });
+  });
+
+  // Ορατότητα — chips με μοναδική επιλογή
+  container.querySelectorAll('[data-stop-visibility]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const card = chip.closest('[data-stop-detail]');
+      const stop = findStop(card.dataset.stopDetail);
+      if(!stop) return;
+      const val = chip.dataset.stopVisibility;
+      const newVal = stop.visibility === val ? null : val;
+      stop.visibility = newVal;
+      card.querySelectorAll('[data-stop-visibility]').forEach(c => {
+        const isSel = c.dataset.stopVisibility === newVal;
+        c.classList.toggle('selected', isSel);
+        c.setAttribute('aria-checked', isSel);
+      });
+      updateFormLayoutForStops();
+    });
+    chip.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); chip.click(); } });
+  });
+
+  // "Ίδιες συνθήκες με προηγούμενη στάση" — αντιγράφει τις συνθήκες (όχι τύπο/περιοχές/σχόλιο/διανυκτέρευση,
+  // αυτά παραμένουν συγκεκριμένα ανά στάση) από την ΑΜΕΣΩΣ προηγούμενη στάση στη λίστα.
+  container.querySelectorAll('.stop-copy-prev-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const stop = findStop(btn.dataset.stop);
+      if(!stop) return;
+      const idx = currentStops.findIndex(s => s.id === stop.id);
+      const prevStop = idx > 0 ? currentStops[idx - 1] : null;
+      if(!prevStop) return;
+      ['bf','gusts','windDir','wave','waveDir','currentDir','currentIntensity','pressure','visibility','avgSpeed','load','people'].forEach(f => {
+        stop[f] = prevStop[f] ?? null;
+      });
+      if(!stop.engineHoursManual){
+        stop.engineHours = computeStopEngineHours(stop);
+      }
+      renderStopsList();
+      const card = document.querySelector(`[data-stop-detail="${stop.id}"]`);
+      if(card) card.open = true;
+      updateFormLayoutForStops();
+      haptic(15);
+      showToast('✓ Αντιγράφηκαν οι συνθήκες από την προηγούμενη στάση');
     });
   });
 
@@ -4641,7 +4842,12 @@ document.getElementById('f-add').addEventListener('click', async () => {
     // Καταγραφή ρεκόρ ΠΡΙΝ την προσθήκη — για να ξέρουμε αν η νέα εξόρμηση μόλις έσπασε κάποιο
     const prevMaxNm = wasEditing ? null : data.trips.reduce((max,t) => Math.max(max, parseFloat(t.nm)||0), 0);
     const prevMaxBf = wasEditing ? null : data.trips.reduce((max,t) => t.bf != null ? Math.max(max, t.bf) : max, -1);
-    const areaIds = [...selectedChipIds];
+    // Οι περιοχές μπορεί να έχουν επιλεγεί είτε σε επίπεδο εξόρμησης (απλές, χωρίς στάσεις) είτε ΜΕΣΑ σε
+    // κάθε στάση/πορεία (νέο σύστημα) — ενώνουμε και τα δύο, ώστε η πρόοδος σταδίων και τα γεωγραφικά
+    // ορόσημα να ενημερώνονται σωστά ό,τι μονοπάτι κι αν χρησιμοποίησες.
+    const areaIdsFromStops = new Set();
+    currentStops.forEach(s => (s.areaIds||[]).forEach(id => areaIdsFromStops.add(id)));
+    const areaIds = [...new Set([...selectedChipIds, ...areaIdsFromStops])];
     const tagIds = [...selectedTagIds];
     const rate = rateEl.value !== '' ? parseFloat(rateEl.value) : null;
     const trip = {
@@ -6441,7 +6647,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.21-19';
+const APP_VERSION = '2026.07.21-20';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
