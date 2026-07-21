@@ -7,7 +7,24 @@ on:
       - main
 
 jobs:
+  # ΠΡΩΤΟ: έλεγχος υγείας. Αν αποτύχει, το deploy ΔΕΝ τρέχει καθόλου — τίποτα σπασμένο δεν φτάνει ζωντανό.
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Λήψη των αρχείων του repository
+        uses: actions/checkout@v4
+
+      - name: Ρύθμιση Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Έλεγχος υγείας πριν το deploy
+        run: node .github/scripts/validate.js
+
+  # ΔΕΥΤΕΡΟ: μόνο αν το validate πέτυχε ("needs: validate")
   deploy:
+    needs: validate
     runs-on: ubuntu-latest
     steps:
       - name: Λήψη των αρχείων του repository
