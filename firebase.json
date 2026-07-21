@@ -6,6 +6,14 @@
       "**/.*",
       "**/node_modules/**",
       "deploy.bat"
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(html|json)",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache, max-age=0, must-revalidate" }
+        ]
+      }
     ]
   }
 }

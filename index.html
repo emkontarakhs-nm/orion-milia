@@ -6297,7 +6297,12 @@ async function applyUpdate(){
   }catch(err){
     console.error('Update apply error:', err);
   }
-  location.reload();
+  // ΚΡΙΣΙΜΟ: το location.reload() από μόνο του μπορεί να ξαναφέρει το index.html από την κανονική
+  // cache του browser (όχι του service worker) — αυτό καθάρισε μόνο τη δική του cache. Προσθέτουμε
+  // ένα μοναδικό query param ώστε η επόμενη φόρτωση να είναι σίγουρα φρέσκια από το δίκτυο, αλλιώς
+  // το μπάνερ θα μπορούσε να ξαναεμφανίζεται ατέρμονα ("δεν το πήρε ποτέ πραγματικά").
+  const freshUrl = location.pathname + '?_fresh=' + Date.now();
+  location.replace(freshUrl);
 }
 
 document.getElementById('update-banner-btn').addEventListener('click', applyUpdate);

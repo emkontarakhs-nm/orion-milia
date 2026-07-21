@@ -1,9 +1,13 @@
-const CACHE_NAME = 'orion-milia-v3';
+const CACHE_NAME = 'orion-milia-v4';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) =>
-      Promise.allSettled(['./', './index.html'].map((url) => cache.add(url)))
+      // {cache:'reload'} αγνοεί οποιαδήποτε παλιά, κρυμμένη έκδοση στην κανονική cache του browser —
+      // εξασφαλίζει ότι η πρώτη φορά που ο service worker αποθηκεύει το index.html, παίρνει πάντα το πιο φρέσκο.
+      Promise.allSettled(['./', './index.html'].map((url) =>
+        fetch(url, {cache: 'reload'}).then((resp) => cache.put(url, resp))
+      ))
     )
   );
   self.skipWaiting();
