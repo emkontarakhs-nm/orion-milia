@@ -1,0 +1,19 @@
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="metalSheen" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#D9A05B"/>
+<stop offset="45%" stop-color="#B5722E"/>
+<stop offset="100%" stop-color="#8C5420"/>
+</linearGradient>
+</defs>
+<rect x="0" y="0" width="400" height="400" rx="88" fill="#14293D"/>
+<circle cx="200" cy="200" r="152" fill="none" stroke="url(#metalSheen)" stroke-width="11" stroke-dasharray="3,6" stroke-linecap="round"/>
+<circle cx="200" cy="200" r="136" fill="none" stroke="url(#metalSheen)" stroke-width="3.5"/>
+<circle cx="200" cy="200" r="130" fill="#101E2C"/>
+<circle cx="200" cy="200" r="115" fill="none" stroke="#B5722E" stroke-width="1.5" opacity="0.55"/>
+<circle cx="200" cy="58" r="4" fill="#B5722E"/>
+<circle cx="200" cy="342" r="4" fill="#B5722E"/>
+<circle cx="58" cy="200" r="4" fill="#B5722E"/>
+<circle cx="342" cy="200" r="4" fill="#B5722E"/>
+<text x="200" y="218" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="bold" font-size="172" fill="url(#metalSheen)">&#937;</text>
+</svg>
