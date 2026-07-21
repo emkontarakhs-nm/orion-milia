@@ -112,7 +112,6 @@
   .map-dot:hover,.map-dot:focus-visible{fill:#3AA8A2;stroke:#0d3d3a;stroke-width:1;opacity:0.85;}
   .map-dot-done{fill:#14293D;stroke:#14293D;opacity:1;}
   [data-theme="dark"] .map-dot-done{fill:#4CC9C3;stroke:#2A8A85;opacity:1;}
-  [data-theme="dark"] .map-dot-done{fill:#EFE9D8;stroke:#C9B98E;}
   .map-dot:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
   .theme-toggle-btn{position:absolute;top:16px;right:16px;background:rgba(243,236,221,0.12);border:1px solid rgba(243,236,221,0.3);color:var(--panel-text);border-radius:50%;width:34px;height:34px;font-size:var(--fs-base);cursor:pointer;z-index:2;}
   .offline-badge{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#B54432;color:#fff;font-family:'JetBrains Mono',monospace;font-size:var(--fs-sm);padding:7px 16px;border-radius:var(--r-lg);z-index:500;display:none;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,0.4);}
@@ -1612,20 +1611,74 @@ if(firebaseReady && fbAuth){
 }
 
 /* ================= ΒΟΗΘΗΤΙΚΑ ================= */
+// Βοηθητική: σημεία αστεριού/πολυγώνου με εναλλασσόμενη ακτίνα (χρησιμοποιείται και για την πυξίδα και για το αστέρι κορυφής)
+function starPoints(cx, cy, rOuter, rInner, points, rotationOffset){
+  let pts = '';
+  const n = points * 2;
+  for(let i=0;i<n;i++){
+    const a = (Math.PI * i) / points - Math.PI/2 + (rotationOffset || 0);
+    const rad = i % 2 === 0 ? rOuter : rInner;
+    const x = cx + rad * Math.cos(a), y = cy + rad * Math.sin(a);
+    pts += `${x.toFixed(1)},${y.toFixed(1)} `;
+  }
+  return pts.trim();
+}
+
+// Το σύμβολο στο κέντρο του μεταλλίου, διαφορετικό ανά φάση — ώστε μια ματιά να λέει αμέσως "σε ποια φάση είσαι",
+// όχι μόνο ένας αριθμός γαλονιών που δύσκολα ξεχωρίζει.
+function phaseMotifSvg(phaseIdx, color, cx, cy, r){
+  if(phaseIdx === 0){
+    // Η Μαθητεία — άγκυρα (το πιο βασικό, οικείο ναυτικό σύμβολο)
+    return `<circle cx="${cx}" cy="${(cy-r*0.55).toFixed(1)}" r="${(r*0.16).toFixed(1)}" fill="none" stroke="${color}" stroke-width="1.4"/>
+      <line x1="${cx}" y1="${(cy-r*0.4).toFixed(1)}" x2="${cx}" y2="${(cy+r*0.5).toFixed(1)}" stroke="${color}" stroke-width="1.6"/>
+      <line x1="${(cx-r*0.4).toFixed(1)}" y1="${(cy-r*0.05).toFixed(1)}" x2="${(cx+r*0.4).toFixed(1)}" y2="${(cy-r*0.05).toFixed(1)}" stroke="${color}" stroke-width="1.6"/>
+      <path d="M${(cx-r*0.4).toFixed(1)} ${(cy+r*0.5).toFixed(1)} Q${(cx-r*0.5).toFixed(1)} ${(cy+r*0.15).toFixed(1)} ${cx} ${(cy+r*0.5).toFixed(1)}" fill="none" stroke="${color}" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M${(cx+r*0.4).toFixed(1)} ${(cy+r*0.5).toFixed(1)} Q${(cx+r*0.5).toFixed(1)} ${(cy+r*0.15).toFixed(1)} ${cx} ${(cy+r*0.5).toFixed(1)}" fill="none" stroke="${color}" stroke-width="1.6" stroke-linecap="round"/>`;
+  }
+  if(phaseIdx === 1){
+    // Η Ικανότητα — τιμόνι (χειρισμός με σιγουριά)
+    let spokes = '';
+    for(let i=0;i<8;i++){
+      const a = (Math.PI*2*i)/8;
+      const x2 = (cx + r*0.75*Math.cos(a)).toFixed(1), y2 = (cy + r*0.75*Math.sin(a)).toFixed(1);
+      spokes += `<line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="1.3"/>`;
+    }
+    return `<circle cx="${cx}" cy="${cy}" r="${(r*0.75).toFixed(1)}" fill="none" stroke="${color}" stroke-width="1.4"/>${spokes}<circle cx="${cx}" cy="${cy}" r="${(r*0.16).toFixed(1)}" fill="${color}"/>`;
+  }
+  if(phaseIdx === 2){
+    // Η Εμπειρία — πυξίδα/ρόδο των ανέμων (πλοήγηση σε βάθος)
+    return `<polygon points="${starPoints(cx, cy, r*0.85, r*0.38, 8)}" fill="${color}" opacity="0.92"/><circle cx="${cx}" cy="${cy}" r="${(r*0.12).toFixed(1)}" fill="#0A141C"/>`;
+  }
+  // Ο Θρύλος — ακτινωτή λάμψη (θρυλική παρουσία)
+  let rays = '';
+  for(let i=0;i<12;i++){
+    const a = (Math.PI*2*i)/12;
+    const x1 = (cx + r*0.48*Math.cos(a)).toFixed(1), y1 = (cy + r*0.48*Math.sin(a)).toFixed(1);
+    const x2 = (cx + r*0.92*Math.cos(a)).toFixed(1), y2 = (cy + r*0.92*Math.sin(a)).toFixed(1);
+    rays += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="1.6" stroke-linecap="round"/>`;
+  }
+  return `${rays}<circle cx="${cx}" cy="${cy}" r="${(r*0.42).toFixed(1)}" fill="${color}"/>`;
+}
+
 function rankInsigniaSvg(levelNum, totalLevels){
-  // Ομαδοποίηση 15 επιπέδων σε 5 "ζώνες" γαλονιών, σαν πραγματικά ναυτικά διάσημα βαθμού στο μανίκι
-  const stripes = Math.min(5, Math.ceil((levelNum / totalLevels) * 5));
+  const phase = getLevelPhase(levelNum);
+  const phaseIdx = LEVEL_PHASES.indexOf(phase);
+  const subLevel = levelNum - phase.range[0] + 1; // θέση 1-5 ΜΕΣΑ στη φάση — ξεκινάει από την αρχή σε κάθε φάση, ώστε να ξεχωρίζει καθαρά
+  const subLevelMax = phase.range[1] - phase.range[0] + 1;
   const isTop = levelNum === totalLevels;
-  const W = 70, H = 34;
+  const W = 62, H = 60;
+  const cx = W/2, cy = 25, r = 15;
   let svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="flex-shrink:0;">`;
-  svg += `<rect x="1" y="1" width="${W-2}" height="${H-2}" rx="3" fill="#0A141C" stroke="#B5722E" stroke-width="1"/>`;
-  const stripeY0 = H - 7;
-  for(let i=0;i<stripes;i++){
-    svg += `<rect x="6" y="${stripeY0 - i*5}" width="${W-12}" height="2.5" rx="1" fill="#D89654"/>`;
+  svg += `<circle cx="${cx}" cy="${cy}" r="${r+5}" fill="#0A141C" stroke="${phase.color}" stroke-width="2"/>`;
+  svg += phaseMotifSvg(phaseIdx, phase.color, cx, cy, r);
+  // Υπο-επίπεδο (1..5) μέσα στη φάση, σαν μικρές κουκκίδες κάτω από το μετάλλιο
+  for(let i=0;i<subLevelMax;i++){
+    const on = i < subLevel;
+    const tx = cx - ((subLevelMax-1)*4) + i*8;
+    svg += `<circle cx="${tx.toFixed(1)}" cy="${H-6}" r="2" fill="${on ? phase.color : 'none'}" stroke="${phase.color}" stroke-width="1" opacity="${on ? 1 : 0.35}"/>`;
   }
   if(isTop){
-    // Αστέρι πάνω από τα γαλόνια — σαν διάκριση Ανωτάτου βαθμού
-    svg += `<path d="M35 4 L37 9 L42 9 L38 12 L40 17 L35 14 L30 17 L32 12 L28 9 L33 9 Z" fill="#F3E3CE"/>`;
+    svg += `<polygon points="${starPoints(cx, cy-r-9, 6, 2.6, 5)}" fill="#F3E3CE"/>`;
   }
   svg += `</svg>`;
   return svg;
@@ -3087,7 +3140,7 @@ function openLevelLadderModal(){
         </div>`
       : '';
     return `${phaseHeaderHtml}<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 8px;${rowStyle}">
-      <span style="width:20px;font-family:'JetBrains Mono',monospace;font-size:var(--fs-xs);color:var(--text-muted);flex-shrink:0;padding-top:2px;">${num}</span>
+      <span style="width:24px;height:24px;flex-shrink:0;overflow:hidden;display:inline-block;position:relative;top:-4px;"><span style="display:block;transform:scale(0.39);transform-origin:top left;">${rankInsigniaSvg(num, LEVELS.length)}</span></span>
       <div style="width:150px;flex-shrink:0;">
         <span style="font-size:var(--fs-sm);font-weight:${isCurrent?'600':'400'};color:${locked?'var(--text-muted)':'var(--ink)'};display:block;">${escapeHtml(L.name)}${isCurrent?' ◂':''}</span>
         <span style="font-size:9px;color:var(--text-muted);font-style:italic;line-height:1.3;display:block;margin-top:1px;">${escapeHtml(L.desc)}</span>
@@ -6266,7 +6319,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.21-13';
+const APP_VERSION = '2026.07.21-15';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
