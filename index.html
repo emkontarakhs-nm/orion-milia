@@ -337,6 +337,11 @@
   .reset-btn:hover{border-color:var(--coral);color:var(--coral);}
   .backup-btn{color:var(--teal);border-color:var(--teal);}
   .backup-btn:hover{background:var(--teal);color:#fff;}
+  .engine-open-service-btn:hover,.engine-service-submit-btn:hover{filter:brightness(1.1);}
+  .engine-open-service-btn:active,.engine-service-submit-btn:active{transform:scale(0.97);}
+  .engine-service-cancel-btn:hover{border-color:var(--coral);color:var(--coral);}
+  .engine-hist-edit-btn:hover{background:var(--teal-light);}
+  .engine-hist-del-btn:hover{background:var(--coral-light);}
 
   .plan-box{background:var(--card-bg);border:1px solid var(--parchment-2);border-radius:var(--r-sm);padding:16px;margin-bottom:32px;box-shadow:0 1px 4px rgba(20,41,61,0.05);}
   .plan-result{margin-top:14px;padding-top:14px;border-top:1px dashed var(--parchment-2);}
@@ -598,6 +603,7 @@
       <div class="field-col">
         <span class="field-label">Ημερομηνία έναρξης</span>
         <input type="date" id="f-date">
+        <span id="f-date-astro-hint" class="stop-auto-hint" style="display:none;"></span>
       </div>
       <div class="field-col">
         <span class="field-label">Ημ. λήξης (μόνο αν πολυήμερη)</span>
@@ -1311,6 +1317,69 @@ const BASE_BF = 2;
 const MIN_SUBSTANTIAL_NM = 3;
 // Ελάχιστη διάρκεια (λεπτά) άσκησης με βοηθητική μηχανή για να μετρήσει σε πόντους/ώρες — αντι-gaming, ίδια λογική με το MIN_SUBSTANTIAL_NM
 const MIN_AUX_PRACTICE_MINUTES = 3;
+
+/* ================= ΑΣΤΡΟΝΟΜΙΚΑ (σελήνη, ανατολή/δύση) — υπολογίζονται τοπικά, χωρίς σύνδεση =================
+   ΣΗΜΕΙΩΣΗ ναυτικής ακρίβειας: η παλίρροια στο Κρητικό Πέλαγος είναι ελάχιστη (μερικά εκατοστά, όχι μέτρα όπως
+   σε ωκεάνιες ακτές) — δεν είναι πρακτικά σημαντικός παράγοντας για αγκυροβόλιο εδώ, γι' αυτό δεν την εμφανίζουμε.
+   Η φάση σελήνης ΚΑΙ η ώρα δύσης όμως έχουν πραγματική πρακτική αξία: ορατότητα σε νυχτερινή πλεύση,
+   σχεδιασμός επιστροφής πριν σκοτεινιάσει. */
+const BASE_LAT = 35.517, BASE_LON = 24.017; // Χανιά — ίδιο σημείο αναφοράς με τον χάρτη καιρού
+
+function computeMoonPhase(dateStr){
+  if(!dateStr) return null;
+  const [y,m,d] = dateStr.split('-').map(Number);
+  if(!y || !m || !d) return null;
+  const dateMs = Date.UTC(y, m-1, d, 12); // μεσημέρι UTC για σταθερότητα
+  const knownNewMoon = Date.UTC(2000, 0, 6, 18, 14); // γνωστή νέα σελήνη αναφοράς
+  const synodicMonth = 29.530588853; // μέρες ανά σεληνιακό κύκλο
+  let phase = (((dateMs - knownNewMoon) / 86400000) % synodicMonth) / synodicMonth;
+  if(phase < 0) phase += 1;
+  const steps = [
+    {max:0.03, icon:'🌑', name:'Νέα Σελήνη'},
+    {max:0.22, icon:'🌒', name:'Αύξουσα Μηνίσκος'},
+    {max:0.28, icon:'🌓', name:'Πρώτο Τέταρτο'},
+    {max:0.47, icon:'🌔', name:'Αύξουσα Αμφίκυρτη'},
+    {max:0.53, icon:'🌕', name:'Πανσέληνος'},
+    {max:0.72, icon:'🌖', name:'Φθίνουσα Αμφίκυρτη'},
+    {max:0.78, icon:'🌗', name:'Τελευταίο Τέταρτο'},
+    {max:0.97, icon:'🌘', name:'Φθίνουσα Μηνίσκος'},
+    {max:1.01, icon:'🌑', name:'Νέα Σελήνη'}
+  ];
+  const step = steps.find(s => phase <= s.max) || steps[steps.length-1];
+  const illumination = Math.round((1 - Math.cos(phase * 2 * Math.PI)) / 2 * 100);
+  return {icon: step.icon, name: step.name, illumination};
+}
+
+// Απλοποιημένος αλγόριθμος NOAA — ικανοποιητική ακρίβεια (~1-2 λεπτά) για σκοπούς σχεδιασμού, όχι επίσημη ναυτική πηγή
+function computeSunTimes(dateStr, lat, lon){
+  if(!dateStr) return null;
+  const [y,m,d] = dateStr.split('-').map(Number);
+  if(!y || !m || !d) return null;
+  const rad = Math.PI / 180;
+  const utcDate = Date.UTC(y, m-1, d);
+  const dayOfYear = Math.round((utcDate - Date.UTC(y,0,1)) / 86400000) + 1;
+  const gamma = 2 * Math.PI / 365 * (dayOfYear - 1);
+  const eqTime = 229.18 * (0.000075 + 0.001868*Math.cos(gamma) - 0.032077*Math.sin(gamma) - 0.014615*Math.cos(2*gamma) - 0.040849*Math.sin(2*gamma));
+  const decl = 0.006918 - 0.399912*Math.cos(gamma) + 0.070257*Math.sin(gamma) - 0.006758*Math.cos(2*gamma) + 0.000907*Math.sin(2*gamma) - 0.002697*Math.cos(3*gamma) + 0.00148*Math.sin(3*gamma);
+  const zenith = 90.833 * rad;
+  const latRad = lat * rad;
+  const cosH = (Math.cos(zenith) - Math.sin(latRad)*Math.sin(decl)) / (Math.cos(latRad)*Math.cos(decl));
+  if(cosH > 1 || cosH < -1) return null; // πολική μέρα/νύχτα — δεν συμβαίνει στα δικά μας γεωγραφικά πλάτη, μόνο προστασία
+  const haDeg = Math.acos(cosH) / rad;
+  const solarNoonUTCmin = 720 - 4*lon - eqTime;
+  const toDate = (minUTC) => new Date(utcDate + minUTC*60000);
+  return { sunrise: toDate(solarNoonUTCmin - 4*haDeg), sunset: toDate(solarNoonUTCmin + 4*haDeg) };
+}
+
+function formatAstroHint(dateStr){
+  const moon = computeMoonPhase(dateStr);
+  const sun = computeSunTimes(dateStr, BASE_LAT, BASE_LON);
+  if(!moon && !sun) return '';
+  const parts = [];
+  if(moon) parts.push(`${moon.icon} ${moon.name} (${moon.illumination}% φωτισμένη)`);
+  if(sun) parts.push(`🌅 ${sun.sunrise.toLocaleTimeString('el-GR',{hour:'2-digit',minute:'2-digit'})} · 🌇 ${sun.sunset.toLocaleTimeString('el-GR',{hour:'2-digit',minute:'2-digit'})}`);
+  return parts.join(' · ');
+}
 function qualifyingAuxPracticeMinutes(t){
   const m = t.auxPractice && t.auxPractice.minutes;
   return (m && m >= MIN_AUX_PRACTICE_MINUTES) ? m : 0;
@@ -1859,6 +1928,12 @@ function renderPtDailyStaysForm(){
   document.getElementById('pt-daily-stays-list').innerHTML = buildDailyStaysHtml(dates, ptDailyStaysPrefill, 'ptds', false);
 }
 document.getElementById('f-date').addEventListener('change', renderDailyStaysForm);
+document.getElementById('f-date').addEventListener('change', (e) => {
+  const hint = document.getElementById('f-date-astro-hint');
+  const text = formatAstroHint(e.target.value);
+  if(text){ hint.textContent = text; hint.style.display = 'block'; }
+  else { hint.style.display = 'none'; }
+});
 document.getElementById('f-end-date').addEventListener('change', renderDailyStaysForm);
 document.getElementById('pt-date').addEventListener('change', renderPtDailyStaysForm);
 document.getElementById('pt-end-date').addEventListener('change', renderPtDailyStaysForm);
@@ -3413,6 +3488,26 @@ function buildYearlyCumulative(byMonth, year){
   return result;
 }
 
+// Πραγματικές στιγμές που αξίζει να φαίνονται πάνω στην καμπύλη, όχι μόνο αριθμοί —
+// έτσι το γράφημα λέει μια ιστορία, δεν είναι απλά ένα σύνολο σε εξέλιξη.
+function computeChartMilestones(){
+  const sortedTrips = data.trips.filter(t => t.date).slice().sort((a,b) => a.date.localeCompare(b.date));
+  if(sortedTrips.length === 0) return [];
+  const milestones = [{date: sortedTrips[0].date, icon:'🚩', label:'Πρώτη εξόρμηση'}];
+
+  const firstRough = sortedTrips.find(t => t.bf != null && t.bf >= 5);
+  if(firstRough) milestones.push({date: firstRough.date, icon:'⚡', label:'Πρώτη φορά Bf5+'});
+
+  let maxNm = 0, maxNmTrip = null;
+  sortedTrips.forEach(t => { const nm = parseFloat(t.nm)||0; if(nm > maxNm){ maxNm = nm; maxNmTrip = t; } });
+  if(maxNmTrip) milestones.push({date: maxNmTrip.date, icon:'🏆', label:`Ρεκόρ απόστασης (${maxNmTrip.nm}ν.μ.)`});
+
+  const firstOutside = sortedTrips.find(t => (t.areas||[]).some(id => !id.startsWith('stage1-')));
+  if(firstOutside) milestones.push({date: firstOutside.date, icon:'🗺️', label:'Πρώτη φορά εκτός Δυτικής Κρήτης'});
+
+  return milestones;
+}
+
 function renderChart(){
   const el = document.getElementById('chart-section');
   if(data.trips.length === 0){
@@ -3485,6 +3580,25 @@ function renderChart(){
   const annoAnchor = lastX > W-90 ? 'end' : 'start';
   const annotation = `<text x="${annoX.toFixed(1)}" y="${(lastY-8).toFixed(1)}" text-anchor="${annoAnchor}" font-size="10" fill="var(--teal)" font-family="JetBrains Mono, monospace" font-weight="600">${lastS.cum.toFixed(1)} ν.μ.</text>`;
 
+  // Ορόσημα πάνω στην καμπύλη — μικρά εικονίδια με διακεκομμένη γραμμή προς το ακριβές σημείο,
+  // με native tooltip (title) για την πλήρη περιγραφή. Αν πέσουν στον ίδιο μήνα, στοιβάζονται κάθετα.
+  const milestonesByIdx = {};
+  computeChartMilestones().forEach(m => {
+    const idx = series.findIndex(s => s.key === m.date.slice(0,7));
+    if(idx === -1) return;
+    (milestonesByIdx[idx] = milestonesByIdx[idx] || []).push(m);
+  });
+  let milestonesSvg = '';
+  Object.entries(milestonesByIdx).forEach(([idxStr, ms]) => {
+    const idx = parseInt(idxStr, 10);
+    const mx = xOf(idx), mLineY = yCum(series[idx].cum);
+    ms.forEach((m, mi) => {
+      const markerY = mLineY - 16 - mi*14;
+      milestonesSvg += `<line x1="${mx.toFixed(1)}" y1="${(markerY+9).toFixed(1)}" x2="${mx.toFixed(1)}" y2="${mLineY.toFixed(1)}" stroke="var(--brass)" stroke-width="1" stroke-dasharray="2,2" opacity="0.5"/>
+        <text x="${mx.toFixed(1)}" y="${markerY.toFixed(1)}" text-anchor="middle" font-size="10" style="cursor:default;">${m.icon}<title>${escapeHtml(m.label)} — ${m.date}</title></text>`;
+    });
+  });
+
   // ============ ΠΑΝΕΛ 2: ΝΑΥΤΙΚΑ ΜΙΛΙΑ ΑΝΑ ΜΗΝΑ (δικός του, ξεκάθαρος άξονας 0→μέγιστος μήνας) ============
   const H2 = 140, PAD2 = {top:22, right:20, bottom:26, left:56};
   const cH2 = H2 - PAD2.top - PAD2.bottom;
@@ -3551,6 +3665,7 @@ function renderChart(){
       <polygon points="${areaFill}" fill="url(#areaGrad)"/>
       <path d="${linePath}" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       ${dotsSvg1}
+      ${milestonesSvg}
       ${annotation}
 
       <line x1="${PAD.left-4}" y1="${H1+6}" x2="${W-PAD.right}" y2="${H1+6}" stroke="var(--line)" stroke-width="0.5"/>
@@ -3564,6 +3679,7 @@ function renderChart(){
       ${xLabels}
     </svg>
     <p style="font-size:var(--fs-xs);color:var(--text-muted);margin:6px 0 0;">Ο μπρούντζινος στυλοβάτης δείχνει τον πιο δυνατό μήνα σου${noDateNote}</p>
+    ${Object.keys(milestonesByIdx).length > 0 ? `<p style="font-size:var(--fs-xs);color:var(--text-muted);margin:2px 0 0;">🚩 πρώτη εξόρμηση · ⚡ πρώτη Bf5+ · 🏆 ρεκόρ απόστασης · 🗺️ πρώτη φορά εκτός Δυτικής Κρήτης — κράτα το ποντίκι πάνω για λεπτομέρειες</p>` : ''}
     ${sparseDataNote}
     <div style="display:flex;gap:16px;margin-top:6px;flex-wrap:wrap;">
       <span style="font-size:var(--fs-sm);color:var(--text-muted);display:flex;align-items:center;gap:5px;"><span style="width:20px;height:2.5px;background:var(--teal);border-radius:2px;display:inline-block;"></span>Σωρευτικό σύνολο</span>
@@ -4205,7 +4321,7 @@ function renderTrips(){
         <div class="trip-summary" data-expand="${t.id}" style="cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
           <div>
             <p class="trip-route">${nameLabel || routeLabel}</p>
-            <p class="trip-meta">${dateLabel}${t.date ? ` · <span title="${dateLabel}">${relativeDateLabel(t.date)}</span>` : ''} ${detailParts.length ? '· ' + detailParts.slice(0,2).join(' · ') : ''}</p>
+            <p class="trip-meta">${dateLabel}${t.date ? ` · <span title="${dateLabel}">${relativeDateLabel(t.date)}</span>` : ''}${t.date ? (() => { const a = formatAstroHint(t.date); return a ? ` <span title="${escapeHtml(a)}" style="cursor:default;">${(computeMoonPhase(t.date)||{}).icon||''}</span>` : ''; })() : ''} ${detailParts.length ? '· ' + detailParts.slice(0,2).join(' · ') : ''}</p>
           </div>
           <span style="font-size:var(--fs-base);color:var(--teal);white-space:nowrap;margin-top:1px;transition:transform 0.2s;">›</span>
         </div>
@@ -4392,6 +4508,7 @@ function startEdit(id){
   editingId = id;
   document.getElementById('f-name').value = t.name || '';
   document.getElementById('f-date').value = t.date || '';
+  { const hint = document.getElementById('f-date-astro-hint'); const text = formatAstroHint(t.date); if(text){ hint.textContent = text; hint.style.display = 'block'; } else { hint.style.display = 'none'; } }
   document.getElementById('f-end-date').value = t.endDate || '';
   document.getElementById('f-nm').value = t.nm != null ? t.nm : '';
   document.getElementById('f-from').value = t.from || '';
@@ -4442,6 +4559,7 @@ function cancelEdit(){
   editingId = null;
   document.getElementById('f-name').value = '';
   document.getElementById('f-date').value = new Date().toISOString().slice(0,10);
+  { const hint = document.getElementById('f-date-astro-hint'); const text = formatAstroHint(document.getElementById('f-date').value); if(text){ hint.textContent = text; hint.style.display = 'block'; } else { hint.style.display = 'none'; } }
   document.getElementById('f-end-date').value = '';
   document.getElementById('f-nm').value = '';
   document.getElementById('f-from').value = '';
@@ -5208,8 +5326,8 @@ function renderEngines(){
           <div style="font-size:var(--fs-xs);color:var(--text-muted);margin-top:2px;">${metaBits}</div>
         </div>
         <div style="display:flex;gap:2px;flex-shrink:0;">
-          <button class="engine-hist-edit-btn" data-eng="${eng.id}" data-idx="${s._origIdx}" title="Επεξεργασία" style="background:none;border:none;color:var(--teal);cursor:pointer;padding:6px;font-size:var(--fs-base);">&#9998;</button>
-          <button class="engine-hist-del-btn" data-eng="${eng.id}" data-idx="${s._origIdx}" title="Διαγραφή" style="background:none;border:none;color:var(--coral);cursor:pointer;padding:6px;font-size:var(--fs-base);">&#10005;</button>
+          <button class="engine-hist-edit-btn" data-eng="${eng.id}" data-idx="${s._origIdx}" title="Επεξεργασία" style="background:none;border:none;color:var(--teal);cursor:pointer;padding:6px;font-size:var(--fs-base);border-radius:var(--r-sm);transition:background 0.15s;">&#9998;</button>
+          <button class="engine-hist-del-btn" data-eng="${eng.id}" data-idx="${s._origIdx}" title="Διαγραφή" style="background:none;border:none;color:var(--coral);cursor:pointer;padding:6px;font-size:var(--fs-base);border-radius:var(--r-sm);transition:background 0.15s;">&#10005;</button>
         </div>
       </div>`;
     }).join('');
@@ -5256,17 +5374,17 @@ function renderEngines(){
       </div>
       ${impellerHtml}
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
-        <button class="engine-open-service-btn" data-eng="${eng.id}" style="font-size:var(--fs-sm);background:var(--teal);color:#fff;border:none;padding:8px 16px;border-radius:4px;cursor:pointer;font-weight:500;flex:1;min-width:140px;">✓ Καταγραφή Service</button>
-        <button onclick="this.closest('.engine-box').querySelector('.engine-offset-panel').style.display=this.closest('.engine-box').querySelector('.engine-offset-panel').style.display==='none'?'block':'none'" style="font-size:var(--fs-sm);background:none;color:var(--text-muted);border:1px solid var(--line);padding:8px 12px;border-radius:4px;cursor:pointer;">⚙ Ρύθμιση</button>
+        <button class="engine-open-service-btn" data-eng="${eng.id}" style="font-size:var(--fs-sm);background:var(--teal);color:#fff;border:none;padding:8px 16px;border-radius:var(--r-sm);cursor:pointer;font-weight:500;flex:1;min-width:140px;transition:filter 0.15s,transform 0.1s;">✓ Καταγραφή Service</button>
+        <button onclick="this.closest('.engine-box').querySelector('.engine-offset-panel').style.display=this.closest('.engine-box').querySelector('.engine-offset-panel').style.display==='none'?'block':'none'" style="font-size:var(--fs-sm);background:none;color:var(--text-muted);border:1px solid var(--line);padding:8px 12px;border-radius:var(--r-sm);cursor:pointer;">⚙ Ρύθμιση</button>
       </div>
-      <div class="engine-offset-panel" style="display:none;margin-top:12px;padding:12px;background:var(--parchment);border-radius:4px;">
+      <div class="engine-offset-panel" style="display:none;margin-top:12px;padding:12px;background:var(--parchment);border-radius:var(--r-sm);">
         <p style="font-size:var(--fs-sm);color:var(--text-muted);margin:0 0 8px;">Ώρες μηχανής πριν αρχίσεις να καταγράφεις εξορμήσεις:</p>
         <div style="display:flex;align-items:center;gap:8px;">
           <input type="number" class="engine-service-input" id="offset-${eng.id}" value="${parseFloat(offsets[eng.id]||0)}" min="0" step="0.5" placeholder="0">
           <button onclick="saveEngineOffset('${eng.id}')" style="font-size:var(--fs-sm);background:var(--teal);color:#fff;border:none;padding:6px 14px;border-radius:4px;cursor:pointer;">Αποθήκευση</button>
         </div>
       </div>
-      <div class="engine-service-form" id="service-form-${eng.id}" data-editing-idx="" style="display:none;margin-top:12px;padding:12px;background:var(--parchment);border-radius:4px;">
+      <div class="engine-service-form" id="service-form-${eng.id}" data-editing-idx="" style="display:none;margin-top:12px;padding:12px;background:var(--parchment);border-radius:var(--r-sm);">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
           <div>
             <span style="font-size:var(--fs-xs);color:var(--text-muted);">Ημερομηνία</span>
@@ -5286,8 +5404,8 @@ function renderEngines(){
         </label>
         <textarea id="service-note-${eng.id}" rows="2" placeholder="Τι έγινε; (προαιρετικό, π.χ. λάδι + φίλτρο)" style="width:100%;margin-bottom:8px;"></textarea>
         <div style="display:flex;gap:8px;">
-          <button class="engine-service-submit-btn" data-eng="${eng.id}" style="font-size:var(--fs-sm);background:var(--teal);color:#fff;border:none;padding:8px 16px;border-radius:4px;cursor:pointer;font-weight:500;flex:1;">Αποθήκευση</button>
-          <button class="engine-service-cancel-btn" data-eng="${eng.id}" style="font-size:var(--fs-sm);background:none;color:var(--text-muted);border:1px solid var(--line);padding:8px 12px;border-radius:4px;cursor:pointer;">Άκυρο</button>
+          <button class="engine-service-submit-btn" data-eng="${eng.id}" style="font-size:var(--fs-sm);background:var(--teal);color:#fff;border:none;padding:8px 16px;border-radius:var(--r-sm);cursor:pointer;font-weight:500;flex:1;transition:filter 0.15s,transform 0.1s;">Αποθήκευση</button>
+          <button class="engine-service-cancel-btn" data-eng="${eng.id}" style="font-size:var(--fs-sm);background:none;color:var(--text-muted);border:1px solid var(--line);padding:8px 12px;border-radius:var(--r-sm);cursor:pointer;transition:border-color 0.15s,color 0.15s;">Άκυρο</button>
         </div>
       </div>
       ${yearlyHtml}
@@ -6319,7 +6437,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.21-15';
+const APP_VERSION = '2026.07.21-18';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
