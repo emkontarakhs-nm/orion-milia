@@ -918,6 +918,8 @@
   <div class="reset-row">
     <button class="reset-btn" id="reset-btn">Διαγραφή όλων των δεδομένων</button>
   </div>
+
+  <p style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);margin:28px 0 8px;letter-spacing:0.04em;">ΩΡΙΩΝ Ναυτικό Ημερολόγιο · έκδοση <span id="app-version-display">—</span></p>
 </div>
 
 <div id="print-view"></div>
@@ -6002,7 +6004,8 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.21-9';
+const APP_VERSION = '2026.07.21-10';
+{ const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
   if(!navigator.onLine) return;
