@@ -337,6 +337,10 @@
   .reset-btn:hover{border-color:var(--coral);color:var(--coral);}
   .backup-btn{color:var(--teal);border-color:var(--teal);}
   .backup-btn:hover{background:var(--teal);color:#fff;}
+  .ripple-btn{position:relative;overflow:hidden;}
+  .ripple-effect{position:absolute;border-radius:50%;background:rgba(255,255,255,0.55);transform:scale(0);animation:ripple-anim 0.5s ease-out;pointer-events:none;}
+  [data-theme="dark"] .ripple-effect{background:rgba(255,255,255,0.35);}
+  @keyframes ripple-anim{to{transform:scale(2.6);opacity:0;}}
   .engine-open-service-btn:hover,.engine-service-submit-btn:hover{filter:brightness(1.1);}
   .engine-open-service-btn:active,.engine-service-submit-btn:active{transform:scale(0.97);}
   .engine-service-cancel-btn:hover{border-color:var(--coral);color:var(--coral);}
@@ -489,12 +493,12 @@
 <div class="online-toast" id="online-toast">✓ Επανασύνδεση — συγχρονισμός...</div>
 <div class="update-banner" id="update-banner">
   <span>🔄 Νέα έκδοση της εφαρμογής είναι διαθέσιμη</span>
-  <button class="update-banner-btn" id="update-banner-btn">Ανανέωση τώρα</button>
+  <button class="update-banner-btn ripple-btn" id="update-banner-btn">Ανανέωση τώρα</button>
   <button class="update-banner-dismiss" id="update-banner-dismiss" aria-label="Κλείσιμο" title="Υπενθύμιση αργότερα">&#10005;</button>
 </div>
 <div class="backup-reminder" id="backup-reminder">
   <span id="backup-reminder-text">📥 Καιρός για αντίγραφο ασφαλείας</span>
-  <button class="backup-reminder-btn" id="backup-reminder-btn">Κατέβασέ το τώρα</button>
+  <button class="backup-reminder-btn ripple-btn" id="backup-reminder-btn">Κατέβασέ το τώρα</button>
   <button class="backup-reminder-dismiss" id="backup-reminder-dismiss" aria-label="Κλείσιμο" title="Υπενθύμιση αργότερα">&#10005;</button>
 </div>
 <div class="cmdk-overlay" id="cmdk-overlay">
@@ -523,7 +527,7 @@
 <div class="wrap">
 
   <nav class="quick-nav" id="quick-nav" aria-label="Γρήγορη πλοήγηση">
-    <button id="cmdk-trigger-btn" class="cmdk-trigger-btn" title="Γρήγορη αναζήτηση (Ctrl+K)" aria-label="Γρήγορη αναζήτηση">⌘K</button>
+    <button class="cmdk-trigger-btn ripple-btn" id="cmdk-trigger-btn" title="Γρήγορη αναζήτηση (Ctrl+K)" aria-label="Γρήγορη αναζήτηση">⌘K</button>
     <a href="#nav-stages" class="quick-nav-item">Στάδια</a>
     <a href="#nav-log" class="quick-nav-item">Ημερολόγιο</a>
     <a href="#nav-plan" class="quick-nav-item">Σχεδίασε</a>
@@ -739,7 +743,7 @@
       <div id="book-material-categories"></div>
     </details>
 
-    <button class="add-btn" id="f-add">+ Προσθήκη εξόρμησης</button>
+    <button class="add-btn ripple-btn" id="f-add">+ Προσθήκη εξόρμησης</button>
   </div>
   <input type="text" class="search-input" id="f-search" placeholder="🔍 Αναζήτηση (διαδρομή, σημειώσεις, πλήρωμα...)">
   <div style="display:flex;gap:14px;margin:8px 0 10px;flex-wrap:wrap;font-size:var(--fs-xs);color:var(--text-muted);">
@@ -927,10 +931,10 @@
   </div>
 
   <div class="reset-row">
-    <button class="reset-btn backup-btn" id="backup-btn">⬇ Αντίγραφο ασφαλείας</button>
-    <button class="reset-btn backup-btn" id="restore-btn">⬆ Επαναφορά από αρχείο</button>
-    <button class="reset-btn backup-btn" id="print-btn">🖨 Εκτύπωση / PDF</button>
-    <button class="reset-btn backup-btn" id="csv-btn">📊 Εξαγωγή CSV</button>
+    <button class="reset-btn backup-btn ripple-btn" id="backup-btn">⬇ Αντίγραφο ασφαλείας</button>
+    <button class="reset-btn backup-btn ripple-btn" id="restore-btn">⬆ Επαναφορά από αρχείο</button>
+    <button class="reset-btn backup-btn ripple-btn" id="print-btn">🖨 Εκτύπωση / PDF</button>
+    <button class="reset-btn backup-btn ripple-btn" id="csv-btn">📊 Εξαγωγή CSV</button>
     <input type="file" id="restore-file" accept="application/json" style="display:none">
   </div>
   <div class="reset-row">
@@ -5374,7 +5378,7 @@ function renderEngines(){
       </div>
       ${impellerHtml}
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
-        <button class="engine-open-service-btn" data-eng="${eng.id}" style="font-size:var(--fs-sm);background:var(--teal);color:#fff;border:none;padding:8px 16px;border-radius:var(--r-sm);cursor:pointer;font-weight:500;flex:1;min-width:140px;transition:filter 0.15s,transform 0.1s;">✓ Καταγραφή Service</button>
+        <button class="engine-open-service-btn ripple-btn" data-eng="${eng.id}" style="font-size:var(--fs-sm);background:var(--teal);color:#fff;border:none;padding:8px 16px;border-radius:var(--r-sm);cursor:pointer;font-weight:500;flex:1;min-width:140px;transition:filter 0.15s,transform 0.1s;">✓ Καταγραφή Service</button>
         <button onclick="this.closest('.engine-box').querySelector('.engine-offset-panel').style.display=this.closest('.engine-box').querySelector('.engine-offset-panel').style.display==='none'?'block':'none'" style="font-size:var(--fs-sm);background:none;color:var(--text-muted);border:1px solid var(--line);padding:8px 12px;border-radius:var(--r-sm);cursor:pointer;">⚙ Ρύθμιση</button>
       </div>
       <div class="engine-offset-panel" style="display:none;margin-top:12px;padding:12px;background:var(--parchment);border-radius:var(--r-sm);">
@@ -5404,7 +5408,7 @@ function renderEngines(){
         </label>
         <textarea id="service-note-${eng.id}" rows="2" placeholder="Τι έγινε; (προαιρετικό, π.χ. λάδι + φίλτρο)" style="width:100%;margin-bottom:8px;"></textarea>
         <div style="display:flex;gap:8px;">
-          <button class="engine-service-submit-btn" data-eng="${eng.id}" style="font-size:var(--fs-sm);background:var(--teal);color:#fff;border:none;padding:8px 16px;border-radius:var(--r-sm);cursor:pointer;font-weight:500;flex:1;transition:filter 0.15s,transform 0.1s;">Αποθήκευση</button>
+          <button class="engine-service-submit-btn ripple-btn" data-eng="${eng.id}" style="font-size:var(--fs-sm);background:var(--teal);color:#fff;border:none;padding:8px 16px;border-radius:var(--r-sm);cursor:pointer;font-weight:500;flex:1;transition:filter 0.15s,transform 0.1s;">Αποθήκευση</button>
           <button class="engine-service-cancel-btn" data-eng="${eng.id}" style="font-size:var(--fs-sm);background:none;color:var(--text-muted);border:1px solid var(--line);padding:8px 12px;border-radius:var(--r-sm);cursor:pointer;transition:border-color 0.15s,color 0.15s;">Άκυρο</button>
         </div>
       </div>
@@ -6437,7 +6441,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.21-18';
+const APP_VERSION = '2026.07.21-19';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
@@ -6696,6 +6700,26 @@ document.addEventListener('keydown', (e) => {
   } else if(e.key === 'Escape' && isCmdkOpen()){
     closeCmdk();
   }
+});
+
+/* ================= RIPPLE (απαλή κυματοειδής ανάδραση σε κάθε πάτημα) =================
+   Χρήση event delegation στο document — δουλεύει αυτόματα σε ΚΑΘΕ στοιχείο με την κλάση
+   "ripple-btn", ακόμα κι αν δημιουργήθηκε δυναμικά ΜΕΤΑ από αυτό το σημείο (καμία ανάγκη
+   επανασύνδεσης listener μετά από κάθε re-render). */
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.ripple-btn');
+  if(!btn) return;
+  try{
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple-effect';
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 500);
+  }catch(err){ /* ποτέ δεν μπλοκάρουμε το πραγματικό κλικ αν κάτι πάει στραβά εδώ */ }
 });
 
 </script>
