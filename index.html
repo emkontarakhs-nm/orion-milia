@@ -1416,7 +1416,20 @@ function getTripAllTags(t){
   const tags = new Set(t.tags || []);
   (t.stops || []).forEach(s => (s.tags||[]).forEach(tag => tags.add(tag)));
   (t.finalLegDetails && t.finalLegDetails.tags || []).forEach(tag => tags.add(tag));
+  // "Πολυήμερη" εντοπίζεται ΑΥΤΟΜΑΤΑ από τις πραγματικές ημερομηνίες — καμία ανάγκη να το κλικάρεις πουθενά:
+  // είτε η ίδια η εξόρμηση έχει ημ. λήξης διαφορετική από την αρχή, είτε κάποια στάση/πορεία έμεινε πάνω
+  // από 1 νύχτα στο ίδιο μέρος, είτε υπάρχουν διανυκτερεύσεις σε περισσότερες από 1 διαφορετικές ημερομηνίες.
+  if(isTripMultiDay(t)) tags.add('Πολυήμερη');
   return [...tags];
+}
+
+function isTripMultiDay(t){
+  if(t.endDate && t.date && t.endDate !== t.date) return true;
+  const stays = getTripDailyStays(t);
+  if(stays.some(s => (s.nights || 1) > 1)) return true;
+  const distinctDates = new Set(stays.map(s => s.date).filter(Boolean));
+  if(distinctDates.size > 1) return true;
+  return false;
 }
 
 const LEVELS = [
@@ -2816,7 +2829,7 @@ function wireStopDetailListeners(container){
         ? (currentStops.length ? currentStops[currentStops.length - 1] : null)
         : (() => { const idx = currentStops.findIndex(s => s.id === stop.id); return idx > 0 ? currentStops[idx - 1] : null; })();
       if(!prevStop) return;
-      ['bf','gusts','windDir','wave','waveDir','currentDir','currentIntensity','pressure','visibility','avgSpeed','load','people'].forEach(f => {
+      ['bf','gusts','windDir','wave','waveDir','currentDir','currentIntensity','pressure','visibility','avgSpeed','load','people','crew'].forEach(f => {
         stop[f] = prevStop[f] ?? null;
       });
       if(!stop.engineHoursManual){
@@ -3354,7 +3367,7 @@ function tripDifficultyMultiplier(t){
     if(bf >= 6) mult += 0.5;
     else if(bf >= 4) mult += 0.3;
   }
-  const tags = t.tags || [];
+  const tags = getTripAllTags(t);
   if(tags.includes('Νυχτερινή')) mult += 0.4;
   if(tags.includes('Ανοιχτή διάπλευση')) mult += 0.5;
   if(tags.includes('Πολυήμερη')) mult += 0.3;
@@ -3375,11 +3388,18 @@ function findUnlockingTripNm(areaId){
   return parseFloat(trips[0].nm) || null;
 }
 
-function areaBonusPoints(stageNum, unlockingNm){
+function areaBonusPoints(stageNum, areaId){
   const base = stageNum * 5;
-  if(unlockingNm === null || unlockingNm === undefined) return base; // καμία εξόρμηση δεν τη συνδέει ρητά — fallback στη βασική τιμή
-  const REF_NM = 15; // ν.μ. αναφοράς — τυπική τοπική εξόρμηση
-  const factor = Math.min(2.0, Math.max(0.5, unlockingNm / REF_NM));
+  // Χρησιμοποιούμε την ΠΡΑΓΜΑΤΙΚΗ απόσταση από τη βάση (Χανιά) μέχρι τη ΣΥΓΚΕΚΡΙΜΕΝΗ περιοχή — όχι τα
+  // συνολικά ν.μ. της εξόρμησης που την ξεκλείδωσε. Το προηγούμενο θα μπορούσε τεχνητά να φουσκώσει το
+  // μπόνους (π.χ. μια μεγάλη εξόρμηση 200 ν.μ. που απλά περνάει ξυστά από μια κοντινή περιοχή στο δρόμο
+  // προς αλλού) ή να το μειώσει άδικα. Η ευθεία απόσταση είναι σταθερή, αδιάβλητη, και αντανακλά πραγματικά
+  // πόσο μακριά είναι το μέρος — συνεπές με τη λογική στάδιο→δυσκολία που ήδη υπάρχει στο base.
+  const coords = AREA_COORDS[getAreaDisplayName(areaId)];
+  if(!coords) return base;
+  const distFromHome = haversineNm(BASE_LAT, BASE_LON, coords[0], coords[1]);
+  const REF_NM = 15; // ν.μ. αναφοράς — τυπική "κοντινή" απόσταση
+  const factor = Math.min(2.0, Math.max(0.5, distFromHome / REF_NM));
   return Math.round(base * factor);
 }
 
@@ -3395,7 +3415,7 @@ function computeExperienceScore(){
       const id = s.id + '-' + i;
       if(data.areas[id]){
         areasCovered++;
-        areaPts += areaBonusPoints(s.num, findUnlockingTripNm(id));
+        areaPts += areaBonusPoints(s.num, id);
       }
     });
   });
@@ -3467,8 +3487,8 @@ function computeExperienceScore(){
 
   const total = nmPts + areaPts + tagPts + mooringPts + tripPts + certPts + trainingPts + maintenancePts + judgmentPts + auxPracticePts;
   const maxBf = data.trips.reduce((max, t) => Math.max(max, getTripConditionsRange(t).bfMax || 0), 0);
-  const nightTrips = data.trips.filter(t => (t.tags||[]).includes('Νυχτερινή')).length;
-  const openSeaTrips = data.trips.filter(t => (t.tags||[]).includes('Ανοιχτή διάπλευση')).length;
+  const nightTrips = data.trips.filter(t => getTripAllTags(t).includes('Νυχτερινή')).length;
+  const openSeaTrips = data.trips.filter(t => getTripAllTags(t).includes('Ανοιχτή διάπλευση')).length;
   return {totalNm, weightedNm, areasCovered, tagDiversity, mooringDiversity, tripsCount, rawTripsCount: data.trips.length, yearsSpan, longestStreak, nmPts, areaPts, tagPts, mooringPts, volumePts, longevityPts, streakPts, tripPts, certValid, certPts, trainingPts, trainingCount, maintenancePts, engineServiceCount, judgmentPts, weatherCancellationCount, auxPracticeCount, auxPracticePts, total, maxBf, nightTrips, openSeaTrips};
 }
 
@@ -3990,7 +4010,7 @@ function computeYearReview(year){
   const maxBf = Math.max(0, ...yearTrips.map(t => getTripConditionsRange(t).bfMax || 0));
   const nightsAway = yearTrips.reduce((s,t) => s + getTripDailyStays(t).filter(d => d.overnightType && d.overnightType!=='none').reduce((sum,d) => sum + (d.nights || 1), 0), 0);
   const tagsUsed = new Set();
-  yearTrips.forEach(t => (t.tags||[]).forEach(tag => tagsUsed.add(tag)));
+  yearTrips.forEach(t => getTripAllTags(t).forEach(tag => tagsUsed.add(tag)));
 
   const placeStats = {};
   yearTrips.forEach(t => {
@@ -4952,8 +4972,8 @@ function tripAccentColor(t){
   // coral = δύσκολη (Bf5+, ή νυχτερινή, ή επιδείνωση)
   // brass = μέτρια (Bf3-4, ή πολυήμερη)
   // teal = κανονική
-  const bf = t.bf ?? 0;
-  const tags = t.tags || [];
+  const bf = getTripConditionsRange(t).bfMax ?? 0;
+  const tags = getTripAllTags(t);
   const hasChallenge = bf >= 5 || tags.includes('Απρόβλεπτη επιδείνωση καιρού') || tags.includes('Νυχτερινή') || tags.includes('Ρυμούλκηση') || tags.includes('Βοήθεια σε άλλο σκάφος');
   const hasMedium = bf >= 3 || tags.includes('Πολυήμερη') || tags.includes('Ανοιχτή διάπλευση') || tags.includes('Κατάδυση');
   if(hasChallenge) return 'var(--coral)';
@@ -4975,6 +4995,14 @@ function computeConsumptionFlag(t){
 }
 
 function computeTripContribution(trip){
+  // ΣΗΜΑΝΤΙΚΗ ΑΡΧΗ ΕΙΛΙΚΡΙΝΕΙΑΣ: εδώ δείχνουμε ΜΟΝΟ ό,τι πραγματικά αποδίδεται δίκαια σε ΑΥΤΗ τη
+  // συγκεκριμένη εξόρμηση. Η "Συνέπεια" (όγκος/χρόνια/συνέχεια), η εκπαίδευση, η συντήρηση, η κρίση
+  // ματαίωσης, και η άσκηση βοηθητικής ΔΕΝ μπορούν να αποδοθούν δίκαια σε ΜΙΑ μεμονωμένη εξόρμηση —
+  // είναι συλλογικά μοτίβα του συνολικού ιστορικού σου (π.χ. "10 συνεχόμενα χρόνια" δεν είναι κατόρθωμα
+  // καμίας ΜΙΑΣ εξόρμησης, και ο δικός τους τύπος έχει ανώτατα όρια που κάνουν την "ίση κατανομή" σε κάθε
+  // εξόρμηση μαθηματικά αδύνατη χωρίς να είναι παραπλανητική). Εμφανίζονται μόνο στη συνολική ανάλυση
+  // Captain's Level, ποτέ εδώ — ώστε να μην υπάρχει ψευδής εντύπωση ότι "αυτή η εξόρμηση έφερε X πόντους
+  // συνέπειας" ενώ στην πραγματικότητα είναι αποτέλεσμα ολόκληρου του ιστορικού σου μαζί.
   const nmPts = Math.round((parseFloat(trip.nm)||0) * tripDifficultyMultiplier(trip));
 
   let areaPts = 0;
@@ -4983,7 +5011,7 @@ function computeTripContribution(trip){
     const unlockers = data.trips.filter(t => (t.areas||[]).includes(id) && t.date).sort((a,b)=>a.date.localeCompare(b.date));
     if(unlockers.length > 0 && unlockers[0].id === trip.id){
       const stageNum = parseInt(id.replace('stage','').split('-')[0], 10);
-      const pts = areaBonusPoints(stageNum, parseFloat(trip.nm)||null);
+      const pts = areaBonusPoints(stageNum, id);
       areaPts += pts;
       areaDetails.push({name: areaNameById(id), pts});
     }
@@ -4991,8 +5019,8 @@ function computeTripContribution(trip){
 
   let tagPts = 0;
   const tagDetails = [];
-  (trip.tags||[]).forEach(tag => {
-    const firstTrips = data.trips.filter(t => (t.tags||[]).includes(tag) && t.date).sort((a,b)=>a.date.localeCompare(b.date));
+  getTripAllTags(trip).forEach(tag => {
+    const firstTrips = data.trips.filter(t => getTripAllTags(t).includes(tag) && t.date).sort((a,b)=>a.date.localeCompare(b.date));
     if(firstTrips.length > 0 && firstTrips[0].id === trip.id){
       const pts = TAG_WEIGHTS[tag] || 10;
       tagPts += pts;
@@ -5000,12 +5028,19 @@ function computeTripContribution(trip){
     }
   });
 
-  const allSorted = [...data.trips].filter(t=>t.date).sort((a,b)=>a.date.localeCompare(b.date));
-  const idx = allSorted.findIndex(t => t.id === trip.id);
-  const tripPts = (idx !== -1 && idx < 30) ? 2 : 0;
+  let mooringPts = 0;
+  const mooringDetails = [];
+  [...new Set(getTripAllMoorings(trip))].forEach(m => {
+    const firstTrips = data.trips.filter(t => getTripAllMoorings(t).includes(m) && t.date).sort((a,b)=>a.date.localeCompare(b.date));
+    if(firstTrips.length > 0 && firstTrips[0].id === trip.id){
+      const pts = MOORING_TYPE_WEIGHTS[m] || 8;
+      mooringPts += pts;
+      mooringDetails.push({name: MOORING_LABELS[m] || m, pts});
+    }
+  });
 
-  const total = nmPts + areaPts + tagPts + tripPts;
-  return {nmPts, areaPts, tagPts, tripPts, total, areaDetails, tagDetails};
+  const total = nmPts + areaPts + tagPts + mooringPts;
+  return {nmPts, areaPts, tagPts, mooringPts, total, areaDetails, tagDetails, mooringDetails};
 }
 
 
@@ -5015,7 +5050,7 @@ function renderTrips(){
   if(searchTerm){
     list = list.filter(t => {
       const hay = [t.name, t.from, t.to, t.route, t.notes, t.crew, t.overnightLocation,
-        (t.tags||[]).join(' '), (t.areas||[]).map(areaNameById).join(' '),
+        getTripAllTags(t).join(' '), (t.areas||[]).map(areaNameById).join(' '),
         (t.stops||[]).map(s=>s.name).join(' '),
         (t.bookMaterial||[]).map(b=>b.category+' '+b.text).join(' ')]
         .filter(Boolean).join(' ').toLowerCase();
@@ -5071,7 +5106,7 @@ function renderTrips(){
       return `<p class="trip-detail-row">📍 ${dateLabel}: ${parts.join(' · ')}</p>`;
     }).join('');
 
-    const tagsHtml = (t.tags||[]).map(tag => `<span class="trip-tag trip-type-tag">${escapeHtml(tag)}</span>`).join('');
+    const tagsHtml = getTripAllTags(t).map(tag => `<span class="trip-tag trip-type-tag">${escapeHtml(tag)}</span>`).join('');
     const areasHtml = (t.areas||[]).map(id => `<span class="trip-tag">${escapeHtml(areaNameById(id))}</span>`).join('');
     const bookHtml = (t.bookMaterial||[]).map(b => `<p class="trip-book"><strong>${escapeHtml(b.category)}:</strong> ${escapeHtml(b.text)}</p>`).join('');
 
@@ -5115,7 +5150,13 @@ function renderTrips(){
           ${bookHtml}
           <p class="trip-contrib" data-contrib="${t.id}">${ICON_STAR} +${contrib.total} πόντοι Captain's Level (πάτα για ανάλυση)</p>
           <div class="trip-contrib-detail" id="contrib-${t.id}" style="display:none;">
-            Μίλια: +${contrib.nmPts} · Περιοχές: +${contrib.areaPts} · Τύποι: +${contrib.tagPts} · Συνέπεια: +${contrib.tripPts}
+            ${[
+              contrib.nmPts ? `Μίλια: +${contrib.nmPts}` : null,
+              contrib.areaPts ? `Περιοχές: +${contrib.areaPts}` : null,
+              contrib.tagPts ? `Τύποι: +${contrib.tagPts}` : null,
+              contrib.mooringPts ? `Πρόσδεση: +${contrib.mooringPts}` : null
+            ].filter(Boolean).join(' · ') || 'Καμία νέα «πρώτη φορά» από αυτή τη συγκεκριμένη εξόρμηση (τα μίλια της μετράνε ήδη στο σύνολο)'}
+            <span style="display:block;margin-top:4px;font-size:var(--fs-xs);color:var(--text-muted);">Συνέπεια, εκπαίδευση, συντήρηση, κρίση και άσκηση βοηθητικής είναι συλλογικά επιτεύγματα του ιστορικού σου — δες τα στη συνολική ανάλυση του Captain's Level.</span>
           </div>
         </div>
       </div>
@@ -5204,10 +5245,24 @@ function renderTrips(){
       const t = data.trips.find(tr => tr.id === id);
       const label = t ? buildRouteLabel(t) : '';
       if(!confirm(`Οριστική διαγραφή: "${label}" (${t ? t.nm : '?'} ν.μ.);\n\nΔεν αναιρείται.`)) return;
+
+      // Εντοπισμός περιοχών που ΜΟΝΟ αυτή η εξόρμηση κάλυπτε — μετά τη διαγραφή θα μείνουν χωρίς καμία
+      // άλλη καταγεγραμμένη απόδειξη επίσκεψης. Δεν τις αποεπιλέγουμε αυτόματα (η σήμανση περιοχής μπορεί
+      // σκόπιμα να έχει οριστεί χειροκίνητα, ανεξάρτητα από εξορμήσεις) — απλά το κάνουμε ΟΡΑΤΟ, ώστε να
+      // μην "κολλήσει" σιωπηλά μια περιοχή σημειωμένη ως καλυμμένη χωρίς πια καμία πραγματική απόδειξη.
+      const orphanedAreas = (t?.areas || []).filter(areaId =>
+        !data.trips.some(other => other.id !== id && (other.areas||[]).includes(areaId))
+      );
+
       data.trips = data.trips.filter(tr => tr.id !== id);
       const ok = await save();
       if(ok) showToast('Διαγράφηκε η εξόρμηση');
       renderAll();
+
+      if(orphanedAreas.length){
+        const names = orphanedAreas.map(getAreaDisplayName).join(', ');
+        setTimeout(() => showToast(`ℹ️ Οι περιοχές "${names}" δεν καλύπτονται πια από καμία άλλη εξόρμηση — παραμένουν σημειωμένες, αποεπίλεξέ τες χειροκίνητα στα Στάδια αν θες.`), 2600);
+      }
     });
   });
   wrap.querySelectorAll('.edit-btn').forEach(btn => {
@@ -5607,7 +5662,7 @@ function estimatePlannedPoints(){
   areas.forEach(id => {
     if(data.areas[id]) return; // ήδη καλυμμένη, δεν φέρνει νέους πόντους
     const stageNum = parseInt(id.replace('stage','').split('-')[0], 10);
-    areaPts += areaBonusPoints(stageNum, nm);
+    areaPts += areaBonusPoints(stageNum, id);
   });
 
   const tripPts = data.trips.length < 30 ? 2 : 0;
@@ -6756,13 +6811,13 @@ function computeSeaExperienceScoreAsOf(cutoffDate){
 
   const areaFirstSeenNm = {};
   trips.slice().sort((a,b) => a.date.localeCompare(b.date)).forEach(t => {
-    (t.areas||[]).forEach(id => { if(!(id in areaFirstSeenNm)) areaFirstSeenNm[id] = parseFloat(t.nm) || 0; });
+    (t.areas||[]).forEach(id => { if(!(id in areaFirstSeenNm)) areaFirstSeenNm[id] = true; });
   });
   let areaPts = 0;
   STAGES.forEach(s => {
     s.areas.forEach((_, i) => {
       const id = s.id + '-' + i;
-      if(id in areaFirstSeenNm) areaPts += areaBonusPoints(s.num, areaFirstSeenNm[id]);
+      if(id in areaFirstSeenNm) areaPts += areaBonusPoints(s.num, id);
     });
   });
 
@@ -6823,7 +6878,7 @@ function recentEngineHoursSince(engineId, sinceDateStr){
 
 // --- Κάρτα 1: Μοτίβα απρόβλεπτου καιρού ---
 function renderWeatherSurpriseCard(){
-  const surprises = data.trips.filter(t => (t.tags||[]).includes('Απρόβλεπτη επιδείνωση καιρού'));
+  const surprises = data.trips.filter(t => getTripAllTags(t).includes('Απρόβλεπτη επιδείνωση καιρού'));
   if(surprises.length < 3){
     return analyticsCard('🌬️ Μοτίβα απρόβλεπτου καιρού', analyticsEmpty(`Χρειάζονται τουλάχιστον 3 καταγραφές με «Απρόβλεπτη επιδείνωση καιρού» (έχεις ${surprises.length}) για να αναδειχθεί μοτίβο.`));
   }
@@ -7304,7 +7359,7 @@ function buildPrintView(){
   const tripRows = sorted.map(t => {
     const route = t.name ? escapeHtml(t.name) + ' — ' + (escapeHtml(t.from)||'?') + ' → ' + (escapeHtml(t.to)||'?') : (escapeHtml(t.from)||'?') + ' → ' + (escapeHtml(t.to)||'?');
     const dateLabel = t.endDate && t.endDate !== t.date ? `${t.date}→${t.endDate}` : (t.date||'');
-    return `<tr><td>${dateLabel}</td><td>${route}</td><td>${t.nm}</td><td>${(t.tags||[]).join(', ')}</td><td>${escapeHtml(t.notes||'')}</td></tr>`;
+    return `<tr><td>${dateLabel}</td><td>${route}</td><td>${t.nm}</td><td>${getTripAllTags(t).join(', ')}</td><td>${escapeHtml(t.notes||'')}</td></tr>`;
   }).join('');
 
   const locStats = computeLocationStats();
@@ -7342,7 +7397,7 @@ function buildCsv(){
   const headers = ['Ημερομηνία','Ημ. Λήξης','Όνομα','Αφετηρία','Προορισμός','Ν.μ.','Τύποι','Beaufort','Κύμα (μ)','Ώρες μηχανής','Κατανάλωση (L/ν.μ.)','Καύσιμο (L)','Φορτίο','Άτομα','Πλήρωμα','Σημειώσεις'];
   const rows = [...data.trips].sort((a,b)=>(a.date||'').localeCompare(b.date||'')).map(t => [
     t.date||'', t.endDate||'', t.name||'', t.from||'', t.to||'', t.nm ?? '',
-    (t.tags||[]).join('; '), t.bf ?? '', t.wave ?? '', t.hours ?? '', t.rate ?? '', t.fuel ?? '',
+    (getTripAllTags(t)).join('; '), t.bf ?? '', t.wave ?? '', t.hours ?? '', t.rate ?? '', t.fuel ?? '',
     t.load ? loadLabel(t.load) : '', t.people ?? '', t.crew||'', t.notes||''
   ]);
   const lines = [headers, ...rows].map(row => row.map(escapeCsvField).join(','));
@@ -7430,7 +7485,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.22-11';
+const APP_VERSION = '2026.07.22-14';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
@@ -7605,7 +7660,7 @@ function renderCmdkResults(query){
   let tripMatches = [];
   if(q){
     tripMatches = data.trips.filter(t => {
-      const hay = normalizeForSearch([buildTripShareRoute(t), t.notes, (t.tags||[]).join(' ')].join(' '));
+      const hay = normalizeForSearch([buildTripShareRoute(t), t.notes, getTripAllTags(t).join(' ')].join(' '));
       return hay.includes(q);
     }).slice(0, 5).map(t => ({
       icon: '⛵',
