@@ -1994,7 +1994,7 @@ function computeStopEngineHours(stop){
   if(stop.engineHoursManual) return stop.engineHours;
   const nm = parseFloat(stop.nm) || 0;
   const speed = parseFloat(stop.avgSpeed) || 0;
-  if(nm > 0 && speed > 0) return Math.round((nm / speed) * 10) / 10;
+  if(nm > 0 && speed > 0) return Math.round((nm / speed) * 100) / 100;
   return null;
 }
 
@@ -6747,7 +6747,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.21-23';
+const APP_VERSION = '2026.07.21-24';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
