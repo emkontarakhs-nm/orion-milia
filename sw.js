@@ -23,6 +23,17 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+
+  // Share Target: όταν μοιράζεσαι μια φωτογραφία από άλλη εφαρμογή (π.χ. Κάμερα/Gallery) προς το ΩΡΙΩΝ,
+  // το λειτουργικό στέλνει ένα POST εδώ. Το αποθηκεύουμε προσωρινά (Cache API) και ανακατευθύνουμε στην
+  // κύρια σελίδα με σημάδι ?shared-photo=1 — η ίδια η εφαρμογή (index.html) το παραλαμβάνει από εκεί
+  // και ρωτάει σε ποια εξόρμηση να την προσθέσει.
+  if (event.request.method === 'POST' && url.pathname.endsWith('/share-photo')) {
+    event.respondWith(handleSharePhoto(event.request));
+    return;
+  }
+
   if (event.request.method !== 'GET') return;
 
   // Το version.json ΠΟΤΕ δεν πρέπει να έρχεται από την cache — είναι το "ρολόι" που
@@ -53,3 +64,20 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
+async function handleSharePhoto(request){
+  try{
+    const formData = await request.formData();
+    const file = formData.get('photo');
+    if(file && file.size > 0){
+      const cache = await caches.open('orion-shared-photo');
+      await cache.put('/__shared-photo-pending', new Response(file, {
+        headers: {'Content-Type': file.type || 'image/jpeg', 'X-Shared-Name': file.name || 'photo.jpg'}
+      }));
+    }
+  }catch(err){
+    console.error('Share target error:', err);
+  }
+  // 303 See Other: σωστός κώδικας για ανακατεύθυνση μετά από POST (ο browser κάνει GET στο νέο URL, όχι re-POST)
+  return Response.redirect('./?shared-photo=1', 303);
+}
