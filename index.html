@@ -2059,7 +2059,7 @@ function directionChipsHtml(currentValue, dataAttr){
 }
 
 function renderStopDetailCard(stop, idx, prevPointName){
-  const sug = suggestRate({bf: stop.bf, load: stop.load||'light', people: stop.people||BASE_PEOPLE, wave: stop.wave});
+  const sug = suggestRate({bf: stop.bf, load: stop.load||'light', people: stop.people||BASE_PEOPLE, wave: stop.wave, speed: stop.avgSpeed, gusts: stop.gusts});
   const autoHours = computeStopEngineHours(stop);
   const overnightActive = !!(stop.overnight && stop.overnight.type && stop.overnight.type !== 'none');
   const tagsHtml = TRIP_TAGS.map(tag => {
@@ -2467,7 +2467,7 @@ function updateFormLayoutForStops(){
     const nm = parseFloat(s.nm) || 0;
     if(nm <= 0) return;
     const legRate = (s.rate !== null && s.rate !== undefined) ? s.rate :
-      (suggestRate({bf: s.bf, load: s.load||'light', people: s.people||BASE_PEOPLE, wave: s.wave})||{}).rate;
+      (suggestRate({bf: s.bf, load: s.load||'light', people: s.people||BASE_PEOPLE, wave: s.wave, speed: s.avgSpeed, gusts: s.gusts})||{}).rate;
     if(legRate){ totalLitersEstimate += nm * legRate; hasLitersEstimate = true; }
   });
   if(hasLitersEstimate){
@@ -2812,6 +2812,58 @@ function renderBookMaterialCategories(){
 }
 
 /* ================= ΣΤΑΔΙΑ (προβολή) ================= */
+/* ================= ΑΝΙΧΝΕΥΣΗ ΔΙΑΔΡΟΜΗΣ ΠΑΝΩ ΑΠΟ ΣΤΕΡΙΑ =================
+   Η ευθεία γραμμή ανάμεσα σε δύο σημεία μπορεί να περνάει πάνω από στεριά (π.χ. χερσόνησο, νησί
+   στη μέση). Δεν χτίζουμε πλήρες "έξυπνο θαλάσσιο routing" (πολύ ρίσκο για λάθος χωρίς οπτική
+   επαλήθευση σε πραγματικό browser) — αντ' αυτού ανιχνεύουμε την διέλευση με ακρίβεια και
+   προειδοποιούμε καθαρά, ώστε ο χρήστης να προσθέσει το δικό του ενδιάμεσο σημείο εκεί που ξέρει
+   ότι υπάρχει πέρασμα. Χρησιμοποιεί τα ΙΔΙΑ δεδομένα ακτογραμμής (LAND_PATHS) που ήδη σχεδιάζουν τον χάρτη. */
+const _landPolygonsCache = {};
+function getLandPolygons(view){
+  if(_landPolygonsCache[view]) return _landPolygonsCache[view];
+  const pathD = LAND_PATHS[view] || '';
+  const polygons = [];
+  pathD.split('Z').forEach(sub => {
+    if(!sub.trim()) return;
+    const pts = [];
+    (sub.match(/[\d.-]+,[\d.-]+/g) || []).forEach(pair => {
+      const [x,y] = pair.split(',').map(Number);
+      if(!isNaN(x) && !isNaN(y)) pts.push({x,y});
+    });
+    if(pts.length >= 3) polygons.push(pts);
+  });
+  _landPolygonsCache[view] = polygons;
+  return polygons;
+}
+
+// Ray-casting point-in-polygon — πρότυπος, καλά δοκιμασμένος αλγόριθμος
+function pointInPolygon(px, py, poly){
+  let inside = false;
+  for(let i=0, j=poly.length-1; i<poly.length; j=i++){
+    const xi = poly[i].x, yi = poly[i].y, xj = poly[j].x, yj = poly[j].y;
+    const intersect = ((yi > py) !== (yj > py)) && (px < (xj-xi)*(py-yi)/(yj-yi)+xi);
+    if(intersect) inside = !inside;
+  }
+  return inside;
+}
+
+function pointOnLand(px, py, polygons){
+  return polygons.some(poly => pointInPolygon(px, py, poly));
+}
+
+// Δειγματοληψία κατά μήκος ενός ευθύγραμμου σκέλους (σε προβεβλημένες pixel-συντεταγμένες, ΟΧΙ lat/lng)
+// — αγνοεί τα ίδια τα άκρα (μπορεί να είναι σε λιμάνι/ακτή), ελέγχει μόνο ενδιάμεσα σημεία.
+function legCrossesLand(p1, p2, polygons, samples){
+  samples = samples || 30;
+  for(let i=1;i<samples;i++){
+    const t = i/samples;
+    const x = p1.x + (p2.x-p1.x)*t;
+    const y = p1.y + (p2.y-p1.y)*t;
+    if(pointOnLand(x, y, polygons)) return true;
+  }
+  return false;
+}
+
 let currentMapView = 'crete';
 
 function renderAreaMap(){
@@ -4304,66 +4356,146 @@ function updateRoutePlannerResult(){
   useBtn.textContent = `→ Χρησιμοποίησε στη φόρμα εξόρμησης (${totalNm.toFixed(1)} ν.μ.)`;
 }
 
+function avgOf(arr){ return arr.length ? arr.reduce((s,v)=>s+v,0)/arr.length : null; }
+
+// Συγκεντρώνει σειρές εκπαίδευσης για το μοντέλο κατανάλωσης, από τρεις πηγές, με φθίνουσα αξιοπιστία:
+// (α) ολόκληρες εξορμήσεις με ΠΡΑΓΜΑΤΙΚΑ μετρημένα λίτρα (totalFuelL) — η πιο αξιόπιστη πηγή, βάρος 2×
+// (β) μεμονωμένα σκέλη/στάσεις όπου επιβεβαίωσες ΧΕΙΡΟΚΙΝΗΤΑ την κατανάλωση (rateManual) — νέο, πλουσιότερο
+//     ανά-συνθήκη δεδομένο (νέο σύστημα στάσεων/πορειών), βάρος 1.2×
+// (γ) ολόκληρες εξορμήσεις με καταγεγραμμένη κατανάλωση σε επίπεδο εξόρμησης (παλιό σύστημα), βάρος 1×
+// ΠΟΤΕ δεν εκπαιδεύουμε πάνω σε τιμές που ήταν απλά η δική μας αυτόματη πρόταση χωρίς επιβεβαίωση —
+// θα ήταν κυκλική λογική (το μοντέλο θα "επιβεβαίωνε" τον εαυτό του αντί να μαθαίνει από σένα).
+function buildConsumptionTrainingRows(){
+  const rows = [];
+  data.trips.forEach(t => {
+    const legs = [...(t.stops||[])];
+    if(t.finalLegDetails && Object.keys(t.finalLegDetails).length) legs.push(t.finalLegDetails);
+
+    if(t.totalFuelL && t.nm > 0){
+      const bfs = legs.map(l=>l.bf).filter(v=>v!=null);
+      const waves = legs.map(l=>l.wave).filter(v=>v!=null);
+      const gustsArr = legs.map(l=>l.gusts).filter(v=>v!=null);
+      const totalHours = legs.length ? legs.reduce((s,l) => {
+        const h = l.engineHoursManual ? l.engineHours : computeStopEngineHours(l);
+        return s + (parseFloat(h)||0);
+      }, 0) : t.hours;
+      rows.push({
+        bf: bfs.length ? avgOf(bfs) : (t.bf ?? BASE_BF),
+        wave: waves.length ? avgOf(waves) : (t.wave ?? null),
+        gusts: gustsArr.length ? avgOf(gustsArr) : null,
+        speed: (totalHours && totalHours > 0) ? t.nm/totalHours : null,
+        load: t.load, people: t.people ?? BASE_PEOPLE,
+        rate: t.totalFuelL / t.nm, isAccurate: true, weight: 2.0, date: t.date
+      });
+    } else if(t.rate && t.rate > 0){
+      rows.push({
+        bf: t.bf ?? BASE_BF, wave: t.wave ?? null, gusts: null,
+        speed: (t.hours && t.hours > 0 && t.nm) ? t.nm/t.hours : null,
+        load: t.load, people: t.people ?? BASE_PEOPLE,
+        rate: t.rate, isAccurate: false, weight: 1.0, date: t.date
+      });
+    }
+
+    legs.forEach(leg => {
+      if(leg.rateManual && leg.rate && leg.rate > 0){
+        const hours = leg.engineHoursManual ? leg.engineHours : computeStopEngineHours(leg);
+        const speed = leg.avgSpeed ?? ((hours && leg.nm) ? leg.nm/hours : null);
+        rows.push({
+          bf: leg.bf ?? BASE_BF, wave: leg.wave ?? null, gusts: leg.gusts ?? null,
+          speed, load: leg.load, people: leg.people ?? BASE_PEOPLE,
+          rate: leg.rate, isAccurate: false, weight: 1.2, date: t.date
+        });
+      }
+    });
+  });
+  return rows;
+}
+
 function fitConsumptionModel(){
   // Προεπιλέγουμε πηγές rate κατά αξιοπιστία:
   // 1. Αν υπάρχει totalFuelL (πραγματικά μετρημένα λίτρα) → υπολογίζουμε τον ΑΚΡΙΒΗ rate
-  // 2. Αλλιώς χρησιμοποιούμε τον καταγεγραμμένο rate (εκτίμηση)
-  const trips = data.trips.filter(t => {
-    const hasAccurateRate = t.totalFuelL && t.nm && t.nm > 0;
-    const hasEstimatedRate = t.rate && t.rate > 0;
-    return hasAccurateRate || hasEstimatedRate;
-  }).map(t => {
-    const accurateRate = (t.totalFuelL && t.nm > 0) ? t.totalFuelL / t.nm : null;
-    return {...t, _effectiveRate: accurateRate || t.rate, _isAccurate: !!accurateRate};
-  });
+  // 2. Αλλιώς χρησιμοποιούμε τον καταγεγραμμένο rate (εκτίμηση), είτε σε επίπεδο εξόρμησης είτε ανά σκέλος
+  const rows = buildConsumptionTrainingRows();
+  if(rows.length < 5) return null;
 
-  if(trips.length < 5) return null;
-
-  // Exponential decay weights: νεότερα δεδομένα πιο σημαντικά
-  // Επίσης accurate measurements (πραγματικά λίτρα) έχουν 2× βάρος
+  // Exponential decay weights: νεότερα δεδομένα πιο σημαντικά. Πολλαπλασιάζεται με το δικό της βάρος
+  // αξιοπιστίας κάθε σειράς (2× πραγματικά λίτρα, 1.2× επιβεβαιωμένο σκέλος, 1× καταγεγραμμένο σύνολο).
   const now = Date.now();
   const halfLife = 180 * 24 * 3600 * 1000; // 6 μήνες
-  const weights = trips.map(t => {
-    const age = t.date ? (now - new Date(t.date).getTime()) : halfLife;
+  const weights = rows.map(r => {
+    const age = r.date ? (now - new Date(r.date).getTime()) : halfLife;
     const decayWeight = Math.exp(-Math.LN2 * age / halfLife);
-    return decayWeight * (t._isAccurate ? 2.0 : 1.0);
+    return decayWeight * r.weight;
   });
 
-  const useWave = trips.length >= 8 && trips.some(t => t.wave);
-  const X = trips.map(t => useWave
-    ? [1, (t.bf ?? BASE_BF), (t.people ?? BASE_PEOPLE), LOAD_NUM[t.load] ?? 0, (t.wave ?? 0)]
-    : [1, (t.bf ?? BASE_BF), (t.people ?? BASE_PEOPLE), LOAD_NUM[t.load] ?? 0]);
-  const y = trips.map(t => t._effectiveRate);
+  // Σταδιακή προσθήκη μεταβλητών όσο μεγαλώνει το ιστορικό σου — κάθε μία χρειάζεται αρκετά δεδομένα
+  // πριν συμπεριληφθεί, αλλιώς ρισκάρουμε overfitting σε πολύ λίγα σημεία.
+  const useWave = rows.length >= 8 && rows.some(r => r.wave != null);
+  const speedRows = rows.filter(r => r.speed != null && r.speed > 0);
+  const useSpeed = speedRows.length >= 6;
+  const gustsRows = rows.filter(r => r.gusts != null);
+  const useGusts = rows.length >= 12 && gustsRows.length >= 8;
+  const avgUserSpeed = speedRows.length ? avgOf(speedRows.map(r=>r.speed)) : 22;
+
+  function buildRow(r){
+    const row = [1, (r.bf ?? BASE_BF), (r.people ?? BASE_PEOPLE), LOAD_NUM[r.load] ?? 0];
+    if(useWave) row.push(r.wave ?? 0);
+    if(useSpeed) row.push(r.speed ?? avgUserSpeed); // αν λείπει η ταχύτητα σε αυτή τη σειρά, αναπληρώνουμε με τη δική σου μέση
+    if(useGusts) row.push(r.gusts ?? (r.bf ?? BASE_BF)); // λογική αναπλήρωση: χωρίς καταγεγραμμένες ριπές, υποθέτουμε ≈ Bf
+    return row;
+  }
+
+  const X = rows.map(buildRow);
+  const y = rows.map(r => r.rate);
 
   // Weighted ridge regression: solveLinearRegression δεν υποστηρίζει weights άμεσα,
   // το εφαρμόζω χρησιμοποιώντας √(weight) scaling (standard WLS technique)
   const Xw = X.map((row, i) => row.map(v => v * Math.sqrt(weights[i])));
   const yw = y.map((v, i) => v * Math.sqrt(weights[i]));
   const coeffs = solveLinearRegression(Xw, yw, 0.15);
+  if(!coeffs) return null;
 
-  const accurateCount = trips.filter(t => t._isAccurate).length;
-  return coeffs ? {coeffs, useWave, n: trips.length, accurateCount} : null;
+  // R² πάνω στα ίδια δεδομένα εκπαίδευσης — όχι αυστηρή out-of-sample επικύρωση, αλλά μια ειλικρινής,
+  // κατανοητή ένδειξη πόσο καλά το μοντέλο εξηγεί τη διακύμανση που έχεις καταγράψει μέχρι τώρα.
+  // Θα βελτιώνεται σταδιακά (και θα φαίνεται στον χρήστη) όσο προστίθενται περισσότερες, ποικίλες καταγραφές.
+  const meanY = avgOf(y);
+  let ssRes = 0, ssTot = 0;
+  X.forEach((row, i) => {
+    const pred = row.reduce((s,v,j) => s + v*coeffs[j], 0);
+    ssRes += (y[i]-pred)**2;
+    ssTot += (y[i]-meanY)**2;
+  });
+  const r2 = ssTot > 0 ? Math.max(0, Math.min(1, 1 - ssRes/ssTot)) : null;
+
+  const accurateCount = rows.filter(r => r.isAccurate).length;
+  return {coeffs, useWave, useSpeed, useGusts, n: rows.length, accurateCount, r2, avgUserSpeed};
 }
 
 function suggestRate(cond){
   const bf = cond.bf, load = cond.load || 'light', people = cond.people || BASE_PEOPLE, wave = cond.wave;
+  const speed = cond.speed, gusts = cond.gusts;
 
   // Επίπεδο 1 (καλύτερο, χρειάζεται 5+ καταγραφές με κατανάλωση): πολυμεταβλητή γραμμική παλινδρόμηση
-  // πάνω στο ΔΙΚΟ ΣΟΥ ιστορικό — μαθαίνει την πραγματική επίδραση ανέμου/ατόμων/φορτίου (και κύματος, με 8+
-  // καταγραφές) στο ΣΥΓΚΕΚΡΙΜΕΝΟ σκάφος, αντί να υποθέτει γενικούς πολλαπλασιαστές. Βελτιώνεται όσο περισσότερες
-  // εξορμήσεις καταγράφεις — και σε ακρίβεια και σε αριθμό μεταβλητών που συνυπολογίζει.
+  // πάνω στο ΔΙΚΟ ΣΟΥ ιστορικό — μαθαίνει την πραγματική επίδραση ανέμου/ατόμων/φορτίου (και κύματος με 8+,
+  // ταχύτητας με 6+, ριπών με 12+) στο ΣΥΓΚΕΚΡΙΜΕΝΟ σκάφος, αντί να υποθέτει γενικούς πολλαπλασιαστές.
+  // Βελτιώνεται κάθε φορά που καταγράφεις — και σε ακρίβεια (R²) και σε αριθμό μεταβλητών που συνυπολογίζει.
   const model = fitConsumptionModel();
   if(model){
     const c = model.coeffs;
     const loadNum = LOAD_NUM[load] ?? 0;
-    const predicted = model.useWave
-      ? c[0] + c[1]*(bf ?? BASE_BF) + c[2]*people + c[3]*loadNum + c[4]*(wave ?? 0)
-      : c[0] + c[1]*(bf ?? BASE_BF) + c[2]*people + c[3]*loadNum;
+    const row = [1, (bf ?? BASE_BF), people, loadNum];
+    if(model.useWave) row.push(wave ?? 0);
+    if(model.useSpeed) row.push(speed ?? model.avgUserSpeed);
+    if(model.useGusts) row.push(gusts ?? (bf ?? BASE_BF));
+    const predicted = row.reduce((s,v,i) => s + v*c[i], 0);
     if(predicted > 0.1 && predicted < 5){ // λογικά όρια ασφαλείας — αν η παλινδρόμηση βγει εκτός λογικού εύρους, δεν την εμπιστευόμαστε τυφλά
-      const n = data.trips.filter(t=>t.rate).length;
-      const varsTxt = model.useWave ? 'άνεμο, φορτίο, άτομα, κύμα' : 'άνεμο, φορτίο, άτομα';
+      const varsParts = ['άνεμο', 'φορτίο', 'άτομα'];
+      if(model.useWave) varsParts.push('κύμα');
+      if(model.useSpeed) varsParts.push('ταχύτητα');
+      if(model.useGusts) varsParts.push('ριπές');
       const accNote = model.accurateCount > 0 ? ` (${model.accurateCount} με πραγματικά μετρημένα λίτρα)` : '';
-      return {rate: Math.round(predicted*100)/100, source: `weighted παλινδρόμηση πάνω σε ${n} εξορμήσεις${accNote} · ${varsTxt}`};
+      const qualityNote = model.r2 != null ? ` · ακρίβεια ${Math.round(model.r2*100)}%` : '';
+      return {rate: Math.round(predicted*100)/100, source: `weighted παλινδρόμηση πάνω σε ${model.n} καταγραφές${accNote} · ${varsParts.join(', ')}${qualityNote}`};
     }
   }
 
@@ -4815,7 +4947,9 @@ function refreshRateSuggestion(){
   const load = document.getElementById('f-load').value;
   const people = document.getElementById('f-people').value !== '' ? parseInt(document.getElementById('f-people').value,10) : null;
   const wave = document.getElementById('f-wave').value !== '' ? parseFloat(document.getElementById('f-wave').value) : null;
-  const sug = suggestRate({bf, load, people, wave});
+  const hoursVal = parseFloat(document.getElementById('f-hours').value);
+  const speed = (hoursVal && hoursVal > 0) ? nm/hoursVal : null;
+  const sug = suggestRate({bf, load, people, wave, speed});
   rateEl.value = sug.rate;
   rateAutoFilled = true;
   document.querySelectorAll('.more-details')[1].open = true;
@@ -6793,7 +6927,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.22-2';
+const APP_VERSION = '2026.07.22-3';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
