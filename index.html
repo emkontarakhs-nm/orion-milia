@@ -3777,7 +3777,7 @@ function renderLevel(){
   html += `<div class="level-breakdown" style="margin-top:10px;">
     <p class="level-breakdown-title">Εμπειρία στα στοιχεία</p>
     <div class="level-breakdown-row">
-      <span>Ανώτατο Beaufort που έχεις ιστιοπλοήσει</span>
+      <span>Ανώτατο Beaufort που έχεις ταξιδέψει</span>
       <span>${sc.maxBf > 0 ? (bfIndicatorSvg(sc.maxBf,'var(--brass)') + ' Bf ' + sc.maxBf) : '—'}</span>
     </div>
     <div class="level-breakdown-row">
@@ -7496,7 +7496,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.22-17';
+const APP_VERSION = '2026.07.22-18';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
