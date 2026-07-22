@@ -4036,7 +4036,7 @@ function renderChart(){
 
   const compareToggleHtml = canCompareYears
     ? `<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:var(--fs-xs);color:var(--text-muted);">
-        <input type="checkbox" id="chart-compare-toggle"> Σύγκριση ετών
+        <input type="checkbox" id="chart-compare-toggle-normal"> Σύγκριση ετών
       </label>`
     : '';
 
@@ -4081,7 +4081,7 @@ function renderChart(){
       <span style="font-size:var(--fs-sm);color:var(--text-muted);display:flex;align-items:center;gap:5px;"><span style="width:12px;height:10px;background:var(--brass);opacity:0.9;border-radius:2px;display:inline-block;"></span>Ο πιο δυνατός μήνας</span>
     </div>`;
 
-  const compareToggle = document.getElementById('chart-compare-toggle');
+  const compareToggle = document.getElementById('chart-compare-toggle-normal');
   if(compareToggle){
     compareToggle.checked = chartCompareMode;
     compareToggle.addEventListener('change', () => {
@@ -4142,7 +4142,7 @@ function renderChartYearCompare(el, byMonth, allYears){
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;flex-wrap:wrap;gap:6px;">
       <span style="font-family:'JetBrains Mono',monospace;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Σύγκριση ${curYear} vs ${prevYear} (σωρευτικά ν.μ. ανά μήνα του έτους)</span>
       <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:var(--fs-xs);color:var(--text-muted);">
-        <input type="checkbox" id="chart-compare-toggle" checked> Σύγκριση ετών
+        <input type="checkbox" id="chart-compare-toggle-compare" checked> Σύγκριση ετών
       </label>
     </div>
     <svg width="100%" viewBox="0 0 ${W} ${H}" style="display:block;overflow:visible;" role="img">
@@ -4159,7 +4159,7 @@ function renderChartYearCompare(el, byMonth, allYears){
       <span style="font-size:var(--fs-sm);color:var(--text-muted);display:flex;align-items:center;gap:5px;"><span style="width:20px;height:2.5px;background:var(--text-muted);border-radius:2px;display:inline-block;border-top:2px dashed var(--text-muted);"></span>${prevYear}</span>
     </div>`;
 
-  const compareToggle = document.getElementById('chart-compare-toggle');
+  const compareToggle = document.getElementById('chart-compare-toggle-compare');
   if(compareToggle){
     compareToggle.addEventListener('change', () => {
       chartCompareMode = compareToggle.checked;
@@ -6927,7 +6927,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.22-3';
+const APP_VERSION = '2026.07.22-4';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
