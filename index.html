@@ -353,6 +353,27 @@
   .ripple-effect{position:absolute;border-radius:50%;background:rgba(255,255,255,0.55);transform:scale(0);animation:ripple-anim 0.5s ease-out;pointer-events:none;}
   [data-theme="dark"] .ripple-effect{background:rgba(255,255,255,0.35);}
   @keyframes ripple-anim{to{transform:scale(2.6);opacity:0;}}
+
+  /* Απαλή, παλλόμενη οπτική επιβεβαίωση μετά την αποθήκευση εξόρμησης — σαν σύντομη "ανάσα ανακούφισης" */
+  #success-checkmark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.5);z-index:9999;opacity:0;pointer-events:none;filter:drop-shadow(0 4px 16px rgba(20,41,61,0.25));}
+  #success-checkmark.show{animation:checkmark-pulse 1.3s ease forwards;}
+  #success-checkmark .checkmark-circle{stroke:var(--teal);stroke-width:2;fill:var(--card-bg);stroke-dasharray:151;stroke-dashoffset:151;}
+  #success-checkmark.show .checkmark-circle{animation:checkmark-circle-draw 0.45s ease-out forwards;}
+  #success-checkmark .checkmark-check{stroke:var(--teal);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:48;stroke-dashoffset:48;}
+  #success-checkmark.show .checkmark-check{animation:checkmark-check-draw 0.3s 0.4s ease-out forwards;}
+  @keyframes checkmark-circle-draw{to{stroke-dashoffset:0;}}
+  @keyframes checkmark-check-draw{to{stroke-dashoffset:0;}}
+  @keyframes checkmark-pulse{
+    0%{opacity:0;transform:translate(-50%,-50%) scale(0.5);}
+    12%{opacity:1;transform:translate(-50%,-50%) scale(1.08);}
+    22%{transform:translate(-50%,-50%) scale(1);}
+    80%{opacity:1;transform:translate(-50%,-50%) scale(1);}
+    100%{opacity:0;transform:translate(-50%,-50%) scale(1);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    #success-checkmark.show{animation:none;opacity:1;transform:translate(-50%,-50%) scale(1);}
+    #success-checkmark.show .checkmark-circle, #success-checkmark.show .checkmark-check{animation:none;stroke-dashoffset:0;}
+  }
   .engine-open-service-btn:hover,.engine-service-submit-btn:hover{filter:brightness(1.1);}
   .engine-open-service-btn:active,.engine-service-submit-btn:active{transform:scale(0.97);}
   .engine-service-cancel-btn:hover{border-color:var(--coral);color:var(--coral);}
@@ -544,6 +565,7 @@
     <a href="#nav-log" class="quick-nav-item">Ημερολόγιο</a>
     <a href="#nav-plan" class="quick-nav-item">Σχεδίασε</a>
     <a href="#nav-level" class="quick-nav-item">Level</a>
+    <a href="#nav-narrative" class="quick-nav-item">Αφήγηση</a>
     <a href="#nav-engines" class="quick-nav-item">Κινητήρες</a>
     <a href="#nav-progress" class="quick-nav-item">Πρόοδος</a>
     <a href="#nav-checklist" class="quick-nav-item">Checklist</a>
@@ -911,11 +933,15 @@
   <p class="section-sub">Πλήρης ανάλυση βάσει όσων έχεις καταγράψει. Ενδεικτική κλίμακα, όχι επίσημη πιστοποίηση.</p>
   <div class="level-box" id="level-box"></div>
 
-  <p class="section-title" id="nav-engines">5. Κινητήρες</p>
+  <p class="section-title" id="nav-narrative">5. Η Αφήγηση της Πορείας μου</p>
+  <p class="section-sub">Ένα προσωπικό, λογοτεχνικό κείμενο για το ταξίδι σου — γράφεται από τον Claude με τα πραγματικά σου δεδομένα, όποτε του το ζητήσεις σε συνομιλία. Επικολλάς εδώ, επεξεργάζεσαι ελεύθερα, τίποτα δεν χάνεται.</p>
+  <div id="narrative-section"></div>
+
+  <p class="section-title" id="nav-engines">6. Κινητήρες</p>
   <p class="section-sub">Συνολικές ώρες λειτουργίας και παρακολούθηση κύκλου service — F115 TCR (κύρια) και F4 BHML (βοηθητική).</p>
   <div id="engines-section"></div>
 
-  <p class="section-title" id="nav-progress">6. Πρόοδος στον Χρόνο</p>
+  <p class="section-title" id="nav-progress">7. Πρόοδος στον Χρόνο</p>
   <p class="section-sub">Ναυτικά μίλια ανά μήνα.
     <button id="location-stats-btn" style="background:none;border:1px solid var(--line);color:var(--teal);border-radius:var(--r-lg);font-size:var(--fs-sm);padding:4px 12px;cursor:pointer;margin-left:6px;">📍 Στατιστικά ανά τοποθεσία</button>
   </p>
@@ -942,11 +968,11 @@
     <div id="analytics-section"></div>
   </div>
 
-  <p class="section-title primary" id="nav-checklist">7. Λίστα Ελέγχου Απόπλου</p>
+  <p class="section-title primary" id="nav-checklist">8. Λίστα Ελέγχου Απόπλου</p>
   <p class="section-sub">26 σημεία ελέγχου ειδικά για το ΩΡΙΩΝ πριν από κάθε απόπλου. Κάθε ✓ αποθηκεύεται με ώρα.</p>
   <div id="checklist-section"></div>
 
-  <p class="section-title secondary" id="nav-sync">8. Συγχρονισμός Συσκευών</p>
+  <p class="section-title secondary" id="nav-sync">9. Συγχρονισμός Συσκευών</p>
   <p class="section-sub">Σύνδεση με τον προσωπικό σου λογαριασμό Google — μόνο εσύ έχεις πρόσβαση. Ίδιος λογαριασμός σε κάθε συσκευή = αυτόματος συγχρονισμός.</p>
   <div class="sync-box">
     <div id="sync-setup">
@@ -972,6 +998,12 @@
   </div>
   <div class="reset-row">
     <button class="reset-btn" id="reset-btn">Διαγραφή όλων των δεδομένων</button>
+  </div>
+  <div class="reset-row">
+    <label style="display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-size:var(--fs-sm);color:var(--text-muted);">
+      <input type="checkbox" id="sound-toggle">
+      🔔 Ήχος επιβεβαίωσης κατά την καταγραφή εξόρμησης (απαλό καμπανάκι σκάφους)
+    </label>
   </div>
 
   <p style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);margin:28px 0 8px;letter-spacing:0.04em;">ΩΡΙΩΝ Ναυτικό Ημερολόγιο · έκδοση <span id="app-version-display">—</span></p>
@@ -1551,7 +1583,7 @@ document.getElementById('theme-toggle-btn').addEventListener('click', () => {
 });
 
 const STORAGE_KEY = 'orion-progress-data';
-let data = { areas: {}, trips: [], settings: {}, plannedTrips: [] };
+let data = { areas: {}, trips: [], settings: {}, plannedTrips: [], narrative: {current:'', lastUpdated:null, history:[]} };
 let openStages = new Set();
 let selectedChipIds = new Set();
 let selectedTagIds = new Set();
@@ -1665,7 +1697,8 @@ function listenToSync(){
 
       data = {
         areas: remote.areas||{}, trips: remote.trips||[], settings: remote.settings||{},
-        plannedTrips: remote.plannedTrips||[], updatedAt: remote.updatedAt||Date.now()
+        plannedTrips: remote.plannedTrips||[], updatedAt: remote.updatedAt||Date.now(),
+        narrative: remote.narrative || {current:'', lastUpdated:null, history:[]}
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       renderAll();
@@ -5414,6 +5447,8 @@ document.getElementById('f-add').addEventListener('click', async () => {
     const searchEl = document.getElementById('f-search');
     if(searchEl) searchEl.value = '';
     renderAll();
+    showSuccessCheckmark();
+    playBellDing();
     if(wasEditing){
       showToast('✓ Ενημερώθηκε η εξόρμηση');
       haptic(15);
@@ -6975,6 +7010,7 @@ function renderAll(){
   renderPtAreaChips();
   renderChart();
   renderLevel();
+  renderNarrative();
   renderPlannedTrips();
   renderWeatherCancellations();
   renderStats();
@@ -7011,11 +7047,12 @@ async function load(){
       const parsed = JSON.parse(raw);
       data = {
         areas: parsed.areas || {}, trips: parsed.trips || [], settings: parsed.settings || {},
-        plannedTrips: parsed.plannedTrips || [], updatedAt: parsed.updatedAt || null
+        plannedTrips: parsed.plannedTrips || [], updatedAt: parsed.updatedAt || null,
+        narrative: parsed.narrative || {current:'', lastUpdated:null, history:[]}
       };
     }
   }catch(err){
-    data = { areas: {}, trips: [], settings: {}, plannedTrips: [] };
+    data = { areas: {}, trips: [], settings: {}, plannedTrips: [], narrative: {current:'', lastUpdated:null, history:[]} };
   }
   _localDataReady = true;
   if(_localDataReadyResolve) _localDataReadyResolve();
@@ -7026,6 +7063,8 @@ async function load(){
     if(mainEl) mainEl.value = data.settings.tankMain != null ? data.settings.tankMain : 110;
     if(auxEl) auxEl.value = data.settings.tankAux != null ? data.settings.tankAux : 24;
     if(canEl) canEl.value = data.settings.canSize != null ? data.settings.canSize : 20;
+    const soundEl = document.getElementById('sound-toggle');
+    if(soundEl) soundEl.checked = !!data.settings.soundEnabled;
   }
   const dateEl = document.getElementById('f-date');
   if(dateEl) dateEl.value = new Date().toISOString().slice(0,10);
@@ -7077,6 +7116,148 @@ document.getElementById('reset-btn').addEventListener('click', async () => {
   if(ok) showToast('Διαγράφηκαν όλα τα δεδομένα');
   renderAll();
 });
+
+document.getElementById('sound-toggle').addEventListener('change', async (e) => {
+  data.settings = data.settings || {};
+  data.settings.soundEnabled = e.target.checked;
+  await save();
+  if(e.target.checked) playBellDing(); // άμεση προεπισκόπηση ήχου όταν το ενεργοποιείς
+});
+
+/* ================= ΗΧΟΣ ΕΠΙΒΕΒΑΙΩΣΗΣ (προαιρετικό, off by default) =================
+   Συνθέτουμε τον ήχο απευθείας με Web Audio API (καμία ανάγκη εξωτερικού αρχείου ήχου — παραμένει
+   η αρχιτεκτονική ενός αρχείου). Δύο αρμονικές μαζί δίνουν χαρακτήρα "καμπανάκι", όχι επίπεδο μπιπ. */
+let _audioCtx = null;
+function playBellDing(){
+  if(!data.settings || !data.settings.soundEnabled) return;
+  try{
+    if(!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(_audioCtx.state === 'suspended') _audioCtx.resume();
+    const now = _audioCtx.currentTime;
+    [880, 1760].forEach((freq, i) => {
+      const osc = _audioCtx.createOscillator();
+      const gain = _audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(i === 0 ? 0.16 : 0.05, now + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.1);
+      osc.connect(gain);
+      gain.connect(_audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 1.15);
+    });
+  }catch(err){ /* ποτέ δεν μπλοκάρουμε την αποθήκευση αν ο ήχος αποτύχει για οποιονδήποτε λόγο */ }
+}
+
+// Απαλή, παλλόμενη οπτική επιβεβαίωση (SVG checkmark) — καθαρά διακοσμητικό, ποτέ δεν κρύβει περιεχόμενο.
+function showSuccessCheckmark(){
+  let el = document.getElementById('success-checkmark');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'success-checkmark';
+    el.innerHTML = `<svg viewBox="0 0 52 52" width="64" height="64"><circle class="checkmark-circle" cx="26" cy="26" r="24" fill="none"/><path class="checkmark-check" fill="none" d="M14 27l7 7 16-16"/></svg>`;
+    document.body.appendChild(el);
+  }
+  el.classList.remove('show');
+  void el.offsetWidth; // εξαναγκάζουμε reflow ώστε το animation να ξαναπαίξει σωστά αν ήδη ήταν ορατό
+  el.classList.add('show');
+  clearTimeout(el._hideTimer);
+  el._hideTimer = setTimeout(() => el.classList.remove('show'), 1400);
+}
+
+/* ================= Η ΑΦΗΓΗΣΗ ΤΗΣ ΠΟΡΕΙΑΣ =================
+   Ένα προσωπικό, λογοτεχνικό κείμενο που γράφεται από τον Claude (σε συνομιλία, με τα πραγματικά
+   δεδομένα του χρήστη) και επικολλάται/επεξεργάζεται εδώ. ΚΑΘΕ αποθήκευση διατηρεί την ΠΡΟΗΓΟΥΜΕΝΗ
+   έκδοση στο ιστορικό — τίποτα δεν χάνεται ποτέ, ακόμα κι όταν αντικατασταθεί πλήρως το κείμενο.
+   Ίδια αρχή ασφαλείας δεδομένων με το sync-safety fix: προτίμησε να κρατήσεις κάτι παραπάνω παρά
+   να χάσεις κάτι αμετάκλητα. */
+let narrativeEditMode = false;
+
+function renderNarrative(){
+  const container = document.getElementById('narrative-section');
+  if(!container) return;
+  data.narrative = data.narrative || {current:'', lastUpdated:null, history:[]};
+  const n = data.narrative;
+
+  if(narrativeEditMode){
+    container.innerHTML = `
+      <textarea id="narrative-textarea" rows="16" placeholder="Επικόλλησε εδώ το κείμενο που σου έγραψε ο Claude, ή γράψε/επεξέργασε ελεύθερα..." style="width:100%;font-family:'Fraunces',serif;font-size:var(--fs-md);line-height:1.7;padding:14px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--card-bg);color:var(--ink);resize:vertical;box-sizing:border-box;">${escapeHtml(n.current || '')}</textarea>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+        <button id="narrative-save-btn" class="ripple-btn" style="background:var(--teal);color:var(--on-accent);border:none;padding:9px 18px;border-radius:var(--r-sm);cursor:pointer;font-weight:600;">✓ Αποθήκευση</button>
+        <button id="narrative-cancel-btn" class="ripple-btn" style="background:none;border:1px solid var(--line);color:var(--text-muted);padding:9px 18px;border-radius:var(--r-sm);cursor:pointer;">Άκυρο</button>
+      </div>
+    `;
+    document.getElementById('narrative-save-btn').addEventListener('click', saveNarrative);
+    document.getElementById('narrative-cancel-btn').addEventListener('click', () => { narrativeEditMode = false; renderNarrative(); });
+    return;
+  }
+
+  const hasText = !!(n.current && n.current.trim());
+  const bodyHtml = hasText
+    ? `<div id="narrative-display-text" style="font-family:'Fraunces',serif;font-size:var(--fs-md);line-height:1.85;color:var(--ink);white-space:pre-wrap;padding:20px 24px;background:var(--card-bg);border:1px solid var(--line);border-radius:var(--r-sm);">${escapeHtml(n.current)}</div>`
+    : `<div style="padding:24px;text-align:center;color:var(--text-muted);font-size:var(--fs-sm);border:1px dashed var(--line);border-radius:var(--r-sm);">Δεν έχεις ακόμα αφήγηση. Ζήτα από τον Claude, σε συνομιλία, να σου γράψει «την αφήγηση της πορείας μου» με τα πραγματικά σου δεδομένα — μετά επικόλλησέ την εδώ.</div>`;
+
+  const updatedNote = n.lastUpdated ? `<p style="font-size:var(--fs-xs);color:var(--text-muted);margin:6px 0 0;font-family:'JetBrains Mono',monospace;">Τελευταία ενημέρωση: ${escapeHtml(n.lastUpdated)}</p>` : '';
+  const historyCount = (n.history||[]).length;
+
+  container.innerHTML = `
+    ${bodyHtml}
+    ${updatedNote}
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+      <button id="narrative-edit-btn" class="ripple-btn" style="background:var(--teal);color:var(--on-accent);border:none;padding:9px 18px;border-radius:var(--r-sm);cursor:pointer;font-weight:600;">✍️ ${hasText ? 'Επεξεργασία' : 'Προσθήκη κειμένου'}</button>
+      ${hasText ? `<button id="narrative-pdf-btn" class="ripple-btn" style="background:none;border:1px solid var(--line);color:var(--ink);padding:9px 18px;border-radius:var(--r-sm);cursor:pointer;">📄 Εξαγωγή σε PDF</button>` : ''}
+    </div>
+    ${historyCount ? `
+      <details style="margin-top:14px;">
+        <summary style="cursor:pointer;font-size:var(--fs-sm);color:var(--text-muted);">Ιστορικό προηγούμενων εκδόσεων (${historyCount})</summary>
+        <div style="margin-top:8px;">
+          ${[...n.history].reverse().map(h => `
+            <details style="margin-bottom:6px;border:1px solid var(--line);border-radius:var(--r-sm);padding:8px 10px;">
+              <summary style="cursor:pointer;font-size:var(--fs-xs);color:var(--text-muted);font-family:'JetBrains Mono',monospace;">${escapeHtml(h.date)} (${(h.text||'').split(/\s+/).filter(Boolean).length} λέξεις)</summary>
+              <div style="font-family:'Fraunces',serif;font-size:var(--fs-sm);line-height:1.7;color:var(--ink);white-space:pre-wrap;margin-top:8px;padding:10px;background:var(--parchment);border-radius:var(--r-sm);">${escapeHtml(h.text)}</div>
+            </details>
+          `).join('')}
+        </div>
+      </details>
+    ` : ''}
+  `;
+
+  document.getElementById('narrative-edit-btn').addEventListener('click', () => { narrativeEditMode = true; renderNarrative(); });
+  const pdfBtn = document.getElementById('narrative-pdf-btn');
+  if(pdfBtn) pdfBtn.addEventListener('click', exportNarrativeToPdf);
+}
+
+async function saveNarrative(){
+  const textarea = document.getElementById('narrative-textarea');
+  if(!textarea) return;
+  const newText = textarea.value.trim();
+  data.narrative = data.narrative || {current:'', lastUpdated:null, history:[]};
+  const n = data.narrative;
+  // Η ΠΡΟΗΓΟΥΜΕΝΗ έκδοση πάει πάντα στο ιστορικό πρώτα, ΠΟΤΕ δεν σβήνεται — μόνο αν υπήρχε
+  // πραγματικό, διαφορετικό κείμενο πριν (αποφεύγουμε άχρηστες διπλές καταχωρήσεις του ίδιου κειμένου).
+  if(n.current && n.current.trim() && n.current.trim() !== newText){
+    n.history = n.history || [];
+    n.history.push({text: n.current, date: n.lastUpdated || new Date().toISOString().slice(0,10)});
+  }
+  n.current = newText;
+  n.lastUpdated = new Date().toISOString().slice(0,10);
+  narrativeEditMode = false;
+  await save();
+  renderNarrative();
+  showToast('✓ Η αφήγηση αποθηκεύτηκε');
+}
+
+function exportNarrativeToPdf(){
+  const n = data.narrative || {};
+  if(!n.current) return;
+  document.getElementById('print-view').innerHTML = `
+    <h1>ΩΡΙΩΝ — Η Αφήγηση της Πορείας</h1>
+    <p class="print-sub">Ενημερώθηκε ${n.lastUpdated ? new Date(n.lastUpdated+'T00:00:00').toLocaleDateString('el-GR') : ''} · Alter 570, Τ.ΧΑΝΙΩΝ 654</p>
+    <div style="font-family:'Fraunces',Georgia,serif;font-size:14px;line-height:1.9;white-space:pre-wrap;margin-top:20px;">${escapeHtml(n.current)}</div>
+  `;
+  setTimeout(() => window.print(), 80);
+}
 
 function buildPrintView(){
   const lvl = computeExperienceLevel();
@@ -7184,7 +7365,8 @@ document.getElementById('restore-file').addEventListener('change', async (e) => 
       }
       data = {
         areas: parsed.areas || {}, trips: parsed.trips || [], settings: parsed.settings || {},
-        plannedTrips: parsed.plannedTrips || [], updatedAt: Date.now()
+        plannedTrips: parsed.plannedTrips || [], updatedAt: Date.now(),
+        narrative: parsed.narrative || {current:'', lastUpdated:null, history:[]}
       };
       openStages = new Set();
       const ok = await save();
@@ -7210,7 +7392,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.22-8';
+const APP_VERSION = '2026.07.22-9';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
