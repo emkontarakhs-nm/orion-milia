@@ -15,5 +15,5 @@
 <circle cx="200" cy="342" r="4" fill="#B5722E"/>
 <circle cx="58" cy="200" r="4" fill="#B5722E"/>
 <circle cx="342" cy="200" r="4" fill="#B5722E"/>
-<text x="200" y="218" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="bold" font-size="172" fill="url(#metalSheen)">&#937;</text>
+<text x="200" y="200" text-anchor="middle" dominant-baseline="central" font-family="Georgia, 'Times New Roman', serif" font-weight="bold" font-size="172" fill="url(#metalSheen)">&#937;</text>
 </svg>

@@ -21,7 +21,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --fs-xs:10px; --fs-sm:11.5px; --fs-base:13.5px; --fs-md:16px; --fs-lg:19px; --fs-xl:22px; --fs-2xl:27px;
+    --fs-xs:11px; --fs-sm:12.5px; --fs-base:14.5px; --fs-md:17px; --fs-lg:20px; --fs-xl:23px; --fs-2xl:28px;
     --r-sm:4px; --r-md:6px; --r-lg:18px;
     --ink:#14293D; --ink-2:#1F3A52;
     --parchment:#F3ECDD; --parchment-2:#EAE0C9;
@@ -30,6 +30,7 @@
     --coral:#B54432; --coral-light:#F5DFDA;
     --line:#C9BFA4; --text-muted:#5C6B78;
     --card-bg:#fff; --panel-bg:#14293D; --panel-text:#F3ECDD;
+    --on-accent:#fff;
   }
   [data-theme="dark"]{
     --ink:#E8E1D0; --ink-2:#C9BFA4;
@@ -37,15 +38,20 @@
     --teal:#3AA8A2; --teal-light:#15302E;
     --brass:#D89654; --brass-light:#2E2417;
     --coral:#E58874; --coral-light:#341C18;
-    --line:#3A4652; --text-muted:#8A94A0;
-    --card-bg:#182530; --panel-bg:#0A141C; --panel-text:#F3ECDD; --text-muted:#A0A8AE;
+    --line:#3A4652; --text-muted:#A0A8AE;
+    --card-bg:#182530; --panel-bg:#0A141C; --panel-text:#F3ECDD;
+    /* Σε σκοτεινό θέμα τα teal/brass/coral φωτίζονται για να ξεχωρίζουν στο σκούρο φόντο — αυτό όμως τα κάνει
+       πολύ ανοιχτά για λευκό κείμενο πάνω τους (αντίθεση έπεφτε στο ~2.6-2.9, κάτω από κάθε αποδεκτό όριο).
+       Το --on-accent προσαρμόζεται ώστε το κείμενο πάνω σε έγχρωμα κουμπιά να παραμένει πάντα ευανάγνωστο
+       (αντίθεση 6.4-7.4 και στα δύο θέματα) — ίδια αρχή με τη λογική "on-primary" των Material/iOS design systems. */
+    --on-accent:#0A141C;
   }
   *{box-sizing:border-box;}
   body{margin:0;background:var(--parchment);font-family:'Inter',sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;line-height:1.6;}
   .wrap{max-width:720px;margin:0 auto;padding:24px 18px 100px;}
 
   .quick-nav{position:sticky;top:0;z-index:150;background:var(--parchment);display:flex;gap:6px;overflow-x:auto;padding:10px 0;margin-bottom:12px;border-bottom:1px solid var(--line);scrollbar-width:none;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
-  .cmdk-trigger-btn{position:sticky;left:0;flex-shrink:0;background:var(--teal);color:#fff;border:none;border-radius:var(--r-lg);width:38px;height:30px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;cursor:pointer;z-index:2;box-shadow:3px 0 8px 2px var(--parchment);}
+  .cmdk-trigger-btn{position:sticky;left:0;flex-shrink:0;background:var(--teal);color:var(--on-accent);border:none;border-radius:var(--r-lg);width:38px;height:30px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;cursor:pointer;z-index:2;box-shadow:3px 0 8px 2px var(--parchment);}
   .cmdk-trigger-btn:hover{background:var(--ink);}
 
   .cmdk-overlay{position:fixed;inset:0;background:rgba(20,41,61,0.55);z-index:3000;display:none;align-items:flex-start;justify-content:center;padding:9vh 16px 0;animation:cmdk-overlay-in 0.15s ease;}
@@ -68,7 +74,7 @@
   .cmdk-highlight{animation:cmdk-pulse 1.2s ease;}
   .quick-nav::-webkit-scrollbar{display:none;}
   .quick-nav-item{flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:var(--fs-sm);text-transform:uppercase;letter-spacing:0.04em;background:var(--card-bg);border:1px solid var(--line);color:var(--text-muted);padding:7px 14px;border-radius:var(--r-lg);text-decoration:none;white-space:nowrap;transition:border-color 0.2s,color 0.2s,background 0.2s;}
-  .quick-nav-item.qn-active{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:600;}
+  .quick-nav-item.qn-active{background:var(--teal);border-color:var(--teal);color:var(--on-accent);font-weight:600;}
   .quick-nav-item:hover, .quick-nav-item:focus-visible{border-color:var(--teal);color:var(--teal);background:var(--teal-light);}
 
   .hero{position:relative;padding:40px 36px 36px;background:var(--panel-bg);border-radius:var(--r-sm);color:var(--panel-text);overflow:hidden;margin-bottom:24px;}
@@ -78,6 +84,7 @@
     pointer-events:none;}
   .hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:var(--fs-sm);letter-spacing:0.12em;color:var(--brass);text-transform:uppercase;margin:0 0 10px;position:relative;}
   .hero h1{font-family:'Fraunces',serif;font-weight:500;font-size:var(--fs-2xl);line-height:1.25;margin:0 0 14px;max-width:480px;position:relative;}
+  .hero-subtitle{font-weight:400;font-style:italic;font-size:0.55em;color:#B8A488;letter-spacing:0.02em;}
   .stat-row{display:flex;gap:24px;position:relative;flex-wrap:wrap;}
   .stat{font-family:'JetBrains Mono',monospace;}
   .stat .num{font-size:var(--fs-xl);color:var(--panel-text);display:block;font-feature-settings:"tnum";}
@@ -125,16 +132,16 @@
   .levelup-star{position:absolute;font-size:var(--fs-xl);animation:star-burst 1s ease forwards;pointer-events:none;}
   .online-toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#1F6F6B;color:#fff;font-family:'JetBrains Mono',monospace;font-size:var(--fs-sm);padding:7px 16px;border-radius:var(--r-lg);z-index:500;display:none;box-shadow:0 4px 16px rgba(0,0,0,0.3);}
 
-  .update-banner{position:fixed;top:0;left:0;right:0;background:var(--brass);color:#fff;font-family:'Inter',sans-serif;font-size:var(--fs-sm);padding:10px 16px;z-index:600;display:none;align-items:center;justify-content:center;gap:14px;box-shadow:0 2px 12px rgba(0,0,0,0.25);flex-wrap:wrap;text-align:center;}
+  .update-banner{position:fixed;top:0;left:0;right:0;background:var(--brass);color:var(--on-accent);font-family:'Inter',sans-serif;font-size:var(--fs-sm);padding:10px 16px;z-index:600;display:none;align-items:center;justify-content:center;gap:14px;box-shadow:0 2px 12px rgba(0,0,0,0.25);flex-wrap:wrap;text-align:center;}
   .update-banner.visible{display:flex;}
   .update-banner-btn{font-family:'JetBrains Mono',monospace;font-size:var(--fs-sm);font-weight:600;background:#fff;color:var(--brass);border:none;border-radius:var(--r-lg);padding:5px 14px;cursor:pointer;white-space:nowrap;}
   .update-banner-btn:active{opacity:0.8;}
-  .update-banner-dismiss{background:none;border:none;color:#fff;opacity:0.75;font-size:var(--fs-md);cursor:pointer;padding:0 4px;line-height:1;}
+  .update-banner-dismiss{background:none;border:none;color:var(--on-accent);opacity:0.75;font-size:var(--fs-md);cursor:pointer;padding:0 4px;line-height:1;}
 
-  .backup-reminder{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--teal);color:#fff;font-family:'Inter',sans-serif;font-size:var(--fs-sm);padding:10px 16px;z-index:550;display:none;align-items:center;justify-content:center;gap:14px;box-shadow:0 4px 16px rgba(0,0,0,0.3);border-radius:var(--r-lg);flex-wrap:wrap;text-align:center;max-width:92vw;}
+  .backup-reminder{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--teal);color:var(--on-accent);font-family:'Inter',sans-serif;font-size:var(--fs-sm);padding:10px 16px;z-index:550;display:none;align-items:center;justify-content:center;gap:14px;box-shadow:0 4px 16px rgba(0,0,0,0.3);border-radius:var(--r-lg);flex-wrap:wrap;text-align:center;max-width:92vw;}
   .backup-reminder.visible{display:flex;}
   .backup-reminder-btn{font-family:'JetBrains Mono',monospace;font-size:var(--fs-sm);font-weight:600;background:#fff;color:var(--teal);border:none;border-radius:var(--r-lg);padding:5px 14px;cursor:pointer;white-space:nowrap;}
-  .backup-reminder-dismiss{background:none;border:none;color:#fff;opacity:0.75;font-size:var(--fs-md);cursor:pointer;padding:0 4px;line-height:1;}
+  .backup-reminder-dismiss{background:none;border:none;color:var(--on-accent);opacity:0.75;font-size:var(--fs-md);cursor:pointer;padding:0 4px;line-height:1;}
   .hero-sync-btn{position:absolute;top:16px;right:58px;background:rgba(243,236,221,0.12);border:1px solid rgba(243,236,221,0.3);color:var(--panel-text);border-radius:var(--r-lg);padding:0 12px;height:34px;font-size:var(--fs-sm);font-family:'JetBrains Mono',monospace;cursor:pointer;z-index:2;white-space:nowrap;}
   .hero-sync-btn.connected{background:rgba(58,168,162,0.25);border-color:var(--teal);}
 
@@ -142,7 +149,7 @@
   .route::before{content:'';position:absolute;left:23px;top:8px;bottom:8px;width:0;border-left:2px dashed var(--line);}
   .stage{position:relative;padding:0 0 8px 60px;margin-bottom:6px;}
   .stage-marker{position:absolute;left:0;top:0;width:48px;height:48px;border-radius:50%;background:var(--parchment);border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:var(--fs-base);font-weight:500;color:var(--ink);z-index:1;}
-  .stage-marker.done{background:var(--teal);border-color:var(--teal);color:#fff;}
+  .stage-marker.done{background:var(--teal);border-color:var(--teal);color:var(--on-accent);}
   .stage-marker.partial{background:var(--brass-light);border-color:var(--brass);}
   .stage-head{padding:10px 0 10px;cursor:pointer;user-select:none;}
   .stage-title{font-family:'Fraunces',serif;font-weight:500;font-size:var(--fs-md);margin:0 0 4px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
@@ -166,7 +173,7 @@
   .log-form input[type="date"]{flex:1 1 130px;}
   .log-form input[type="number"]{flex:0 1 90px;}
   .log-form input[type="text"]{flex:2 1 180px;}
-  .add-btn{font-family:'Inter',sans-serif;font-size:var(--fs-base);font-weight:600;color:#fff;background:var(--teal);border:none;padding:9px 18px;border-radius:var(--r-sm);cursor:pointer;width:100%;transition:background 0.15s ease, transform 0.1s ease;}
+  .add-btn{font-family:'Inter',sans-serif;font-size:var(--fs-base);font-weight:600;color:var(--on-accent);background:var(--teal);border:none;padding:9px 18px;border-radius:var(--r-sm);cursor:pointer;width:100%;transition:background 0.15s ease, transform 0.1s ease;}
   .add-btn:active{transform:scale(0.98);}
   .add-btn:hover{background:#175753;}
   .add-btn:disabled{opacity:0.6;cursor:default;}
@@ -181,15 +188,15 @@
   .area-chip-group summary::before{content:'▸';color:var(--teal);font-size:var(--fs-xs);transition:transform 0.2s;}
   .area-chip-group[open] summary::before{transform:rotate(90deg);}
   .area-chip-group .chip-list{padding:0 12px 12px;}
-  .area-chip-count{background:var(--teal);color:#fff;font-family:'JetBrains Mono',monospace;font-size:var(--fs-xs);padding:1px 7px;border-radius:var(--r-md);}
+  .area-chip-count{background:var(--teal);color:var(--on-accent);font-family:'JetBrains Mono',monospace;font-size:var(--fs-xs);padding:1px 7px;border-radius:var(--r-md);}
   .welcome-banner{position:relative;background:var(--teal-light);border:1px solid var(--teal);border-radius:var(--r-md);padding:18px 44px 18px 18px;margin-bottom:20px;box-shadow:0 2px 12px rgba(31,111,107,0.12);}
   .welcome-title{font-family:'Fraunces',serif;font-weight:500;font-size:var(--fs-base);margin:0 0 4px;color:var(--ink);}
   .welcome-text{font-size:var(--fs-sm);line-height:1.6;color:var(--ink-2);margin:0;}
   .welcome-text a{color:var(--teal);font-weight:600;}
   .welcome-close{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--text-muted);font-size:var(--fs-base);cursor:pointer;padding:6px;}
-  .chip.selected{background:var(--teal);border-color:var(--teal);color:#fff;}
+  .chip.selected{background:var(--teal);border-color:var(--teal);color:var(--on-accent);}
   .chip.tag-chip{border-color:var(--brass);}
-  .chip.tag-chip.selected{background:var(--brass);border-color:var(--brass);color:#fff;}
+  .chip.tag-chip.selected{background:var(--brass);border-color:var(--brass);color:var(--on-accent);}
   .log-form textarea{font-family:'Inter',sans-serif;font-size:var(--fs-md);padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--parchment);color:var(--ink);width:100%;resize:vertical;margin-bottom:8px;}
   .trip-notes{font-size:var(--fs-sm);color:var(--ink-2);margin:6px 0 0;line-height:1.5;border-top:1px dashed var(--parchment-2);padding-top:6px;}
   .trip-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
@@ -230,7 +237,7 @@
   .book-cat-group summary::-webkit-details-marker{display:none;}
   .book-cat-group summary::before{content:'▸';color:var(--teal);font-size:9px;transition:transform 0.2s;flex-shrink:0;}
   .book-cat-group[open] summary::before{transform:rotate(90deg);}
-  .book-cat-count{background:var(--teal);color:#fff;font-family:'JetBrains Mono',monospace;font-size:var(--fs-xs);padding:1px 7px;border-radius:9px;}
+  .book-cat-count{background:var(--teal);color:var(--on-accent);font-family:'JetBrains Mono',monospace;font-size:var(--fs-xs);padding:1px 7px;border-radius:9px;}
   .book-cat-body{padding:0 12px 12px;}
   .book-entry-edit{display:flex;gap:6px;align-items:flex-start;margin-bottom:6px;}
   .book-entry-textarea{flex:1;font-family:'Inter',sans-serif;font-size:var(--fs-sm);color:var(--ink);background:var(--parchment);border:1px solid var(--line);border-radius:var(--radius-sm);padding:7px 9px;resize:vertical;line-height:1.5;}
@@ -262,7 +269,7 @@
   .stop-tab-btn{flex-shrink:0;font-family:'Inter',sans-serif;font-size:var(--fs-xs);background:none;border:none;border-bottom:2px solid transparent;color:var(--text-muted);padding:7px 10px;cursor:pointer;white-space:nowrap;transition:color 0.15s,border-color 0.15s;}
   .stop-tab-btn.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:600;}
   .stop-tab-btn:hover:not(.active){color:var(--ink);}
-  .stop-tag-chip.selected{background:var(--teal);border-color:var(--teal);color:#fff;}
+  .stop-tag-chip.selected{background:var(--teal);border-color:var(--teal);color:var(--on-accent);}
   .stop-auto-hint{font-size:var(--fs-xs);color:var(--teal);margin:4px 0 0;}
 
   .chart-section .empty-note{margin-bottom:32px;}
@@ -274,7 +281,7 @@
   .checklist-item.done{background:var(--teal-light);}
   .checklist-item.done .cl-label{color:var(--text-muted);text-decoration:line-through;}
   .cl-box{width:18px;height:18px;border-radius:var(--radius-sm);border:2px solid var(--line);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
-  .checklist-item.done .cl-box{background:var(--teal);border-color:var(--teal);color:#fff;font-size:var(--fs-sm);animation:cl-pop 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+  .checklist-item.done .cl-box{background:var(--teal);border-color:var(--teal);color:var(--on-accent);font-size:var(--fs-sm);animation:cl-pop 0.3s cubic-bezier(0.34,1.56,0.64,1);}
   @keyframes cl-pop{0%{transform:scale(0.7);}60%{transform:scale(1.15);}100%{transform:scale(1);}}
   .cl-label{font-size:var(--fs-base);color:var(--ink);line-height:1.4;}
   .cl-note{font-size:var(--fs-sm);color:var(--text-muted);margin-top:2px;display:block;}
@@ -341,7 +348,7 @@
   .reset-btn{font-family:'Inter',sans-serif;font-size:var(--fs-sm);color:var(--text-muted);background:none;border:1px solid var(--line);padding:8px 16px;border-radius:var(--r-lg);cursor:pointer;}
   .reset-btn:hover{border-color:var(--coral);color:var(--coral);}
   .backup-btn{color:var(--teal);border-color:var(--teal);}
-  .backup-btn:hover{background:var(--teal);color:#fff;}
+  .backup-btn:hover{background:var(--teal);color:var(--on-accent);}
   .ripple-btn{position:relative;overflow:hidden;}
   .ripple-effect{position:absolute;border-radius:50%;background:rgba(255,255,255,0.55);transform:scale(0);animation:ripple-anim 0.5s ease-out;pointer-events:none;}
   [data-theme="dark"] .ripple-effect{background:rgba(255,255,255,0.35);}
@@ -385,7 +392,7 @@
   .planned-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
   .planned-actions button{font-family:'Inter',sans-serif;font-size:var(--fs-sm);border:1px solid var(--line);background:var(--parchment);color:var(--text-muted);padding:6px 12px;border-radius:var(--r-lg);cursor:pointer;}
   .planned-actions button.use-btn{border-color:var(--teal);color:var(--teal);}
-  .planned-actions button.complete-btn{border-color:var(--teal);background:var(--teal);color:#fff;}
+  .planned-actions button.complete-btn{border-color:var(--teal);background:var(--teal);color:var(--on-accent);}
   .planned-actions button.del-plan-btn{border-color:var(--coral);color:var(--coral);}
 
   #toast{position:fixed;left:50%;bottom:-70px;transform:translateX(-50%);background:var(--panel-bg);color:var(--panel-text);padding:11px 22px;border-radius:var(--r-lg);font-size:var(--fs-sm);font-family:'Inter',sans-serif;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,0.4);transition:bottom 0.35s cubic-bezier(0.34,1.56,0.64,1);z-index:1000;max-width:90%;text-align:center;}
@@ -547,7 +554,7 @@
     <button id="theme-toggle-btn" class="theme-toggle-btn" title="Εναλλαγή σκοτεινού θέματος" aria-label="Εναλλαγή σκοτεινού θέματος">🌙</button>
     <button id="hero-sync-btn" class="hero-sync-btn" title="Συγχρονισμός συσκευών">🔒 Sync</button>
     <p class="hero-eyebrow">Τ.ΧΑΝΙΩΝ 654 · Alter 570 · Yamaha F115</p>
-    <h1>ΩΡΙΩΝ</h1>
+    <h1>ΩΡΙΩΝ <span class="hero-subtitle">— logbook</span></h1>
     <div class="stat-row">
       <div class="stat"><span class="num" id="stat-nm">0</span><span class="lbl">Σύνολο ν.μ.</span></div>
       <div class="stat"><span class="num" id="stat-trips">0</span><span class="lbl">Εξορμήσεις</span></div>
@@ -985,7 +992,10 @@ const STAGES = [
       'Χώρα Σφακίων – Λουτρό', 'Ακρωτήρι (Σταυρός – Καλαθάς)',
       'Κολυμπάρι – Ταυρωνίτης', 'Ελαφονήσι',
       'Αγία Μαρίνα – Πλατανιάς', 'Γεωργιούπολη',
-      'Σεϊτάν Λιμάνια (Καβρός)', 'Καλύβες – Αλμυρίδα', 'Μαράθι', 'Αγία Ρούμελη', 'Νέα Χώρα – Κυδωνιάς (παραλία Χανίων)', 'Κόλπος Κεραμειών (Αλμυρίδα–Βάμος)', 'Ρόδοπος – Σπηλιά Αγίου Ιωάννη', 'Άγιος Παύλος – Σφακίων', 'Λίμνη – Χαμαλεύρι (νοτ. Ρεθύμνου γρ.)', 'Ποκιονέρι – Πέτρες (βόρεια ακτή Νομού)', 'Μάρμαρα (Διαλισκάρι, δυτικά Λουτρού)'
+      'Σεϊτάν Λιμάνια (Καβρός)', 'Καλύβες – Αλμυρίδα', 'Μαράθι', 'Αγία Ρούμελη', 'Νέα Χώρα – Κυδωνιάς (παραλία Χανίων)', 'Κόλπος Κεραμειών (Αλμυρίδα–Βάμος)', 'Ρόδοπος – Σπηλιά Αγίου Ιωάννη', 'Άγιος Παύλος – Σφακίων', 'Λίμνη – Χαμαλεύρι (νοτ. Ρεθύμνου γρ.)', 'Ποκιονέρι – Πέτρες (βόρεια ακτή Νομού)', 'Μάρμαρα (Διαλισκάρι, δυτικά Λουτρού)',
+      'Γλυκά Νερά (Σφακιά)', 'Καλόγερος (Σφακιά)', 'Τρυπητή (Σούγια)', 'Δώματα (Σφακιά)',
+      'Μαχαιρίδα (Ακρωτήρι)', 'Αφράτα (Ροδωπός)', 'Μένιες – Δίκτυννα (Ροδωπός)', 'Λισσός (Σούγια)',
+      'Στόμιο – Άγιοι Θεόδωροι', 'Παχιά Άμμος Παλαιόχωρας'
     ]
   },
   {
@@ -1001,7 +1011,10 @@ const STAGES = [
       'Κουφονήσι & Χρυσή (νοτιοανατολικές νησίδες)',
       'Μπαλί (Ρέθυμνο)', 'Ελούντα – Σπιναλόγκα', 'Βάι (φοινικόδασος, ανατ. Κρήτη)',
       'Μάταλα', 'Χερσόνησος', 'Παλαίκαστρο',
-      'Πλατανιάς – Πάνορμος (Ρέθυμνο)', 'Μοχλός (Λασίθι)', 'Αμμουδάρα – Καρτερός (Ηράκλειο)'
+      'Πλατανιάς – Πάνορμος (Ρέθυμνο)', 'Μοχλός (Λασίθι)', 'Αμμουδάρα – Καρτερός (Ηράκλειο)',
+      'Πρέβελη (Ρέθυμνο)', 'Τριόπετρα (Ρέθυμνο)', 'Άγιος Παύλος (Ρέθυμνο)', 'Αλατσόγκρεμνοι (Ρέθυμνο)',
+      'Βούλισμα – Χρυσή Άμμος (Λασίθι)', 'Παχιά Άμμος (Λασίθι)', 'Ξερόκαμπος (Λασίθι)',
+      'Αγία Πελαγία (Ηράκλειο)', 'Καμπουλά (Ηράκλειο)', 'Χελιδόνι (Ηράκλειο)'
     ]
   },
   {
@@ -1054,6 +1067,11 @@ const AREA_COORDS = {
   'Ποκιονέρι – Πέτρες (βόρεια ακτή Νομού)': [35.545, 23.700], 'Καλύβες – Αλμυρίδα': [35.48, 24.20],
   'Μαράθι': [35.56, 24.13], 'Αγία Ρούμελη': [35.23, 23.96],
   'Μάρμαρα (Διαλισκάρι, δυτικά Λουτρού)': [35.1966, 24.0582],
+  'Γλυκά Νερά (Σφακιά)': [35.20, 24.05], 'Καλόγερος (Σφακιά)': [35.23, 23.94],
+  'Τρυπητή (Σούγια)': [35.24, 23.85], 'Δώματα (Σφακιά)': [35.24, 23.87],
+  'Μαχαιρίδα (Ακρωτήρι)': [35.58, 24.12], 'Αφράτα (Ροδωπός)': [35.58, 23.74],
+  'Μένιες – Δίκτυννα (Ροδωπός)': [35.68, 23.72], 'Λισσός (Σούγια)': [35.24, 23.76],
+  'Στόμιο – Άγιοι Θεόδωροι': [35.50, 23.90], 'Παχιά Άμμος Παλαιόχωρας': [35.24, 23.68],
   'Ρέθυμνο (βόρεια ακτή)': [35.37, 24.47], 'Κόλπος Ηρακλείου': [35.34, 25.13],
   'Κόλπος Μαλίων': [35.29, 25.46], 'Κόλπος Μιραμπέλλου (Λασίθι)': [35.19, 25.72],
   'Αγία Γαλήνη – Πλακιάς (Λιβυκό Ρεθύμνου)': [35.15, 24.55],
@@ -1066,6 +1084,11 @@ const AREA_COORDS = {
   'Μάταλα': [34.99, 24.75], 'Χερσόνησος': [35.32, 25.38], 'Παλαίκαστρο': [35.20, 26.25],
   'Πλατανιάς – Πάνορμος (Ρέθυμνο)': [35.42, 24.65], 'Μοχλός (Λασίθι)': [35.19, 25.90],
   'Αμμουδάρα – Καρτερός (Ηράκλειο)': [35.34, 25.20],
+  'Πρέβελη (Ρέθυμνο)': [35.13, 24.48], 'Τριόπετρα (Ρέθυμνο)': [35.08, 24.62],
+  'Άγιος Παύλος (Ρέθυμνο)': [35.10, 24.60], 'Αλατσόγκρεμνοι (Ρέθυμνο)': [35.08, 24.63],
+  'Βούλισμα – Χρυσή Άμμος (Λασίθι)': [35.05, 25.72], 'Παχιά Άμμος (Λασίθι)': [35.10, 25.70],
+  'Ξερόκαμπος (Λασίθι)': [35.05, 26.29], 'Αγία Πελαγία (Ηράκλειο)': [35.42, 24.93],
+  'Καμπουλά (Ηράκλειο)': [34.95, 25.50], 'Χελιδόνι (Ηράκλειο)': [35.42, 24.75],
   'Κύθηρα': [36.15, 23.00], 'Κέα': [37.62, 24.33], 'Κύθνος': [37.40, 24.42],
   'Σέριφος': [37.15, 24.50], 'Σίφνος': [36.97, 24.70], 'Μήλος': [36.75, 24.42],
   'Φολέγανδρος': [36.62, 24.92], 'Σίκινος': [36.60, 25.10], 'Ίος': [36.72, 25.28],
@@ -1098,7 +1121,7 @@ const LAND_PATHS = {
 };
 
 
-const TRIP_TAGS = ['Παράκτια διάπλευση', 'Άρόδου', 'Ψάρεμα', 'Κατάδυση', 'Νυχτερινή', 'Πολυήμερη', 'Ανοιχτή διάπλευση', 'Ρυμούλκηση', 'Απρόβλεπτη επιδείνωση καιρού', 'Βοήθεια σε άλλο σκάφος', 'Άσκηση επείγουσας ανάγκης', 'Βλάβη κύριας μηχανής', 'Βλάβη βοηθητικής μηχανής', 'Πρόβλημα καυσίμου', 'Πρόβλημα ηλεκτρικού συστήματος'];
+const TRIP_TAGS = ['Παράκτια διάπλευση', 'Άρόδου', 'Ψάρεμα', 'Κατάδυση', 'Νυχτερινή', 'Πολυήμερη', 'Ανοιχτή διάπλευση', 'Ρυμούλκηση', 'Απρόβλεπτη επιδείνωση καιρού', 'Βοήθεια σε άλλο σκάφος', 'Άσκηση επείγουσας ανάγκης', 'Βλάβη κύριας μηχανής', 'Βλάβη βοηθητικής μηχανής', 'Πρόβλημα καυσίμου', 'Πρόβλημα ηλεκτρικού συστήματος', 'Άσκηση λειτουργίας βοηθητικής μηχανής'];
 
 // Βάρος κάθε τύπου στη βαθμολογία εμπειρίας — αντανακλά πραγματική δυσκολία/σημασία, όχι ίση κατανομή
 const TAG_WEIGHTS = {
@@ -1115,7 +1138,8 @@ const TAG_WEIGHTS = {
   'Βλάβη κύριας μηχανής': 35,
   'Βλάβη βοηθητικής μηχανής': 20,
   'Πρόβλημα καυσίμου': 25,
-  'Πρόβλημα ηλεκτρικού συστήματος': 20
+  'Πρόβλημα ηλεκτρικού συστήματος': 20,
+  'Άσκηση λειτουργίας βοηθητικής μηχανής': 15
 };
 
 const BOOK_CATEGORIES = [
@@ -1404,8 +1428,22 @@ function formatAstroHint(dateStr){
   return parts.join(' · ');
 }
 function qualifyingAuxPracticeMinutes(t){
+  // Δύο πηγές άσκησης με βοηθητική μηχανή, αθροίζονται μαζί:
+  // (α) το παλιό σύστημα "διακοπή κύριας" σε επίπεδο εξόρμησης (λεπτά, μόνο για απλές εξορμήσεις χωρίς στάσεις)
+  // (β) ο τύπος "Άσκηση λειτουργίας βοηθητικής μηχανής" ανά στάση/πορεία (ώρες, νέο σύστημα) — μετατρέπεται σε λεπτά
+  let total = 0;
   const m = t.auxPractice && t.auxPractice.minutes;
-  return (m && m >= MIN_AUX_PRACTICE_MINUTES) ? m : 0;
+  if(m && m >= MIN_AUX_PRACTICE_MINUTES) total += m;
+
+  const legsForAux = [...(t.stops||[])];
+  if(t.finalLegDetails) legsForAux.push(t.finalLegDetails);
+  legsForAux.forEach(leg => {
+    if((leg.tags||[]).includes('Άσκηση λειτουργίας βοηθητικής μηχανής') && leg.auxEngineHours){
+      const mins = leg.auxEngineHours * 60;
+      if(mins >= MIN_AUX_PRACTICE_MINUTES) total += mins;
+    }
+  });
+  return total;
 }
 
 /* ================= ΚΑΤΑΣΤΑΣΗ ================= */
@@ -2052,6 +2090,10 @@ function renderStopDetailCard(stop, idx, prevPointName){
       <div class="stop-tab-panel" data-tab-panel="type" style="display:block;">
         <p class="form-label">Τύπος στάσης</p>
         <div style="margin-bottom:10px;">${tagsHtml}</div>
+        <div class="stop-aux-hours-field" data-stop="${stop.id}" style="${(stop.tags||[]).includes('Άσκηση λειτουργίας βοηθητικής μηχανής') ? '' : 'display:none;'}margin-bottom:10px;">
+          <span class="field-label">Ώρες λειτουργίας βοηθητικής μηχανής</span>
+          <input type="number" class="stop-aux-hours" data-stop="${stop.id}" min="0" step="0.01" value="${stop.auxEngineHours ?? ''}" placeholder="π.χ. 0.5">
+        </div>
         <p class="form-label">Περιοχές που καλύφθηκαν σε αυτή τη στάση</p>
         <div>${stopAreaChipsHtml(stop)}</div>
       </div>
@@ -2453,6 +2495,10 @@ function wireStopDetailListeners(container){
       if(idx === -1) stop.tags.push(tag); else stop.tags.splice(idx,1);
       chip.classList.toggle('selected');
       chip.setAttribute('aria-checked', stop.tags.includes(tag));
+      if(tag === 'Άσκηση λειτουργίας βοηθητικής μηχανής'){
+        const auxField = card.querySelector('.stop-aux-hours-field');
+        if(auxField) auxField.style.display = stop.tags.includes(tag) ? '' : 'none';
+      }
       updateFormLayoutForStops();
     };
     chip.addEventListener('click', toggle);
@@ -2477,7 +2523,7 @@ function wireStopDetailListeners(container){
 
   const simpleFieldMap = [
     ['.stop-bf','bf',parseFloat], ['.stop-gusts','gusts',parseFloat], ['.stop-wave','wave',parseFloat],
-    ['.stop-pressure','pressure',parseFloat],
+    ['.stop-pressure','pressure',parseFloat], ['.stop-aux-hours','auxEngineHours',parseFloat],
     ['.stop-current-intensity','currentIntensity',v=>v],
     ['.stop-load','load',v=>v], ['.stop-people','people',parseInt],
     ['.stop-crew','crew',v=>v], ['.stop-comment','comment',v=>v]
@@ -4231,7 +4277,7 @@ function updateRoutePlannerResult(){
     useBtn = document.createElement('button');
     useBtn.id = 'route-use-btn';
     useBtn.className = 'map-toggle-btn';
-    useBtn.style.cssText = 'background:var(--teal);color:#fff;border-color:var(--teal);margin-top:8px;display:inline-block;font-weight:600;';
+    useBtn.style.cssText = 'background:var(--teal);color:var(--on-accent);border-color:var(--teal);margin-top:8px;display:inline-block;font-weight:600;';
     useBtn.addEventListener('click', () => {
       const nmEl = document.getElementById('f-nm');
       if(nmEl){ nmEl.value = totalNm.toFixed(1); nmAutoFilled=false; rateAutoFilled=true; refreshRateSuggestion(); updateFuelPreview(); }
@@ -5684,14 +5730,14 @@ function renderEngines(){
       </div>
       ${impellerHtml}
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
-        <button class="engine-open-service-btn ripple-btn" data-eng="${eng.id}" style="font-size:var(--fs-sm);background:var(--teal);color:#fff;border:none;padding:8px 16px;border-radius:var(--r-sm);cursor:pointer;font-weight:500;flex:1;min-width:140px;transition:filter 0.15s,transform 0.1s;">✓ Καταγραφή Service</button>
+        <button class="engine-open-service-btn ripple-btn" data-eng="${eng.id}" style="font-size:var(--fs-sm);background:var(--teal);color:var(--on-accent);border:none;padding:8px 16px;border-radius:var(--r-sm);cursor:pointer;font-weight:500;flex:1;min-width:140px;transition:filter 0.15s,transform 0.1s;">✓ Καταγραφή Service</button>
         <button onclick="this.closest('.engine-box').querySelector('.engine-offset-panel').style.display=this.closest('.engine-box').querySelector('.engine-offset-panel').style.display==='none'?'block':'none'" style="font-size:var(--fs-sm);background:none;color:var(--text-muted);border:1px solid var(--line);padding:8px 12px;border-radius:var(--r-sm);cursor:pointer;">⚙ Ρύθμιση</button>
       </div>
       <div class="engine-offset-panel" style="display:none;margin-top:12px;padding:12px;background:var(--parchment);border-radius:var(--r-sm);">
         <p style="font-size:var(--fs-sm);color:var(--text-muted);margin:0 0 8px;">Ώρες μηχανής πριν αρχίσεις να καταγράφεις εξορμήσεις:</p>
         <div style="display:flex;align-items:center;gap:8px;">
           <input type="number" class="engine-service-input" id="offset-${eng.id}" value="${parseFloat(offsets[eng.id]||0)}" min="0" step="0.5" placeholder="0">
-          <button onclick="saveEngineOffset('${eng.id}')" style="font-size:var(--fs-sm);background:var(--teal);color:#fff;border:none;padding:6px 14px;border-radius:4px;cursor:pointer;">Αποθήκευση</button>
+          <button onclick="saveEngineOffset('${eng.id}')" style="font-size:var(--fs-sm);background:var(--teal);color:var(--on-accent);border:none;padding:6px 14px;border-radius:4px;cursor:pointer;">Αποθήκευση</button>
         </div>
       </div>
       <div class="engine-service-form" id="service-form-${eng.id}" data-editing-idx="" style="display:none;margin-top:12px;padding:12px;background:var(--parchment);border-radius:var(--r-sm);">
@@ -5714,7 +5760,7 @@ function renderEngines(){
         </label>
         <textarea id="service-note-${eng.id}" rows="2" placeholder="Τι έγινε; (προαιρετικό, π.χ. λάδι + φίλτρο)" style="width:100%;margin-bottom:8px;"></textarea>
         <div style="display:flex;gap:8px;">
-          <button class="engine-service-submit-btn ripple-btn" data-eng="${eng.id}" style="font-size:var(--fs-sm);background:var(--teal);color:#fff;border:none;padding:8px 16px;border-radius:var(--r-sm);cursor:pointer;font-weight:500;flex:1;transition:filter 0.15s,transform 0.1s;">Αποθήκευση</button>
+          <button class="engine-service-submit-btn ripple-btn" data-eng="${eng.id}" style="font-size:var(--fs-sm);background:var(--teal);color:var(--on-accent);border:none;padding:8px 16px;border-radius:var(--r-sm);cursor:pointer;font-weight:500;flex:1;transition:filter 0.15s,transform 0.1s;">Αποθήκευση</button>
           <button class="engine-service-cancel-btn" data-eng="${eng.id}" style="font-size:var(--fs-sm);background:none;color:var(--text-muted);border:1px solid var(--line);padding:8px 12px;border-radius:var(--r-sm);cursor:pointer;transition:border-color 0.15s,color 0.15s;">Άκυρο</button>
         </div>
       </div>
@@ -6747,7 +6793,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.21-24';
+const APP_VERSION = '2026.07.22-2';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
