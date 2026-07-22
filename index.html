@@ -847,6 +847,10 @@
           <option value="6">6</option><option value="7">7</option><option value="8">8</option>
         </select>
       </div>
+      <div class="field-col">
+        <span class="field-label">Αναμ. κύμα (μ)</span>
+        <input type="number" id="p-wave" min="0" step="0.1" placeholder="π.χ. 0.5">
+      </div>
     </div>
     <div class="detail-grid" style="margin-top:8px;">
       <div class="field-col">
@@ -1399,6 +1403,14 @@ function getLevelPhase(levelNum){
 }
 
 const BASE_RATE = 1.0;
+
+// Όρια λειτουργίας ΩΡΙΩΝ σε δύο επίπεδα:
+// - "Σχεδίασης" = το επίσημο, πιστοποιημένο όριο CE (Κατηγορία Γ) από την άδεια εκτέλεσης πλόων —
+//   πάνω από αυτό, το σκάφος τεχνικά ΔΕΝ έχει σχεδιαστεί να λειτουργεί.
+// - "Πρακτικό" = το πραγματικό, άνετο/ασφαλές όριο για ευχάριστη ναυσιπλοΐα — πολύ πιο συντηρητικό,
+//   γιατί το "μπορεί τεχνικά" δεν σημαίνει "είναι άνετο ή συνετό" για ερασιτεχνικό σκάφος αναψυχής.
+const BOAT_DESIGN_LIMIT_BF = 6, BOAT_DESIGN_LIMIT_WAVE = 2;
+const BOAT_PRACTICAL_LIMIT_BF = 4, BOAT_PRACTICAL_LIMIT_WAVE = 1;
 
 // Μικρά, συνεπή SVG εικονίδια (χρησιμοποιούν currentColor — προσαρμόζονται στο χρώμα του κουμπιού/κειμένου γύρω τους)
 const ICON_INFO = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="vertical-align:-2px;"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7.3" r="1.3" fill="currentColor"/></svg>';
@@ -4733,6 +4745,8 @@ function updatePlan(){
   const load = loadEl.value;
   const people = peopleEl.value !== '' ? parseInt(peopleEl.value, 10) : null;
   const bf = bfEl.value !== '' ? parseInt(bfEl.value, 10) : null;
+  const waveEl = document.getElementById('p-wave');
+  const wave = waveEl.value !== '' ? parseFloat(waveEl.value) : null;
 
   data.settings = data.settings || {};
   let changed = false;
@@ -4779,14 +4793,28 @@ function updatePlan(){
       }
     }
   }
-  if(bf !== null && bf > 6){
-    html += `<p class="plan-warn">⚠ Bf ${bf} είναι εκτός του επίσημου ορίου του ΩΡΙΩΝ (έως Bf 6, κύμα έως 2μ).</p>`;
+  // Έλεγχος ασφαλείας σε δύο επίπεδα, πριν βγεις — όχι μόνο μετά, στο ημερολόγιο:
+  // 1) Πρακτικό όριο (Bf4/1μ): ήπια προειδοποίηση — τεχνικά εντάξει, αλλά καλό να το ξέρεις εκ των προτέρων.
+  // 2) Όριο σχεδίασης (Bf6/2μ, CE Κατηγορία Γ): σοβαρή προειδοποίηση — πάνω από αυτό το σκάφος δεν έχει
+  //    σχεδιαστεί να λειτουργεί, ανεξάρτητα πόσο έμπειρος είσαι.
+  const overDesignLimit = (bf !== null && bf > BOAT_DESIGN_LIMIT_BF) || (wave !== null && wave > BOAT_DESIGN_LIMIT_WAVE);
+  const overPracticalLimit = !overDesignLimit && ((bf !== null && bf > BOAT_PRACTICAL_LIMIT_BF) || (wave !== null && wave > BOAT_PRACTICAL_LIMIT_WAVE));
+  if(overDesignLimit){
+    const parts = [];
+    if(bf !== null && bf > BOAT_DESIGN_LIMIT_BF) parts.push(`Bf ${bf}`);
+    if(wave !== null && wave > BOAT_DESIGN_LIMIT_WAVE) parts.push(`κύμα ${wave}μ`);
+    html += `<p class="plan-warn">⚠️ ${parts.join(' και ')} — εκτός του επίσημου ορίου σχεδίασης του ΩΡΙΩΝ (έως Bf ${BOAT_DESIGN_LIMIT_BF}, κύμα έως ${BOAT_DESIGN_LIMIT_WAVE}μ). Δεν είναι θέμα εμπειρίας — το σκάφος δεν έχει πιστοποιηθεί γι' αυτές τις συνθήκες.</p>`;
+  } else if(overPracticalLimit){
+    const parts = [];
+    if(bf !== null && bf > BOAT_PRACTICAL_LIMIT_BF) parts.push(`Bf ${bf}`);
+    if(wave !== null && wave > BOAT_PRACTICAL_LIMIT_WAVE) parts.push(`κύμα ${wave}μ`);
+    html += `<p class="plan-warn">⚠ ${parts.join(' και ')} — πλησιάζεις το πρακτικό, άνετο όριό σου (έως Bf ${BOAT_PRACTICAL_LIMIT_BF}, κύμα έως ${BOAT_PRACTICAL_LIMIT_WAVE}μ). Ακόμα εντός σχεδίασης, αλλά σκέψου αν αξίζει τον κόπο σήμερα.</p>`;
   }
   resultEl.innerHTML = html;
   resultEl.style.display = 'block';
 }
 
-['p-tank-main','p-tank-aux','p-can-size','p-nm','p-load','p-people','p-bf'].forEach(id => {
+['p-tank-main','p-tank-aux','p-can-size','p-nm','p-load','p-people','p-bf','p-wave'].forEach(id => {
   const el = document.getElementById(id);
   el.addEventListener('input', updatePlan);
   el.addEventListener('change', updatePlan);
@@ -4938,7 +4966,11 @@ function renderTrips(){
   wrap.innerHTML = `<div class="trip-list">${visible.map(t => {
     const routeLabel = (t.from || t.to || (t.stops&&t.stops.length)) ? buildRouteLabel(t) : (escapeHtml(t.route) || '(χωρίς περιγραφή)');
     const nameLabel = t.name ? escapeHtml(t.name) : null;
-    const overLimit = (t.bf !== null && t.bf !== undefined && t.bf > 6) || (t.wave !== null && t.wave !== undefined && t.wave > 2);
+    // Χρησιμοποιούμε την ΚΟΡΥΦΗ κάθε σκέλους (όχι τον μέσο όρο) — μια εξόρμηση με ένα δύσκολο σκέλος
+    // δεν πρέπει να κρύβεται πίσω από αλλιώς ήρεμες συνθήκες σε άλλα σκέλη.
+    const condRange = getTripConditionsRange(t);
+    const overLimit = (condRange.bfMax !== null && condRange.bfMax > BOAT_DESIGN_LIMIT_BF) || (condRange.waveMax !== null && condRange.waveMax > BOAT_DESIGN_LIMIT_WAVE);
+    const overPractical = !overLimit && ((condRange.bfMax !== null && condRange.bfMax > BOAT_PRACTICAL_LIMIT_BF) || (condRange.waveMax !== null && condRange.waveMax > BOAT_PRACTICAL_LIMIT_WAVE));
     const dateLabel = t.endDate && t.endDate !== t.date ? `${t.date} → ${t.endDate}` : (t.date || '—');
 
     const detailParts = [];
@@ -5005,7 +5037,8 @@ function renderTrips(){
           ${detailParts.length > 2 ? `<p class="trip-detail-row">${detailParts.slice(2).join(' · ')}</p>` : ''}
           ${costLine ? `<p class="trip-detail-row">⛽ ${costLine}</p>` : ''}
           ${staysHtml}
-          ${overLimit ? `<p class="trip-detail-row warn-text">⚠ Εκτός ορίου σχεδίασης σκάφους (Bf 6 / 2μ)</p>` : ''}
+          ${overLimit ? `<p class="trip-detail-row warn-text">⚠ Εκτός ορίου σχεδίασης σκάφους (Bf ${BOAT_DESIGN_LIMIT_BF} / ${BOAT_DESIGN_LIMIT_WAVE}μ)</p>` : ''}
+          ${overPractical ? `<p class="trip-detail-row" style="color:var(--brass);">⚠ Πάνω από το πρακτικό όριο άνεσης (Bf ${BOAT_PRACTICAL_LIMIT_BF} / ${BOAT_PRACTICAL_LIMIT_WAVE}μ) — εντός σχεδίασης πάντως</p>` : ''}
           ${consFlag ? `<p class="trip-detail-row warn-text">⚠ Ασυνήθιστα υψηλή κατανάλωση: ${consFlag.rate} L/ν.μ. (μέσος: ${consFlag.avg}, +${consFlag.pct}%)</p>` : ''}
           ${(tagsHtml || areasHtml) ? `<div class="trip-tags">${tagsHtml}${areasHtml}</div>` : ''}
           ${bookHtml}
@@ -7177,7 +7210,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.22-7';
+const APP_VERSION = '2026.07.22-8';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
