@@ -934,7 +934,7 @@
   <div class="level-box" id="level-box"></div>
 
   <p class="section-title" id="nav-narrative">5. Η Αφήγηση της Πορείας μου</p>
-  <p class="section-sub">Ένα προσωπικό, λογοτεχνικό κείμενο για το ταξίδι σου — γράφεται από τον Claude με τα πραγματικά σου δεδομένα, όποτε του το ζητήσεις σε συνομιλία. Επικολλάς εδώ, επεξεργάζεσαι ελεύθερα, τίποτα δεν χάνεται.</p>
+  <p class="section-sub">Ένα προσωπικό, λογοτεχνικό κείμενο για το ταξίδι σου — γράφεται από εσένα με τα πραγματικά σου δεδομένα.</p>
   <div id="narrative-section"></div>
 
   <p class="section-title" id="nav-engines">6. Κινητήρες</p>
@@ -7167,7 +7167,7 @@ function showSuccessCheckmark(){
 }
 
 /* ================= Η ΑΦΗΓΗΣΗ ΤΗΣ ΠΟΡΕΙΑΣ =================
-   Ένα προσωπικό, λογοτεχνικό κείμενο που γράφεται από τον Claude (σε συνομιλία, με τα πραγματικά
+   Ένα προσωπικό, λογοτεχνικό κείμενο που γράφεται από εσένα (με τα πραγματικά
    δεδομένα του χρήστη) και επικολλάται/επεξεργάζεται εδώ. ΚΑΘΕ αποθήκευση διατηρεί την ΠΡΟΗΓΟΥΜΕΝΗ
    έκδοση στο ιστορικό — τίποτα δεν χάνεται ποτέ, ακόμα κι όταν αντικατασταθεί πλήρως το κείμενο.
    Ίδια αρχή ασφαλείας δεδομένων με το sync-safety fix: προτίμησε να κρατήσεις κάτι παραπάνω παρά
@@ -7182,7 +7182,7 @@ function renderNarrative(){
 
   if(narrativeEditMode){
     container.innerHTML = `
-      <textarea id="narrative-textarea" rows="16" placeholder="Επικόλλησε εδώ το κείμενο που σου έγραψε ο Claude, ή γράψε/επεξέργασε ελεύθερα..." style="width:100%;font-family:'Fraunces',serif;font-size:var(--fs-md);line-height:1.7;padding:14px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--card-bg);color:var(--ink);resize:vertical;box-sizing:border-box;">${escapeHtml(n.current || '')}</textarea>
+      <textarea id="narrative-textarea" rows="16" placeholder="Γράψε ή επικόλλησε εδώ την αφήγησή σου..." style="width:100%;font-family:'Fraunces',serif;font-size:var(--fs-md);line-height:1.7;padding:14px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--card-bg);color:var(--ink);resize:vertical;box-sizing:border-box;">${escapeHtml(n.current || '')}</textarea>
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
         <button id="narrative-save-btn" class="ripple-btn" style="background:var(--teal);color:var(--on-accent);border:none;padding:9px 18px;border-radius:var(--r-sm);cursor:pointer;font-weight:600;">✓ Αποθήκευση</button>
         <button id="narrative-cancel-btn" class="ripple-btn" style="background:none;border:1px solid var(--line);color:var(--text-muted);padding:9px 18px;border-radius:var(--r-sm);cursor:pointer;">Άκυρο</button>
@@ -7196,7 +7196,7 @@ function renderNarrative(){
   const hasText = !!(n.current && n.current.trim());
   const bodyHtml = hasText
     ? `<div id="narrative-display-text" style="font-family:'Fraunces',serif;font-size:var(--fs-md);line-height:1.85;color:var(--ink);white-space:pre-wrap;padding:20px 24px;background:var(--card-bg);border:1px solid var(--line);border-radius:var(--r-sm);">${escapeHtml(n.current)}</div>`
-    : `<div style="padding:24px;text-align:center;color:var(--text-muted);font-size:var(--fs-sm);border:1px dashed var(--line);border-radius:var(--r-sm);">Δεν έχεις ακόμα αφήγηση. Ζήτα από τον Claude, σε συνομιλία, να σου γράψει «την αφήγηση της πορείας μου» με τα πραγματικά σου δεδομένα — μετά επικόλλησέ την εδώ.</div>`;
+    : `<div style="padding:24px;text-align:center;color:var(--text-muted);font-size:var(--fs-sm);border:1px dashed var(--line);border-radius:var(--r-sm);">Δεν έχεις ακόμα αφήγηση. Γράψε «την αφήγηση της πορείας μου» με τα πραγματικά σου δεδομένα.</div>`;
 
   const updatedNote = n.lastUpdated ? `<p style="font-size:var(--fs-xs);color:var(--text-muted);margin:6px 0 0;font-family:'JetBrains Mono',monospace;">Τελευταία ενημέρωση: ${escapeHtml(n.lastUpdated)}</p>` : '';
   const historyCount = (n.history||[]).length;
@@ -7392,7 +7392,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.22-9';
+const APP_VERSION = '2026.07.22-10';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
