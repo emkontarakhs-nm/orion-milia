@@ -699,6 +699,14 @@
           </select>
         </div>
         <div class="field-col">
+          <span class="field-label">Ποια μηχανή δούλεψε; (μόνο για απλές εξορμήσεις χωρίς στάσεις)</span>
+          <select id="f-engine-used">
+            <option value="main">Κύρια (Yamaha F115)</option>
+            <option value="aux">Βοηθητική (Yamaha F4) — π.χ. βλάβη κύριας</option>
+            <option value="both">Και οι δύο (μοιρασμένα)</option>
+          </select>
+        </div>
+        <div class="field-col">
           <span class="field-label">Άτομα</span>
           <input type="number" id="f-people" min="1" max="8" step="1" placeholder="π.χ. 2">
           <span id="f-people-hint" class="stop-auto-hint" style="display:none;"></span>
@@ -2196,6 +2204,13 @@ function renderStopDetailCard(stop, idx, prevPointName){
           <div class="field-col"><span class="field-label">Ώρες μηχανής${stop.engineHoursManual?'':' (αυτόματο)'}</span>
             <input type="number" class="stop-hours" data-stop="${stop.id}" min="0" step="0.01" value="${(stop.engineHoursManual ? stop.engineHours : autoHours) ?? ''}" placeholder="από ταχύτητα"></div>
         </div>
+        <div class="field-col" style="margin-top:8px;"><span class="field-label">Ποια μηχανή δούλεψε σε αυτό το σκέλος;</span>
+          <select class="stop-engine-used" data-stop="${stop.id}">
+            <option value="main" ${(!stop.engineUsed || stop.engineUsed==='main')?'selected':''}>Κύρια (Yamaha F115)</option>
+            <option value="aux" ${stop.engineUsed==='aux'?'selected':''}>Βοηθητική (Yamaha F4) — π.χ. βλάβη κύριας</option>
+            <option value="both" ${stop.engineUsed==='both'?'selected':''}>Και οι δύο (μοιρασμένα)</option>
+          </select>
+        </div>
         <div class="detail-grid" style="margin-top:8px;">
           <div class="field-col"><span class="field-label">Φορτίο</span>
             <select class="stop-load" data-stop="${stop.id}">
@@ -2589,7 +2604,7 @@ function wireStopDetailListeners(container){
   const simpleFieldMap = [
     ['.stop-bf','bf',parseFloat], ['.stop-gusts','gusts',parseFloat], ['.stop-wave','wave',parseFloat],
     ['.stop-pressure','pressure',parseFloat], ['.stop-aux-hours','auxEngineHours',parseFloat],
-    ['.stop-current-intensity','currentIntensity',v=>v],
+    ['.stop-current-intensity','currentIntensity',v=>v], ['.stop-engine-used','engineUsed',v=>v],
     ['.stop-load','load',v=>v], ['.stop-people','people',parseInt],
     ['.stop-crew','crew',v=>v], ['.stop-comment','comment',v=>v]
   ];
@@ -5076,6 +5091,7 @@ function startEdit(id){
   document.getElementById('f-wave').value = t.wave != null ? t.wave : '';
   document.getElementById('f-hours').value = t.hours != null ? t.hours : '';
   document.getElementById('f-load').value = t.load || 'light';
+  document.getElementById('f-engine-used').value = t.engineUsed || 'main';
   document.getElementById('f-people').value = t.people != null ? t.people : '';
   document.getElementById('f-rate').value = t.rate != null ? t.rate : '';
   document.getElementById('f-total-fuel').value = t.totalFuelL != null ? t.totalFuelL : '';
@@ -5128,6 +5144,7 @@ function cancelEdit(){
   document.getElementById('f-wave').value = '';
   document.getElementById('f-hours').value = '';
   document.getElementById('f-load').value = 'light';
+  document.getElementById('f-engine-used').value = 'main';
   document.getElementById('f-people').value = '';
   document.getElementById('f-rate').value = '';
   document.getElementById('f-total-fuel').value = '';
@@ -5223,6 +5240,7 @@ document.getElementById('f-add').addEventListener('click', async () => {
       wave: waveEl.value !== '' ? parseFloat(waveEl.value) : null,
       hours: hoursEl.value !== '' ? parseFloat(hoursEl.value) : null,
       load: loadEl.value || 'light',
+      engineUsed: document.getElementById('f-engine-used').value || 'main',
       people: peopleEl.value !== '' ? parseInt(peopleEl.value, 10) : null,
       rate: rate,
       fuel: rate !== null ? Math.round(rate * nm * 10) / 10 : null,
@@ -5752,15 +5770,39 @@ const ENGINES = [
   }
 ];
 
+function computeHoursByEngine(legHours, engineUsed, hours){
+  // Κοινή λογική κατανομής ωρών σε μηχανή, ανάλογα ποια πραγματικά δούλεψε σε αυτό το σκέλος/εξόρμηση.
+  // 'main' (προεπιλογή, ίδια συμπεριφορά με πριν) / 'aux' / 'both' (μοιρασμένο 50-50).
+  if(engineUsed === 'aux') hours['f4'] += legHours;
+  else if(engineUsed === 'both'){ hours['f115'] += legHours/2; hours['f4'] += legHours/2; }
+  else hours['f115'] += legHours;
+}
+
 function computeEngineHours(){
   const hours = {};
   ENGINES.forEach(e => { hours[e.id] = 0; });
   data.trips.forEach(t => {
-    const tripHours = parseFloat(t.hours) || 0;
-    if(tripHours > 0){
-      // Αν δεν υπάρχει διαχωρισμός, όλες οι ώρες στην κύρια
-      hours['f115'] += tripHours;
+    const legs = [...(t.stops||[])];
+    if(t.finalLegDetails && Object.keys(t.finalLegDetails).length) legs.push(t.finalLegDetails);
+    const legsWithHours = legs.filter(leg => {
+      const h = leg.engineHoursManual ? leg.engineHours : computeStopEngineHours(leg);
+      return h !== null && h !== undefined && parseFloat(h) > 0;
+    });
+
+    if(legsWithHours.length > 0){
+      // Έχουμε πραγματικά δεδομένα ωρών ανά σκέλος (νέο σύστημα στάσεων/πορειών) — κατανέμουμε εκεί,
+      // με βάση ποια μηχανή δούλεψε ΣΕ ΚΑΘΕ σκέλος συγκεκριμένα (π.χ. βλάβη κύριας -> ολοκλήρωση με βοηθητική).
+      legsWithHours.forEach(leg => {
+        const legHours = parseFloat(leg.engineHoursManual ? leg.engineHours : computeStopEngineHours(leg)) || 0;
+        computeHoursByEngine(legHours, leg.engineUsed || 'main', hours);
+      });
+    } else {
+      // Είτε καμία στάση, είτε στάσεις χωρίς δικά τους δεδομένα ωρών (παλαιότερες καταχωρήσεις πριν το
+      // σύστημα στάσεων/πορειών) — χρησιμοποιούμε το σύνολο ωρών σε επίπεδο εξόρμησης, όπως πάντα.
+      const tripHours = parseFloat(t.hours) || 0;
+      if(tripHours > 0) computeHoursByEngine(tripHours, t.engineUsed || 'main', hours);
     }
+
     // Ώρες βοηθητικής από dailyStays αν καταγράφονται ξεχωριστά
     (t.dailyStays || []).forEach(s => {
       if(s.engineF4Hours) hours['f4'] += parseFloat(s.engineF4Hours) || 0;
@@ -5795,9 +5837,24 @@ function computeEngineHoursAsOf(engineId, cutoffDate){
   let h = 0;
   data.trips.forEach(t => {
     if(!t.date || t.date > cutoffDate) return;
-    if(engineId === 'f115'){
-      h += parseFloat(t.hours) || 0;
+    const legs = [...(t.stops||[])];
+    if(t.finalLegDetails && Object.keys(t.finalLegDetails).length) legs.push(t.finalLegDetails);
+    const legsWithHours = legs.filter(leg => {
+      const lh = leg.engineHoursManual ? leg.engineHours : computeStopEngineHours(leg);
+      return lh !== null && lh !== undefined && parseFloat(lh) > 0;
+    });
+    const tmp = {f115:0, f4:0};
+    if(legsWithHours.length > 0){
+      legsWithHours.forEach(leg => {
+        const legHours = parseFloat(leg.engineHoursManual ? leg.engineHours : computeStopEngineHours(leg)) || 0;
+        computeHoursByEngine(legHours, leg.engineUsed || 'main', tmp);
+      });
     } else {
+      const tripHours = parseFloat(t.hours) || 0;
+      if(tripHours > 0) computeHoursByEngine(tripHours, t.engineUsed || 'main', tmp);
+    }
+    h += tmp[engineId] || 0;
+    if(engineId === 'f4'){
       (t.dailyStays||[]).forEach(s => { if(s.engineF4Hours) h += parseFloat(s.engineF4Hours) || 0; });
       h += qualifyingAuxPracticeMinutes(t) / 60;
     }
@@ -5812,10 +5869,24 @@ function computeEngineHoursByYear(engineId){
   data.trips.forEach(t => {
     if(!t.date) return;
     const y = t.date.slice(0,4);
-    let h = 0;
-    if(engineId === 'f115'){
-      h = parseFloat(t.hours) || 0;
+    const legs = [...(t.stops||[])];
+    if(t.finalLegDetails && Object.keys(t.finalLegDetails).length) legs.push(t.finalLegDetails);
+    const legsWithHours = legs.filter(leg => {
+      const lh = leg.engineHoursManual ? leg.engineHours : computeStopEngineHours(leg);
+      return lh !== null && lh !== undefined && parseFloat(lh) > 0;
+    });
+    const tmp = {f115:0, f4:0};
+    if(legsWithHours.length > 0){
+      legsWithHours.forEach(leg => {
+        const legHours = parseFloat(leg.engineHoursManual ? leg.engineHours : computeStopEngineHours(leg)) || 0;
+        computeHoursByEngine(legHours, leg.engineUsed || 'main', tmp);
+      });
     } else {
+      const tripHours = parseFloat(t.hours) || 0;
+      if(tripHours > 0) computeHoursByEngine(tripHours, t.engineUsed || 'main', tmp);
+    }
+    let h = tmp[engineId] || 0;
+    if(engineId === 'f4'){
       (t.dailyStays||[]).forEach(s => { if(s.engineF4Hours) h += parseFloat(s.engineF4Hours) || 0; });
       h += qualifyingAuxPracticeMinutes(t) / 60;
     }
@@ -7004,7 +7075,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.22-5';
+const APP_VERSION = '2026.07.22-6';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
