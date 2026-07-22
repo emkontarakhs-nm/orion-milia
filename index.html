@@ -1334,6 +1334,24 @@ function collectDailyStays(prefix){
 // Ενιαία, συμβατή-με-παλιά-δεδομένα ανάγνωση του τύπου πρόσδεσης μιας στάσης/πορείας: πρώτα το νέο,
 // ανεξάρτητο πεδίο (stop.mooringType — μπορεί να υπάρχει ΧΩΡΙΣ διανυκτέρευση), αλλιώς το παλιό, ένθετο
 // μέσα στη διανυκτέρευση (stop.overnight.mooringType — από πριν τον σημερινό διαχωρισμό).
+// Πόσες νύχτες διήρκεσε μια διανυκτέρευση σε ΜΙΑ στάση — καλύπτει το σενάριο "έμεινα 3 βράδια στο ίδιο
+// μέρος χωρίς να κουνήσω τη βάρκα" χωρίς να χρειάζεται ψεύτικη νέα στάση για κάθε ενδιάμεση μέρα.
+// Χωρίς "έως" ημερομηνία (ή ίδια με την πρώτη) -> 1 νύχτα, όπως πάντα.
+function computeNightsCount(overnight){
+  if(!overnight || !overnight.date) return 0;
+  if(!overnight.endDate || overnight.endDate === overnight.date) return 1;
+  const d1 = new Date(overnight.date + 'T00:00:00');
+  const d2 = new Date(overnight.endDate + 'T00:00:00');
+  const diffDays = Math.round((d2 - d1) / (24*3600*1000));
+  return diffDays > 0 ? diffDays : 1; // ασφαλές fallback αν η "έως" ημερομηνία δόθηκε λάθος (πριν την πρώτη)
+}
+
+function narrativeNightsLabel(overnight){
+  const nights = computeNightsCount(overnight);
+  if(nights <= 1) return '';
+  return `🌙 ${nights} νύχτες συνολικά (${escapeHtml(overnight.date)} → ${escapeHtml(overnight.endDate)})`;
+}
+
 function getStopMooringType(leg){
   if(!leg) return null;
   return leg.mooringType || (leg.overnight && leg.overnight.mooringType) || null;
@@ -1348,6 +1366,8 @@ function getTripDailyStays(t){
     .filter(s => s.overnight && s.overnight.type && s.overnight.type !== 'none')
     .map(s => ({
       date: (s.overnight.date) || t.date,
+      endDate: s.overnight.endDate || null,
+      nights: computeNightsCount(s.overnight) || 1,
       overnightType: s.overnight.type,
       overnightLocation: s.overnight.location || s.name || '',
       mooringType: getStopMooringType(s) || ''
@@ -2340,13 +2360,16 @@ function renderStopDetailCard(stop, idx, prevPointName){
           </p>
           <div class="stop-overnight-fields" data-stop="${stop.id}" style="${overnightActive?'':'display:none;'}">
             <div class="detail-grid">
-              <div class="field-col"><span class="field-label">Ημερομηνία διανυκτέρευσης</span>
+              <div class="field-col"><span class="field-label">Πρώτο βράδυ</span>
                 <input type="date" class="stop-overnight-date" data-stop="${stop.id}" value="${escapeHtml(stop.overnight&&stop.overnight.date||'')}"></div>
+              <div class="field-col"><span class="field-label">Τελευταίο βράδυ (αν έμεινες πάνω από 1 νύχτα εδώ)</span>
+                <input type="date" class="stop-overnight-end-date" data-stop="${stop.id}" value="${escapeHtml(stop.overnight&&stop.overnight.endDate||'')}" placeholder="ίδιο με πάνω αν 1 νύχτα"></div>
               <div class="field-col"><span class="field-label">Τύπος διανυκτέρευσης</span>
                 <select class="stop-overnight-type" data-stop="${stop.id}">
                   ${Object.entries(OVERNIGHT_LABELS).map(([k,v]) => `<option value="${k}" ${(stop.overnight&&stop.overnight.type===k)?'selected':''}>${escapeHtml(v)}</option>`).join('')}
                 </select></div>
             </div>
+            <p class="stop-auto-hint stop-overnight-nights-hint" data-stop="${stop.id}">${narrativeNightsLabel(stop.overnight)}</p>
           </div>
         </div>
       </div>
@@ -2873,7 +2896,7 @@ function wireStopDetailListeners(container){
     cb.addEventListener('change', () => {
       const stop = findStop(cb.dataset.stop);
       if(!stop) return;
-      if(!stop.overnight) stop.overnight = {type:null, location:null, date:null};
+      if(!stop.overnight) stop.overnight = {type:null, location:null, date:null, endDate:null};
       const fieldsDiv = container.querySelector(`.stop-overnight-fields[data-stop="${stop.id}"]`);
       if(cb.checked){
         // Διανυκτέρευση χωρίς πρόσδεση δεν βγάζει νόημα — ενεργοποιούμε αυτόματα και την πρόσδεση
@@ -2900,19 +2923,33 @@ function wireStopDetailListeners(container){
       }
     });
   });
+  function refreshNightsHint(stop){
+    const hint = container.querySelector(`.stop-overnight-nights-hint[data-stop="${stop.id}"]`);
+    if(hint) hint.textContent = narrativeNightsLabel(stop.overnight);
+  }
   container.querySelectorAll('.stop-overnight-date').forEach(input => {
     input.addEventListener('change', () => {
       const stop = findStop(input.dataset.stop);
       if(!stop) return;
-      if(!stop.overnight) stop.overnight = {type:null, location:null, date:null};
+      if(!stop.overnight) stop.overnight = {type:null, location:null, date:null, endDate:null};
       stop.overnight.date = input.value || null;
+      refreshNightsHint(stop);
+    });
+  });
+  container.querySelectorAll('.stop-overnight-end-date').forEach(input => {
+    input.addEventListener('change', () => {
+      const stop = findStop(input.dataset.stop);
+      if(!stop) return;
+      if(!stop.overnight) stop.overnight = {type:null, location:null, date:null, endDate:null};
+      stop.overnight.endDate = input.value || null;
+      refreshNightsHint(stop);
     });
   });
   container.querySelectorAll('.stop-overnight-type').forEach(sel => {
     sel.addEventListener('change', () => {
       const stop = findStop(sel.dataset.stop);
       if(!stop) return;
-      if(!stop.overnight) stop.overnight = {type:null, location:null, date:null};
+      if(!stop.overnight) stop.overnight = {type:null, location:null, date:null, endDate:null};
       stop.overnight.type = sel.value;
     });
   });
@@ -3951,7 +3988,7 @@ function computeYearReview(year){
 
   const farthest = [...yearTrips].sort((a,b)=>(parseFloat(b.nm)||0)-(parseFloat(a.nm)||0))[0];
   const maxBf = Math.max(0, ...yearTrips.map(t => getTripConditionsRange(t).bfMax || 0));
-  const nightsAway = yearTrips.reduce((s,t) => s + getTripDailyStays(t).filter(d => d.overnightType && d.overnightType!=='none').length, 0);
+  const nightsAway = yearTrips.reduce((s,t) => s + getTripDailyStays(t).filter(d => d.overnightType && d.overnightType!=='none').reduce((sum,d) => sum + (d.nights || 1), 0), 0);
   const tagsUsed = new Set();
   yearTrips.forEach(t => (t.tags||[]).forEach(tag => tagsUsed.add(tag)));
 
@@ -5030,7 +5067,8 @@ function renderTrips(){
       if(s.mooringType) parts.push(MOORING_LABELS[s.mooringType] || s.mooringType);
       if(s.nm) parts.push(s.nm + ' ν.μ.');
       if(s.hours) parts.push(s.hours + ' ώρες μηχ.');
-      return `<p class="trip-detail-row">📍 ${s.date}: ${parts.join(' · ')}</p>`;
+      const dateLabel = (s.nights && s.nights > 1 && s.endDate) ? `${s.date} → ${s.endDate} (${s.nights} νύχτες)` : s.date;
+      return `<p class="trip-detail-row">📍 ${dateLabel}: ${parts.join(' · ')}</p>`;
     }).join('');
 
     const tagsHtml = (t.tags||[]).map(tag => `<span class="trip-tag trip-type-tag">${escapeHtml(tag)}</span>`).join('');
@@ -7392,7 +7430,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.22-10';
+const APP_VERSION = '2026.07.22-11';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
