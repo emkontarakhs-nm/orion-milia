@@ -5470,7 +5470,7 @@ document.getElementById('f-add').addEventListener('click', async () => {
   addBtn.disabled = true;
   try{
     const wasEditing = !!editingId;
-    const scoreBefore = wasEditing ? null : computeExperienceScore().total;
+    const scoreBefore = computeExperienceScore().total;
     // Καταγραφή ρεκόρ ΠΡΙΝ την προσθήκη — για να ξέρουμε αν η νέα εξόρμηση μόλις έσπασε κάποιο
     const prevMaxNm = wasEditing ? null : data.trips.reduce((max,t) => Math.max(max, parseFloat(t.nm)||0), 0);
     const prevMaxBf = wasEditing ? null : data.trips.reduce((max,t) => t.bf != null ? Math.max(max, t.bf) : max, -1);
@@ -5543,7 +5543,13 @@ document.getElementById('f-add').addEventListener('click', async () => {
     showSuccessCheckmark();
     playBellDing();
     if(wasEditing){
-      showToast('✓ Ενημερώθηκε η εξόρμηση');
+      const scoreAfterEdit = computeExperienceScore().total;
+      const editDelta = scoreAfterEdit - scoreBefore;
+      // Ειλικρινής ανάδραση και στην επεξεργασία, όχι μόνο σε νέα καταγραφή — αν διορθώνεις ένα λάθος
+      // (π.χ. Bf5 ήταν στην πραγματικότητα Bf3), πρέπει να βλέπεις καθαρά αν η βαθμολογία σου άλλαξε,
+      // προς τα πάνω ή προς τα κάτω, ώστε να εμπιστεύεσαι ότι αντανακλά πάντα την αληθινή εικόνα.
+      const deltaTxt = editDelta === 0 ? '' : (editDelta > 0 ? ` (+${editDelta} πόντοι)` : ` (${editDelta} πόντοι)`);
+      showToast(`✓ Ενημερώθηκε η εξόρμηση${deltaTxt}`);
       haptic(15);
     } else {
       const scoreAfter = computeExperienceScore().total;
@@ -7485,7 +7491,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.22-14';
+const APP_VERSION = '2026.07.22-15';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
