@@ -1295,21 +1295,62 @@ function collectDailyStays(prefix){
   });
 }
 
+// Ενιαία, συμβατή-με-παλιά-δεδομένα ανάγνωση του τύπου πρόσδεσης μιας στάσης/πορείας: πρώτα το νέο,
+// ανεξάρτητο πεδίο (stop.mooringType — μπορεί να υπάρχει ΧΩΡΙΣ διανυκτέρευση), αλλιώς το παλιό, ένθετο
+// μέσα στη διανυκτέρευση (stop.overnight.mooringType — από πριν τον σημερινό διαχωρισμό).
+function getStopMooringType(leg){
+  if(!leg) return null;
+  return leg.mooringType || (leg.overnight && leg.overnight.mooringType) || null;
+}
+
 function getTripDailyStays(t){
-  // Νέο μοντέλο: διανυκτέρευση καταγράφεται ανά ΣΤΑΣΗ, με τη δική της ημερομηνία.
-  const fromStops = (t.stops || [])
+  // Νέο μοντέλο: διανυκτέρευση καταγράφεται ανά ΣΤΑΣΗ/ΠΟΡΕΙΑ (συμπεριλαμβανομένης της τελικής διαδρομής),
+  // με τη δική της ημερομηνία.
+  const legs = [...(t.stops || [])];
+  if(t.finalLegDetails && Object.keys(t.finalLegDetails).length) legs.push(t.finalLegDetails);
+  const fromStops = legs
     .filter(s => s.overnight && s.overnight.type && s.overnight.type !== 'none')
     .map(s => ({
       date: (s.overnight.date) || t.date,
       overnightType: s.overnight.type,
       overnightLocation: s.overnight.location || s.name || '',
-      mooringType: s.overnight.mooringType || ''
+      mooringType: getStopMooringType(s) || ''
     }));
   if(fromStops.length) return fromStops;
   // Παλιά δεδομένα (πριν την ενοποίηση) — διατηρούνται για συμβατότητα, ποτέ δεν χάνονται
   if(t.dailyStays && t.dailyStays.length) return t.dailyStays;
   if(t.overnightType) return [{date: t.date, overnightType: t.overnightType, overnightLocation: t.overnightLocation||'', mooringType: t.mooringType||''}];
   return [];
+}
+
+// ΟΛΕΣ οι προσδέσεις/αγκυροβολίες μιας εξόρμησης, ΑΝΕΞΑΡΤΗΤΑ από διανυκτέρευση — π.χ. ένα σταμάτημα
+// για κολύμπι το μεσημέρι μετράει εξίσου εδώ. Χρησιμοποιείται για τη βαθμολόγηση ποικιλομορφίας πρόσδεσης,
+// ώστε πραγματική ναυτοσύνη (διαφορετικές τεχνικές πρόσδεσης) να αναγνωρίζεται ακόμα κι όταν δεν μένεις τη νύχτα.
+function getTripAllMoorings(t){
+  const legs = [...(t.stops || [])];
+  if(t.finalLegDetails && Object.keys(t.finalLegDetails).length) legs.push(t.finalLegDetails);
+  return legs.map(getStopMooringType).filter(Boolean);
+}
+
+// Το πραγματικό εύρος συνθηκών μιας εξόρμησης — όχι μόνο ο μέσος όρος, που μπορεί να "κρύψει" μια πραγματικά
+// δύσκολη μέρα μέσα σε αλλιώς ήρεμες συνθήκες (π.χ. Bf5 τη 1η μέρα, Bf1 την τελευταία -> μέσος όρος ~3,
+// που ούτε αντιπροσωπεύει την πραγματική δυσκολία ούτε την αξίζει σωστά στη βαθμολόγηση).
+// Χρησιμοποιείται τόσο για ειλικρινέστερη παρουσίαση (εύρος αντί για ένα αραιωμένο νούμερο) όσο και για
+// δικαιότερη βαθμολόγηση δυσκολίας (η κορυφή, όχι ο μέσος όρος, καθορίζει πόσο δύσκολη ήταν μια εξόρμηση).
+function getTripConditionsRange(t){
+  const legs = [...(t.stops || [])];
+  if(t.finalLegDetails && Object.keys(t.finalLegDetails).length) legs.push(t.finalLegDetails);
+  const bfVals = legs.map(l=>l.bf).filter(v=>v!=null && v!=='');
+  const waveVals = legs.map(l=>l.wave).filter(v=>v!=null && v!=='');
+
+  const bfMin = bfVals.length ? Math.min(...bfVals) : (t.bf ?? null);
+  const bfMax = bfVals.length ? Math.max(...bfVals) : (t.bf ?? null);
+  const bfAvg = bfVals.length ? avgOf(bfVals) : (t.bf ?? null);
+  const waveMin = waveVals.length ? Math.min(...waveVals) : (t.wave ?? null);
+  const waveMax = waveVals.length ? Math.max(...waveVals) : (t.wave ?? null);
+  const waveAvg = waveVals.length ? avgOf(waveVals) : (t.wave ?? null);
+
+  return {bfMin, bfMax, bfAvg, waveMin, waveMax, waveAvg};
 }
 
 function getTripAllTags(t){
@@ -2135,6 +2176,7 @@ function renderStopDetailCard(stop, idx, prevPointName){
   const sug = suggestRate({bf: stop.bf, load: stop.load||'light', people: stop.people||BASE_PEOPLE, wave: stop.wave, speed: stop.avgSpeed, gusts: stop.gusts});
   const autoHours = computeStopEngineHours(stop);
   const overnightActive = !!(stop.overnight && stop.overnight.type && stop.overnight.type !== 'none');
+  const mooringActive = !!(stop.mooringActive || getStopMooringType(stop) || overnightActive);
   const tagsHtml = TRIP_TAGS.map(tag => {
     const sel = (stop.tags||[]).includes(tag);
     return `<span class="stop-tag-chip${sel?' selected':''}" data-stop-tag="${escapeHtml(tag)}" tabindex="0" role="checkbox" aria-checked="${sel}">${escapeHtml(tag)}</span>`;
@@ -2157,7 +2199,7 @@ function renderStopDetailCard(stop, idx, prevPointName){
         <button type="button" class="stop-tab-btn active ripple-btn" data-tab="type" role="tab" aria-selected="true" aria-controls="tabpanel-type-${stop.id}">🏷️ Τύπος</button>
         <button type="button" class="stop-tab-btn ripple-btn" data-tab="weather" role="tab" aria-selected="false" aria-controls="tabpanel-weather-${stop.id}">🌊 Καιρός</button>
         <button type="button" class="stop-tab-btn ripple-btn" data-tab="trip" role="tab" aria-selected="false" aria-controls="tabpanel-trip-${stop.id}">🚤 Ταξίδι</button>
-        <button type="button" class="stop-tab-btn ripple-btn" data-tab="sleep" role="tab" aria-selected="false" aria-controls="tabpanel-sleep-${stop.id}">🌙 Ύπνος${overnightActive?' •':''}</button>
+        <button type="button" class="stop-tab-btn ripple-btn" data-tab="sleep" role="tab" aria-selected="false" aria-controls="tabpanel-sleep-${stop.id}">🌙⚓ Ύπνος/Αγκυροβόλιο${mooringActive?' •':''}</button>
       </div>
 
       <div class="stop-tab-panel" id="tabpanel-type-${stop.id}" data-tab-panel="type" role="tabpanel" style="display:block;">
@@ -2232,23 +2274,34 @@ function renderStopDetailCard(stop, idx, prevPointName){
       <div class="stop-tab-panel" id="tabpanel-sleep-${stop.id}" data-tab-panel="sleep" role="tabpanel" style="display:none;">
         <p class="form-label">
           <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
-            <input type="checkbox" class="stop-overnight-toggle" data-stop="${stop.id}" ${overnightActive?'checked':''}>
-            Διανυκτέρευση σε αυτή τη στάση
+            <input type="checkbox" class="stop-mooring-toggle" data-stop="${stop.id}" ${mooringActive?'checked':''}>
+            Πρόσδεση / Αγκυροβόλιο σε αυτή τη στάση
           </label>
         </p>
-        <div class="stop-overnight-fields" data-stop="${stop.id}" style="${overnightActive?'':'display:none;'}">
-          <div class="detail-grid">
-            <div class="field-col"><span class="field-label">Ημερομηνία διανυκτέρευσης</span>
-              <input type="date" class="stop-overnight-date" data-stop="${stop.id}" value="${escapeHtml(stop.overnight&&stop.overnight.date||'')}"></div>
-            <div class="field-col"><span class="field-label">Τύπος διανυκτέρευσης</span>
-              <select class="stop-overnight-type" data-stop="${stop.id}">
-                ${Object.entries(OVERNIGHT_LABELS).map(([k,v]) => `<option value="${k}" ${(stop.overnight&&stop.overnight.type===k)?'selected':''}>${escapeHtml(v)}</option>`).join('')}
-              </select></div>
-            <div class="field-col"><span class="field-label">Πρόσδεση / Αγκυροβόλιο</span>
-              <select class="stop-mooring" data-stop="${stop.id}">
-                <option value="">—</option>
-                ${Object.entries(MOORING_LABELS).map(([k,v]) => `<option value="${k}" ${(stop.overnight&&stop.overnight.mooringType===k)?'selected':''}>${escapeHtml(v)}</option>`).join('')}
-              </select></div>
+        <div class="stop-mooring-fields" data-stop="${stop.id}" style="${mooringActive?'':'display:none;'}padding-left:4px;border-left:2px solid var(--line);margin-left:2px;">
+          <div class="field-col" style="margin-bottom:10px;"><span class="field-label">Τύπος πρόσδεσης</span>
+            <select class="stop-mooring" data-stop="${stop.id}">
+              <option value="">—</option>
+              ${Object.entries(MOORING_LABELS).map(([k,v]) => `<option value="${k}" ${getStopMooringType(stop)===k?'selected':''}>${escapeHtml(v)}</option>`).join('')}
+            </select>
+            <p style="font-size:var(--fs-xs);color:var(--text-muted);margin:4px 0 0;">π.χ. σταματήσαμε για κολύμπι ή επίσκεψη σε μαρίνα, χωρίς να διανυκτερεύσουμε</p>
+          </div>
+
+          <p class="form-label" style="margin-top:6px;">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+              <input type="checkbox" class="stop-overnight-toggle" data-stop="${stop.id}" ${overnightActive?'checked':''}>
+              Διανυκτερεύσαμε εδώ
+            </label>
+          </p>
+          <div class="stop-overnight-fields" data-stop="${stop.id}" style="${overnightActive?'':'display:none;'}">
+            <div class="detail-grid">
+              <div class="field-col"><span class="field-label">Ημερομηνία διανυκτέρευσης</span>
+                <input type="date" class="stop-overnight-date" data-stop="${stop.id}" value="${escapeHtml(stop.overnight&&stop.overnight.date||'')}"></div>
+              <div class="field-col"><span class="field-label">Τύπος διανυκτέρευσης</span>
+                <select class="stop-overnight-type" data-stop="${stop.id}">
+                  ${Object.entries(OVERNIGHT_LABELS).map(([k,v]) => `<option value="${k}" ${(stop.overnight&&stop.overnight.type===k)?'selected':''}>${escapeHtml(v)}</option>`).join('')}
+                </select></div>
+            </div>
           </div>
         </div>
       </div>
@@ -2319,7 +2372,14 @@ function renderStopsList(){
 }
 
 function findStop(id){
-  if(id === 'final-leg') return finalLegDetails;
+  if(id === 'final-leg'){
+    // Το finalLegDetails δεν αποθηκεύει ποτέ μόνιμα το δικό του nm/id (αυτά ζουν αλλού/μόνο στο
+    // προσωρινό wrapper του rendering) — εξασφαλίζουμε ότι πάντα τα έχει σωστά, αλλιώς υπολογισμοί
+    // όπως ταχύτητα->ώρες μηχανής αποτυγχάνουν σιωπηλά όποτε γίνονται ΖΩΝΤΑΝΑ μέσα από event handler.
+    finalLegDetails.nm = finalLegNm;
+    finalLegDetails.id = 'final-leg';
+    return finalLegDetails;
+  }
   return currentStops.find(s => s.id === id);
 }
 
@@ -2522,6 +2582,16 @@ function updateFormLayoutForStops(){
   const visibilities = legs.map(s => s.visibility).filter(Boolean);
 
   const summaryLines = [];
+  // Εύρος (όχι μόνο μέσος όρος) — μια εξόρμηση με Bf5 μία μέρα και Bf1 την άλλη δεν είναι "Bf3 όλη την ώρα".
+  // Το εύρος δείχνει την πραγματική εικόνα· ο μέσος όρος μένει στο κλειδωμένο πεδίο από πάνω για αναφορά.
+  if(legsWithBf.length > 1){
+    const bfMin = Math.min(...legsWithBf.map(s=>s.bf)), bfMax = Math.max(...legsWithBf.map(s=>s.bf));
+    if(bfMin !== bfMax) summaryLines.push(`💨 Beaufort: εύρος ${bfMin}–${bfMax} (μέσος όρος ${Math.round(avgOf(legsWithBf.map(s=>s.bf)))})`);
+  }
+  if(legsWithWave.length > 1){
+    const waveMin = Math.min(...legsWithWave.map(s=>s.wave)), waveMax = Math.max(...legsWithWave.map(s=>s.wave));
+    if(waveMin !== waveMax) summaryLines.push(`🌊 Κύμα: εύρος ${waveMin}–${waveMax}μ (μέσος όρος ${Math.round(avgOf(legsWithWave.map(s=>s.wave))*10)/10}μ)`);
+  }
   if(legsWithGusts.length){
     const avgGusts = Math.round(legsWithGusts.reduce((s,x)=>s+x.gusts,0) / legsWithGusts.length);
     summaryLines.push(`💨 Ριπές: μέσος όρος Bf${avgGusts}`);
@@ -2727,13 +2797,49 @@ function wireStopDetailListeners(container){
     });
   });
 
+  container.querySelectorAll('.stop-mooring-toggle').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const stop = findStop(cb.dataset.stop);
+      if(!stop) return;
+      stop.mooringActive = cb.checked;
+      const fieldsDiv = container.querySelector(`.stop-mooring-fields[data-stop="${stop.id}"]`);
+      if(fieldsDiv) fieldsDiv.style.display = cb.checked ? '' : 'none';
+      if(!cb.checked){
+        // Απενεργοποιώντας την πρόσδεση, σβήνουμε και τυχόν διανυκτέρευση — δεν μπορείς να μείνεις
+        // τη νύχτα χωρίς να είσαι προσδεδεμένος/αγκυροβολημένος κάπου.
+        stop.mooringType = null;
+        if(stop.overnight) stop.overnight.type = 'none';
+        const overnightCb = container.querySelector(`.stop-overnight-toggle[data-stop="${stop.id}"]`);
+        if(overnightCb) overnightCb.checked = false;
+        const overnightFields = container.querySelector(`.stop-overnight-fields[data-stop="${stop.id}"]`);
+        if(overnightFields) overnightFields.style.display = 'none';
+      }
+      renderStopsList();
+    });
+  });
+  container.querySelectorAll('.stop-mooring').forEach(sel => {
+    sel.addEventListener('change', () => {
+      const stop = findStop(sel.dataset.stop);
+      if(!stop) return;
+      stop.mooringType = sel.value || null;
+    });
+  });
   container.querySelectorAll('.stop-overnight-toggle').forEach(cb => {
     cb.addEventListener('change', () => {
       const stop = findStop(cb.dataset.stop);
       if(!stop) return;
-      if(!stop.overnight) stop.overnight = {type:null, location:null, mooringType:null, date:null};
+      if(!stop.overnight) stop.overnight = {type:null, location:null, date:null};
       const fieldsDiv = container.querySelector(`.stop-overnight-fields[data-stop="${stop.id}"]`);
       if(cb.checked){
+        // Διανυκτέρευση χωρίς πρόσδεση δεν βγάζει νόημα — ενεργοποιούμε αυτόματα και την πρόσδεση
+        // αν δεν ήταν ήδη ενεργή, χωρίς να αναγκάζουμε συγκεκριμένο τύπο.
+        if(!stop.mooringActive){
+          stop.mooringActive = true;
+          const mooringCb = container.querySelector(`.stop-mooring-toggle[data-stop="${stop.id}"]`);
+          const mooringFields = container.querySelector(`.stop-mooring-fields[data-stop="${stop.id}"]`);
+          if(mooringCb) mooringCb.checked = true;
+          if(mooringFields) mooringFields.style.display = '';
+        }
         stop.overnight.type = stop.overnight.type && stop.overnight.type !== 'none' ? stop.overnight.type : 'boat_anchor';
         if(!stop.overnight.date){
           stop.overnight.date = document.getElementById('f-date').value || null;
@@ -2753,7 +2859,7 @@ function wireStopDetailListeners(container){
     input.addEventListener('change', () => {
       const stop = findStop(input.dataset.stop);
       if(!stop) return;
-      if(!stop.overnight) stop.overnight = {type:null, location:null, mooringType:null, date:null};
+      if(!stop.overnight) stop.overnight = {type:null, location:null, date:null};
       stop.overnight.date = input.value || null;
     });
   });
@@ -2761,16 +2867,8 @@ function wireStopDetailListeners(container){
     sel.addEventListener('change', () => {
       const stop = findStop(sel.dataset.stop);
       if(!stop) return;
-      if(!stop.overnight) stop.overnight = {type:null, location:null, mooringType:null, date:null};
+      if(!stop.overnight) stop.overnight = {type:null, location:null, date:null};
       stop.overnight.type = sel.value;
-    });
-  });
-  container.querySelectorAll('.stop-mooring').forEach(sel => {
-    sel.addEventListener('change', () => {
-      const stop = findStop(sel.dataset.stop);
-      if(!stop) return;
-      if(!stop.overnight) stop.overnight = {type:null, location:null, mooringType:null, date:null};
-      stop.overnight.mooringType = sel.value;
     });
   });
 }
@@ -3167,7 +3265,9 @@ function renderStages(){
 /* ================= CAPTAIN'S LEVEL ================= */
 function tripDifficultyMultiplier(t){
   let mult = 1.0;
-  const bf = t.bf;
+  // Η κορυφαία τιμή Bf που αντιμετωπίστηκε σε ΟΠΟΙΟΔΗΠΟΤΕ σκέλος — όχι ο μέσος όρος, που θα "έκρυβε"
+  // μια πραγματικά δύσκολη μέρα μέσα σε αλλιώς ήρεμες συνθήκες μιας πολυήμερης εξόρμησης.
+  const bf = getTripConditionsRange(t).bfMax;
   if(bf !== null && bf !== undefined && bf !== ''){
     if(bf >= 6) mult += 0.5;
     else if(bf >= 4) mult += 0.3;
@@ -3182,7 +3282,7 @@ function tripDifficultyMultiplier(t){
   if(tags.includes('Βλάβη κύριας μηχανής')) mult += 0.3;
   const stays = getTripDailyStays(t);
   if(stays.some(s => s.overnightType === 'boat_anchor' || s.overnightType === 'camping_anchor')) mult += 0.2;
-  if(stays.some(s => s.mooringType)) mult += 0.1;
+  if(getTripAllMoorings(t).length > 0) mult += 0.1;
   return Math.min(mult, 3.0);
 }
 
@@ -3224,9 +3324,10 @@ function computeExperienceScore(){
   loggedTags.forEach(tag => { tagPts += TAG_WEIGHTS[tag] || 10; });
   const tagDiversity = loggedTags.size;
 
-  // Ποικιλία τεχνικών πρόσδεσης/αγκυροβολίου — πραγματική ναυτοσύνη, δεν προσμετρούνταν πριν καθόλου
+  // Ποικιλία τεχνικών πρόσδεσης/αγκυροβολίου — πραγματική ναυτοσύνη, μετράει ΚΑΘΕ πρόσδεση
+  // (ακόμα κι ένα σταμάτημα για κολύμπι το μεσημέρι), όχι μόνο όσες συνοδεύονται από διανυκτέρευση.
   const loggedMoorings = new Set();
-  data.trips.forEach(t => getTripDailyStays(t).forEach(s => { if(s.mooringType) loggedMoorings.add(s.mooringType); }));
+  data.trips.forEach(t => getTripAllMoorings(t).forEach(m => loggedMoorings.add(m)));
   let mooringPts = 0;
   loggedMoorings.forEach(m => { mooringPts += MOORING_TYPE_WEIGHTS[m] || 8; });
   const mooringDiversity = loggedMoorings.size;
@@ -3283,7 +3384,7 @@ function computeExperienceScore(){
   const auxPracticePts = Math.min(auxPracticeCount, 10) * 8;
 
   const total = nmPts + areaPts + tagPts + mooringPts + tripPts + certPts + trainingPts + maintenancePts + judgmentPts + auxPracticePts;
-  const maxBf = data.trips.reduce((max, t) => Math.max(max, t.bf || 0), 0);
+  const maxBf = data.trips.reduce((max, t) => Math.max(max, getTripConditionsRange(t).bfMax || 0), 0);
   const nightTrips = data.trips.filter(t => (t.tags||[]).includes('Νυχτερινή')).length;
   const openSeaTrips = data.trips.filter(t => (t.tags||[]).includes('Ανοιχτή διάπλευση')).length;
   return {totalNm, weightedNm, areasCovered, tagDiversity, mooringDiversity, tripsCount, rawTripsCount: data.trips.length, yearsSpan, longestStreak, nmPts, areaPts, tagPts, mooringPts, volumePts, longevityPts, streakPts, tripPts, certValid, certPts, trainingPts, trainingCount, maintenancePts, engineServiceCount, judgmentPts, weatherCancellationCount, auxPracticeCount, auxPracticePts, total, maxBf, nightTrips, openSeaTrips};
@@ -3804,7 +3905,7 @@ function computeYearReview(year){
   const bestMonthNm = bestMonthEntry ? Math.round(bestMonthEntry[1]*10)/10 : 0;
 
   const farthest = [...yearTrips].sort((a,b)=>(parseFloat(b.nm)||0)-(parseFloat(a.nm)||0))[0];
-  const maxBf = Math.max(0, ...yearTrips.map(t => t.bf || 0));
+  const maxBf = Math.max(0, ...yearTrips.map(t => getTripConditionsRange(t).bfMax || 0));
   const nightsAway = yearTrips.reduce((s,t) => s + getTripDailyStays(t).filter(d => d.overnightType && d.overnightType!=='none').length, 0);
   const tagsUsed = new Set();
   yearTrips.forEach(t => (t.tags||[]).forEach(tag => tagsUsed.add(tag)));
@@ -6742,10 +6843,11 @@ function renderQuarterlyLevelCard(){
 // --- Κάρτα 5: Ρεκόρ & ορόσημα ---
 function renderRecordsCard(){
   if(data.trips.length === 0) return '';
-  let maxNmTrip = null, maxBfTrip = null;
+  let maxNmTrip = null, maxBfTrip = null, maxBfValue = 0;
   data.trips.forEach(t => {
     if(!maxNmTrip || (parseFloat(t.nm)||0) > (parseFloat(maxNmTrip.nm)||0)) maxNmTrip = t;
-    if(t.bf != null && (!maxBfTrip || t.bf > maxBfTrip.bf)) maxBfTrip = t;
+    const peakBf = getTripConditionsRange(t).bfMax;
+    if(peakBf != null && peakBf > maxBfValue){ maxBfValue = peakBf; maxBfTrip = t; }
   });
   const monthsWithTrips = [...new Set(data.trips.filter(t=>t.date).map(t => t.date.slice(0,7)))].sort();
   let longestMonthStreak = monthsWithTrips.length ? 1 : 0, curStreak = monthsWithTrips.length ? 1 : 0;
@@ -6758,7 +6860,7 @@ function renderRecordsCard(){
 
   const items = [];
   if(maxNmTrip) items.push(`🏆 Μεγαλύτερη απόσταση: <strong>${maxNmTrip.nm} ν.μ.</strong> (${buildRouteLabel(maxNmTrip)}${maxNmTrip.date ? ', ' + new Date(maxNmTrip.date+'T00:00:00').toLocaleDateString('el-GR') : ''})`);
-  if(maxBfTrip) items.push(`🌊 Υψηλότερο Beaufort που αντιμετώπισες: <strong>Bf${maxBfTrip.bf}</strong> (${buildRouteLabel(maxBfTrip)}${maxBfTrip.date ? ', ' + new Date(maxBfTrip.date+'T00:00:00').toLocaleDateString('el-GR') : ''})`);
+  if(maxBfTrip) items.push(`🌊 Υψηλότερο Beaufort που αντιμετώπισες: <strong>Bf${maxBfValue}</strong> (${buildRouteLabel(maxBfTrip)}${maxBfTrip.date ? ', ' + new Date(maxBfTrip.date+'T00:00:00').toLocaleDateString('el-GR') : ''})`);
   if(longestMonthStreak >= 2) items.push(`📅 Μεγαλύτερο συνεχόμενο σερί: <strong>${longestMonthStreak} μήνες</strong> στη σειρά με τουλάχιστον μία εξόρμηση`);
   if(items.length === 0) return '';
   return analyticsCard('🏆 Ρεκόρ & ορόσημα', items.map(i => `<p class="analytics-text">${i}</p>`).join(''));
@@ -7075,7 +7177,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.22-6';
+const APP_VERSION = '2026.07.22-7';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
