@@ -4635,8 +4635,8 @@ function renderTrips(){
           ${detailParts.length > 2 ? `<p class="trip-detail-row">${detailParts.slice(2).join(' · ')}</p>` : ''}
           ${costLine ? `<p class="trip-detail-row">⛽ ${costLine}</p>` : ''}
           ${staysHtml}
-          ${overLimit ? `<p class="trip-detail-row" style="" class="warn-text">⚠ Εκτός ορίου σχεδίασης σκάφους (Bf 6 / 2μ)</p>` : ''}
-          ${consFlag ? `<p class="trip-detail-row" style="" class="warn-text">⚠ Ασυνήθιστα υψηλή κατανάλωση: ${consFlag.rate} L/ν.μ. (μέσος: ${consFlag.avg}, +${consFlag.pct}%)</p>` : ''}
+          ${overLimit ? `<p class="trip-detail-row warn-text">⚠ Εκτός ορίου σχεδίασης σκάφους (Bf 6 / 2μ)</p>` : ''}
+          ${consFlag ? `<p class="trip-detail-row warn-text">⚠ Ασυνήθιστα υψηλή κατανάλωση: ${consFlag.rate} L/ν.μ. (μέσος: ${consFlag.avg}, +${consFlag.pct}%)</p>` : ''}
           ${(tagsHtml || areasHtml) ? `<div class="trip-tags">${tagsHtml}${areasHtml}</div>` : ''}
           ${bookHtml}
           <p class="trip-contrib" data-contrib="${t.id}">${ICON_STAR} +${contrib.total} πόντοι Captain's Level (πάτα για ανάλυση)</p>
@@ -6747,7 +6747,7 @@ if('serviceWorker' in navigator){
 // Το version.json ΔΕΝ μπαίνει ποτέ στην cache του service worker (δες sw.js) —
 // έτσι το βλέπουμε αμέσως μόλις υπάρχει νέα έκδοση ζωντανή, χωρίς να χρειάζεται
 // να κλείσει/ανοίξει κανείς στα τυφλά την εφαρμογή για να "τη βρει".
-const APP_VERSION = '2026.07.21-22';
+const APP_VERSION = '2026.07.21-23';
 { const vEl = document.getElementById('app-version-display'); if(vEl) vEl.textContent = APP_VERSION; }
 
 async function checkForUpdate(){
